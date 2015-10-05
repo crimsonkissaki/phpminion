@@ -1,0 +1,32 @@
+{
+    "name": "crimsonkissaki/phpminion",
+    "description": "A PHP developer helping framework providing better debugging utilities.",
+    "keywords": ["library", "testing", "test", "var_dump", "debugging", "development"],
+    "homepage": "http://github.com/crimsonkissaki/phpminion",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evan Johnson",
+            "email": "crimsonminion@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.10",
+        "phpmd/phpmd": "@stable",
+        "pdepend/pdepend": "@stable",
+        "phploc/phploc": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "PHPMinion\\": "src/PHPMinion"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": ".0.x-dev"
+        }
+    }
+}
