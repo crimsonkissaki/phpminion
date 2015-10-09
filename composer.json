@@ -21,7 +21,8 @@
     },
     "autoload": {
         "psr-4": {
-            "PHPMinion\\": "src/PHPMinion"
+            "PHPMinion\\": "src/",
+            "PHPMinionLib\\": "libraries/"
         }
     },
     "extra": {
