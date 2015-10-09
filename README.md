@@ -13,7 +13,7 @@ Eventually each sub-system should be split off into its own project repo as an i
 Through Composer:
 
 ```bin
-    composer require-dev crimsonkissaki/phpminion:dev-master
+    composer require --dev crimsonkissaki/phpminion:dev-master
 ```
 
 *NOTE* You will have to update your composer.json file with a repository entry for this github repo as I have not yet uploaded the repo to packagist. I will do so when I'm happy that it will work on most use-cases.
