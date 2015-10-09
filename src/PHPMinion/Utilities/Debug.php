@@ -6,11 +6,20 @@
  * (c) Evan Johnson
  */
 
-namespace PHPMinion\Debug;
+namespace PHPMinion\Utilities;
 
+use PHPMinion\PHPMinion;
 use Doctrine\Common\Util\Debug as DoctrineDebug;
 use Doctrine\Common\Persistence\Proxy;
 
+/**
+ * Class Debug
+ *
+ * TODO: maybe some of these should be sub-classes?
+ *   that way i can make them more easily configurable ...
+ *
+ * @package PHPMinion\Utilities
+ */
 class Debug
 {
 
@@ -21,11 +30,11 @@ class Debug
         width: -moz-fit-content;
         width: fit-content;
     }
-    .dbugDiv {
+    ._dbugDiv {
         text-align: left;
         margin: 25px;
     }
-    .dbugP {
+    ._dbugP {
         border: 1px solid black;
         width: -webkit-fit-content;
         width: -moz-fit-content;
@@ -37,14 +46,260 @@ class Debug
 OUTPUT;
 
     /**
-     * Gets details of method that called a Util method
+     * Custom Debug CSS stylings
+     *
+     * @var string
+     */
+    private $debugStyles;
+
+    /**
+     * String to use for new lines
+     *
+     * Used for swapping between CLI and browser debugging
+     *
+     * @var string
+     */
+    private $newLineStr = '<br>';
+
+    /**
+     * @param string $styles
+     */
+    public function setDebugStyles($styles)
+    {
+        $this->debugStyles = $styles;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDebugStyles()
+    {
+        return $this->debugStyles;
+    }
+
+    /**
+     * @param string $str  String to use for creating new lines.
+     *                     Set to "\n" for CLI debugging, "<br>" for browser.
+     */
+    public function setNewLineStr($str)
+    {
+        $this->newLineStr = $str;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNewLineStr()
+    {
+        return $this->newLineStr;
+    }
+
+    public function __construct()
+    {
+        // Attempt to detect CLI instances and set newline appropriately
+        if (strpos(php_sapi_name(), 'cli') !== false) {
+            $this->setNewLineStr("\n");
+        }
+    }
+
+    /**
+     * A more user-friendly variable debugger
+     *
+     * This should be able to prevent certain problems that large objects/arrays
+     * cause in debugging, such as recursive Doctrine objects or bloody huge
+     * domain objects causing out of memory errors.
+     *
+     * Objects are parsed using Reflection, and their contents displayed
+     * in a slimmed down var_dumped array.
+     *
+     * @param mixed      $var
+     * @param null       $txt
+     * @param bool|false $die
+     */
+    public function debugDump($var, $txt = null, $die = false)
+    {
+        $br = $this->getNewLineStr();
+        $hr = '<hr style="width: 25%; margin-left: 0;">';
+        $note = (is_null($txt)) ? '' : self::color($txt) . "\n\n";
+        $method = $this->getMethodInfo();
+        $varType = gettype($var);
+        $varValue = $this->getVariableTypeDetailed($var);
+        $styles = $this->DBUG_STYLES;
+
+        echo <<<OUTPUT
+{$styles}
+
+<pre class="_dbugPre"><div class="_dbugDiv">{$method['class']}->{$method['func']}() :: {$method['line']}
+
+{$note}Var Type: {$varType}
+
+<p class="_dbugP">{$varValue}</p></div></pre>
+OUTPUT;
+
+        if ($die) {
+            die($br.self::color('Killed by '.__METHOD__).$br);
+        }
+    }
+
+    /**
+     * Outputs a lightweight debug backtrace
+     *
+     * @param string|null $txt      Notes to display with trace
+     * @param bool|false  $die      Kill PHP after execution?
+     * @param int         $lvls     How far back in the trace to output
+     */
+    public function debugTrace($txt = null, $die = false, $lvls = 2)
+    {
+        // debug_backtrace index of 2 gets "calling method's" info
+        // so we start here
+        $defaultBacktraceIndex = 2;
+        $note = (is_null($txt)) ? '' : $this->colorize($txt) . "\n\n";
+        $styles = $this->DBUG_STYLES;
+        $title = $this->colorize('Dbug Trace:', 'blue');
+
+        $trace = '';
+        for ($i = 0; $i <= $lvls; $i += 1 ) {
+            $nextDebugIndex = $defaultBacktraceIndex + $lvls - $i;
+            $method = $this->getMethodInfo($nextDebugIndex);
+            $trace .= "{$method['class']}->{$method['func']}() :: {$method['line']}\n";
+        }
+
+        echo <<<OUTPUT
+{$styles}
+
+<pre class="_dbugPre"><div class="_dbugDiv">{$title}
+
+{$note}<p class="_dbugP">{$trace}</p></div></pre>
+OUTPUT;
+
+        if ($die) {
+            die('<br>'.$this->colorize('Killed by '.__METHOD__).'<br>');
+        }
+    }
+
+
+    public function debugColor($var, $color = '#F00;', $die = false)
+    {
+        $method = self::getMethodInfo();
+        $styles = self::DBUG_STYLES;
+        $methodData = "{$method['class']}->{$method['func']}() :: {$method['line']}";
+        $varValue = self::color($var, $color);
+
+        echo <<<OUTPUT
+{$styles}
+
+<div class="_dbugDiv">{$methodData}
+<BR>
+{$varValue}
+</div>
+OUTPUT;
+
+        if ($die) {
+            die('<BR><BR>Killed by '.__METHOD__.'<BR><BR>');
+        }
+    }
+
+    /**
+     * Outputs a simple variable type, e.g. BOOL, INT, etc.
+     *
+     * @param            $var
+     * @param null       $txt
+     * @param bool|false $die
+     */
+    public function debugType($var, $txt = null, $die = false)
+    {
+        $method = self::getMethodInfo();
+        $methodData = "{$method['class']}->{$method['func']}() :: {$method['line']}";
+        $styles = self::DBUG_STYLES;
+        $note = (is_null($txt)) ? '' : $txt . " :: ";
+        $varOutput = strtoupper(gettype($var)) . ' (' . self::getVariableTypeSimple($var) . ')';
+        $varType = self::color($varOutput, 'purple');
+
+        echo <<<OUTPUT
+{$styles}
+
+<div class="_dbugDiv">{$methodData}
+<BR>
+{$note}{$varType}
+</div>
+OUTPUT;
+
+        if ($die) {
+            die('<BR><BR>Killed by '.__METHOD__.'<BR><BR>');
+        }
+    }
+
+    /**
+     * Writes data to a log file
+     *
+     * Because sometimes you don't want to mess with Monolog.
+     *
+     * If no file is specified, it writes to <projectRoot>\phpMinionDebug.log
+     *
+     * @param mixed       $data
+     * @param int         $eol      Number of new lines to append to $data
+     * @param string|bool $file     File to write to
+     * @param bool        $reset    If true the file will be erased before writing
+     */
+    public function debugLog($data, $eol = 1, $file = false, $reset = false)
+    {
+        if (!$file) {
+            $file = PHPMinion::getInstance()->getProjectRoot() . 'phpMinionDebug.log';
+        }
+
+        if( is_array($data) || is_object($data) ) {
+            ob_start();
+            print_r($data);
+            $output = ob_get_clean();
+        } else {
+            $output = $data;
+        }
+
+        $writeMode = ($reset) ? 'w' : 'a';
+        $fh = fopen( $file, $writeMode ) or die( "myLog() cannot open '{$file}' for writing." );
+        fwrite( $fh, $output . str_repeat(PHP_EOL, $eol));
+        fclose( $fh );
+    }
+
+    /**
+     * Gets a file path relative to project root
+     *
+     * @param  string $path
+     * @return string
+     */
+    private function getProjectRelPath($path)
+    {
+        $root = PHPMinion::getInstance()->getProjectRoot();
+
+        return str_replace($root, '', $path);
+    }
+
+    /**
+     * Wraps a string with a <span> element with font-color
+     *
+     * @param string $var
+     * @param string $color
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public function colorize($var, $color = '#F00;')
+    {
+        if (!is_string($var)) {
+            throw new \InvalidArgumentException(__METHOD__.' only accepts strings: '.gettype($var).' provided.');
+        }
+
+        return "<span style='color: {$color}; text-align: left;'>{$var}</span>";
+    }
+
+    /**
+     * Gets details of the method that called a Util method
      *
      * @param int $levels   Where the calling method's info is in debug_backtrace()
      *                      Default is 2 since this will likely be called from
      *                      inside a Utils method.
      * @return array
      */
-    public static function getMethodInfo($levels = 2)
+    public function getMethodInfo($levels = 2)
     {
         /**
          * E.g. calling getMethodInfo from StyleFactorys->getCompleteStyleClass() :: 164
@@ -71,143 +326,20 @@ OUTPUT;
         $trace = debug_backtrace();
 
         return [
-            'file' => self::getProjectRelPath($trace[$levels - 1]['file']),
-            'class' => self::getProjectRelPath($trace[$levels]['class']),
+            'file' => $this->getProjectRelPath($trace[$levels - 1]['file']),
+            'class' => $this->getProjectRelPath($trace[$levels]['class']),
             'func' => $func = $trace[$levels]['function'],
             'line' => $trace[$levels - 1]['line'],
         ];
     }
 
     /**
-     * Gets the path to the project root directory
-     *
-     * @return string
-     */
-    public static function getProjectRoot()
-    {
-        return dirname(dirname(__FILE__)) . '/';
-    }
-
-    /**
-     * Gets a file path relative to project root
-     *
-     * @param  string $path
-     * @return string
-     */
-    public static function getProjectRelPath($path)
-    {
-        $root = self::getProjectRoot();
-
-        return str_replace($root, '', $path);
-    }
-
-    /**
-     * Shows a lightweight debug backtrace
-     *
-     * @param string|null $txt
-     * @param bool|false  $die
-     * @param int         $lvls
-     */
-    public static function dbugTrace($txt = null, $die = false, $lvls = 2)
-    {
-        // debug_backtrace index of 2 gets "calling method's" info
-        // so we start here
-        $defaultBacktraceIndex = 2;
-        $note = (is_null($txt)) ? '' : self::color($txt) . "\n\n";
-        $styles = self::DBUG_STYLES;
-        $title = self::color('Dbug Trace:', 'blue');
-        $br = '<BR>';
-
-        $trace = '';
-        for ($i = 0; $i <= $lvls; $i += 1 ) {
-            $nextDebugIndex = $defaultBacktraceIndex + $lvls - $i;
-            $method = self::getMethodInfo($nextDebugIndex);
-            $trace .= "{$method['class']}->{$method['func']}() :: {$method['line']}\n";
-        }
-
-        echo <<<OUTPUT
-{$styles}
-
-<pre class="_dbugPre"><div class="dbugDiv">{$title}
-
-{$note}<p class="dbugP">{$trace}</p></div></pre>
-OUTPUT;
-
-        if ($die) {
-            die($br.self::color('Killed by '.__METHOD__).$br);
-        }
-    }
-
-    public static function dbug($var, $txt = null, $die = false)
-    {
-        $br = '<BR>';
-        $hr = '<hr style="width: 25%; margin-left: 0;">';
-        $note = (is_null($txt)) ? '' : self::color($txt) . "\n\n";
-        $method = self::getMethodInfo();
-        $varType = gettype($var);
-        $varValue = self::getVariableValue($var);
-        $styles = self::DBUG_STYLES;
-
-        echo <<<OUTPUT
-{$styles}
-
-<pre class="_dbugPre"><div class="dbugDiv">{$method['class']}->{$method['func']}() :: {$method['line']}
-
-{$note}Var Type: {$varType}
-
-<p class="dbugP">{$varValue}</p></div></pre>
-OUTPUT;
-
-        if ($die) {
-            die($br.self::color('Killed by '.__METHOD__).$br);
-        }
-    }
-
-    public static function getVariableValue($var)
-    {
-        if (gettype($var) === 'object') {
-            return self::getObjectValue($var);
-        }
-
-        return self::getFullSimpleTypeValue($var);
-    }
-
-    /**
-     * Returns a full value for a variable
-     *
-     * Ignores objects
-     *
-     * @param $var
-     * @return string
-     */
-    public static function getFullSimpleTypeValue($var)
-    {
-         switch (true) {
-            case ($var === false):
-                return 'FALSE';
-            case ($var === true):
-                return 'TRUE';
-            case ($var === null):
-                return 'NULL';
-            case (is_array($var)):
-                ob_start();
-                print_r($var);
-                return ob_get_clean();
-            default:
-                return $var;
-        }
-    }
-
-    /**
-     * Returns a simple value for a variable
-     *
-     * For arrays it returns their length
-     * Ignores objects
+     * Returns a string representation of a variable type
      *
      * @param   mixed       $var
-     * @return  int|string
+     * @return  string
      */
-    public static function getSimpleTypeValue($var)
+    public function getVariableTypeSimple($var)
     {
         switch (true) {
             case ($var === false):
@@ -216,8 +348,10 @@ OUTPUT;
                 return 'TRUE';
             case ($var === null):
                 return 'NULL';
+            case (is_numeric($var)):
+                return strtoupper(gettype($var)) . '('.$var.')';
             case (is_array($var)):
-                return count($var);
+                return '['.count($var).']';
             case (is_string($var)):
                 return "'{$var}'";
             case (is_object($var)):
@@ -227,10 +361,39 @@ OUTPUT;
         }
     }
 
-    public static function getObjectValue($var)
+    /**
+     * Similar to getVariableTypeSimple(), but returns a full
+     * data dump of arrays/objects.
+     *
+     * @param  mixed    $var
+     * @return string
+     */
+    public function getVariableTypeDetailed($var)
+    {
+         switch (true) {
+             case (is_array($var)):
+                 ob_start();
+                 print_r($var);
+                 return ob_get_clean();
+             case (is_object($var)):
+                 return $this->getObjectValue($var);
+             default:
+                 return $this->getVariableTypeSimple($var);
+        }
+    }
+
+    /**
+     * Converts an object into a more human-readable array representation
+     *
+     * Includes all parameter values including protected/private/static.
+     *
+     * @param  object $var
+     * @return string
+     */
+    public function getObjectValue($var)
     {
         ob_start();
-        echo 'class type: ' . get_class($var) . '<BR>';
+        echo 'Class type: ' . get_class($var) . '<BR>';
 
         if ($var instanceof Proxy) {
             //DoctrineDebug::dump($var, 1);
@@ -243,92 +406,6 @@ OUTPUT;
         }
 
         return ob_get_clean();
-    }
-
-    public static function color($var, $color = '#F00;')
-    {
-        return "<span style='color: {$color}; text-align: left;'>{$var}</span>";
-    }
-
-    public static function dbugColor($var, $color = '#F00;', $die = false)
-    {
-        $method = self::getMethodInfo();
-        $styles = self::DBUG_STYLES;
-        $methodData = "{$method['class']}->{$method['func']}() :: {$method['line']}";
-        $varValue = self::color($var, $color);
-
-        echo <<<OUTPUT
-{$styles}
-
-<div class="dbugDiv">{$methodData}
-<BR>
-{$varValue}
-</div>
-OUTPUT;
-
-        if ($die) {
-            die('<BR><BR>Killed by '.__METHOD__.'<BR><BR>');
-        }
-    }
-
-    /**
-     * Outputs a simple variable type, e.g. BOOL, INT, etc.
-     *
-     * @param            $var
-     * @param null       $txt
-     * @param bool|false $die
-     */
-    public static function dbugType($var, $txt = null, $die = false)
-    {
-        $method = self::getMethodInfo();
-        $methodData = "{$method['class']}->{$method['func']}() :: {$method['line']}";
-        $styles = self::DBUG_STYLES;
-        $note = (is_null($txt)) ? '' : $txt . " :: ";
-        $varOutput = strtoupper(gettype($var)) . ' (' . self::getSimpleTypeValue($var) . ')';
-        $varType = self::color($varOutput, 'purple');
-
-        echo <<<OUTPUT
-{$styles}
-
-<div class="dbugDiv">{$methodData}
-<BR>
-{$note}{$varType}
-</div>
-OUTPUT;
-
-        if ($die) {
-            die('<BR><BR>Killed by '.__METHOD__.'<BR><BR>');
-        }
-    }
-
-    /**
-     * Writes data to a log file
-     *
-     * If no file is specified, it writes to <projectRoot>\myLog.log
-     *
-     * @param mixed       $data
-     * @param int         $eol      Number of new lines to append to $data
-     * @param string|bool $file     File to write to
-     * @param bool        $reset    If true the file will be erased before writing
-     */
-    public static function myLog($data, $eol = 1, $file = false, $reset = false)
-    {
-        if (!$file) {
-            $file = dirname(dirname(__FILE__)) . '/myLog.log';
-        }
-
-        if( is_array($data) || is_object($data) ) {
-            ob_start();
-            print_r($data);
-            $output = ob_get_clean();
-        } else {
-            $output = $data;
-        }
-
-        $writeMode = ($reset) ? 'w' : 'a';
-        $fh = fopen( $file, $writeMode ) or die( "myLog() cannot open '{$file}' for writing." );
-        fwrite( $fh, $output . str_repeat(PHP_EOL, $eol));
-        fclose( $fh );
     }
 
 }
