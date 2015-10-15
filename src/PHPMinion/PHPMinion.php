@@ -81,6 +81,24 @@ class PHPMinion
     }
 
     /**
+     * Static accessibility mutator
+     *
+     * @param string $name
+     * @param array  $args
+     */
+    public static function __callStatic($name, $args)
+    {
+        echo "calling __callStatic for method '{$name}'<BR>";
+
+        echo "using args:<BR>";
+
+        var_dump($args);
+
+        die("<BR><BR>__callStatic()<BR><BR>");
+
+    }
+
+    /**
      * Instantiates a utility class & saves it in PHPMinion::$_classes[]
      *
      * This acts as a repository for long-running instances of various
@@ -97,7 +115,7 @@ class PHPMinion
      * @param null|string $alias An alias to reference the instance
      * @throws  \InvalidArgumentException
      */
-    public function create($class, $alias = null)
+    private function create($class, $alias = null)
     {
         $needle = strtolower($class);
         // $_classes array key to store the instance under
@@ -127,7 +145,7 @@ class PHPMinion
      * @param null   $alias
      * @return mixed
      */
-    public function createOrGet($class, $alias = null)
+    private function createOrGet($class, $alias = null)
     {
         $key = (!is_null($alias)) ? strtolower($alias) : $class;
 
@@ -145,7 +163,7 @@ class PHPMinion
      * @return  mixed
      * @throws  \InvalidArgumentException
      */
-    public function get($alias)
+    private function get($alias)
     {
         $needle = strtolower($alias);
 
