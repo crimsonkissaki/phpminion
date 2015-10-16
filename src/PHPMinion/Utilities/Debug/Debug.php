@@ -47,7 +47,10 @@ class Debug
     public function __construct()
     {
         $this->registerTool('dbug', '\PHPMinion\Utilities\Debug\Tools\DebugDump')
-            ->registerTool('trace', '\PHPMinion\Utilities\Debug\Tools\DebugTrace');
+            ->registerTool('trace', '\PHPMinion\Utilities\Debug\Tools\DebugTrace')
+            ->registerTool('color', '\PHPMinion\Utilities\Debug\Tools\DebugColor')
+            ->registerTool('textarea', '\PHPMinion\Utilities\Debug\Tools\DebugTextarea')
+            ->registerTool('type', '\PHPMinion\Utilities\Debug\Tools\DebugType');
 
     }
 
