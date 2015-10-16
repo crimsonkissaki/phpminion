@@ -12,26 +12,31 @@
 
 namespace PHPMinion\Utilities\Dbug\Tools;
 
-use PHPMinion\Utilities\Dbug\Dbug;
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
 /**
- * Class DbugDump
+ * Class DbugColor
  *
- * More robust var_dump() & print_r() alternative that *should* be
- * able to prevent out of memory errors caused by large objects/arrays.
+ * Simple output of strings/numeric values in color for easy reading
  *
  * @created     October 16, 2015
  * @version     0.1
  */
-class DbugDump extends DbugTool
+class DbugColor extends DbugTool
 {
+
+    /**
+     * Default color to use on dbug output
+     *
+     * @var string
+     */
+    protected $defaultColor = '#F00';
 
     /**
      * <code>
      * Method Args:
-     *  mixed   $target   Variable to target
-     *  string  $comment  Comments to display in debug output (default = '')
+     *  mixed   $comment  Text to output in color (non-array/object)
+     *  string  $color    Color to use on dbug output (default = '#F00')
      *  bool    $kill     Immediately terminate script (default = false)
      * </code>
      *
@@ -41,13 +46,10 @@ class DbugDump extends DbugTool
     {
         $this->processArgs($args);
 
-        /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugDumpCrumb $crumb */
+        /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugColorCrumb $crumb */
         $crumb = $this->crumb;
         $crumb->callingMethodInfo = $this->getMethodInfoString($this->common->getMethodInfo());
-        $crumb->variableType = $this->common->getSimpleTypeValue($this->dbugTarget);
-        $crumb->variableData = $this->common->getFullSimpleTypeValue($this->dbugTarget);
-        $crumb->dbugComment = (empty($this->comment)) ? ''
-                               : $this->common->colorize($this->comment, $this->commentColor)."\n\n";
+        $crumb->dbugComment = $this->common->colorize($this->comment, $this->commentColor);
 
         $this->render();
 
@@ -63,11 +65,11 @@ class DbugDump extends DbugTool
     private function processArgs(array $args)
     {
         if (empty($args[0])) {
-            throw new DbugException("ERROR: No variable provided to DbugDump");
+            throw new DbugException("ERROR: No variable provided to DbugColor");
         }
 
-        $this->dbugTarget = $args[0];
-        $this->comment = (!empty($args[1])) ? $args[1] : null;
+        $this->comment = trim($args[0]);
+        $this->commentColor = (!empty($args[1])) ? $args[1] : $this->defaultColor;
         $this->kill = (!empty($args[2])) ? $args[2] : false;
     }
 

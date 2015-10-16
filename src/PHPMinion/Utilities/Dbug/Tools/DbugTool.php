@@ -58,6 +58,43 @@ abstract class DbugTool implements DbugToolInterface
     protected $toolAlias;
 
     /**
+     * Variable to debug
+     *
+     * @var mixed
+     */
+    protected $dbugTarget;
+
+    /**
+     * Dbug comments
+     *
+     * @var string
+     */
+    protected $comment;
+
+    /**
+     * Color to set DbugDump comment text
+     *
+     * @var string
+     */
+    protected $commentColor = '#F00';
+
+    /**
+     * Debugging output from DbugDumpCrumb
+     *
+     * @var string
+     */
+    protected $dbugResults;
+
+    /**
+     * Kill the script or not?
+     *
+     * If true script dumps output && die()
+     *
+     * @var bool
+     */
+    protected $kill = false;
+
+    /**
      * Default message to display if die()
      *
      * Override in child DbugTool if desired
@@ -65,6 +102,11 @@ abstract class DbugTool implements DbugToolInterface
      * @var string
      */
     protected $dieMessage = "<br>Killed by PHPMinion::Dbug<br>";
+
+    public function getDbugResults()
+    {
+        return $this->dbugResults;
+    }
 
     /**
      * @param DbugCrumbInterface $crumb
@@ -91,6 +133,7 @@ abstract class DbugTool implements DbugToolInterface
     public function __construct($toolAlias, Dbug $debug = null)
     {
         $this->toolAlias = $toolAlias;
+        $this->dieMessage = "<br>Killed by Dbug::{$toolAlias}<br>";
         $this->debug = $debug;
         $this->common = new Common();
     }

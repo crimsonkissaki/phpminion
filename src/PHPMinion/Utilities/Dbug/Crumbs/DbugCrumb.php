@@ -40,7 +40,7 @@ abstract class DbugCrumb
         'toolAlias'  => 'background-color: #FFF; border: 1px solid black; border-bottom-style: hidden; border-radius: 5px 5px 0 0; padding: 2px 5px; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
         'pre'        => 'background-color: #FFF; border: 1px dashed black;',
         'dbugDiv'    => 'margin: 5px 10px;',
-        'varDataDiv' => 'padding: 5px 10px; border: 1px solid black;',
+        'varDataDiv' => 'padding: 5px 10px; border: 1px solid black; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
     ];
 
 }

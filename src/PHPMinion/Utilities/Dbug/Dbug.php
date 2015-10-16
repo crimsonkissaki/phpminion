@@ -85,13 +85,14 @@ class Dbug
         $toolPath = '\PHPMinion\Utilities\Dbug\Tools';
         $this->registerTool('dbug', $toolPath.'\DbugDump')
             //->registerTool('trace', $toolPath.'\DbugTrace')
-            //->registerTool('color', $toolPath.'\DbugColor')
+            ->registerTool('color', $toolPath.'\DbugColor')
             //->registerTool('textarea', $toolPath.'\DbugTextarea')
             //->registerTool('type', $toolPath.'\DbugType')
             ;
 
         $crumbPath = '\PHPMinion\Utilities\Dbug\Crumbs';
-        $this->registerCrumb('dbug', $crumbPath.'\DbugDumpCrumb');
+        $this->registerCrumb('dbug', $crumbPath.'\DbugDumpCrumb')
+             ->registerCrumb('color', $crumbPath.'\DbugColorCrumb');
 
     }
 
