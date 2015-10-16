@@ -1,20 +1,28 @@
 <?php
-
-namespace PHPMinion\Utilities\Debug\Crumbs;
-
-use PHPMinion\Utilities\Debug\Crumbs\DebugCrumbInterface;
-
 /**
- * DebugDumpCrumb
+ * PHPMinion
  *
- * Rendering Crumb for DebugDump tool
+ * A suite of tools to facilitate development and debugging.
  *
  * @package     PHPMinion
  * @author      Evan Johnson
+ * @created     October 9, 2015
+ * @version     0.1
+ */
+
+namespace PHPMinion\Utilities\Dbug\Crumbs;
+
+use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
+
+/**
+ * DbugDumpCrumb
+ *
+ * Rendering Crumb for DbugDump tool
+ *
  * @created     October 15, 2015
  * @version     0.1
  */
-class DebugDumpCrumb extends DebugCrumb implements DebugCrumbInterface
+class DbugDumpCrumb extends DbugCrumb implements DbugCrumbInterface
 {
 
     /**
@@ -25,25 +33,25 @@ class DebugDumpCrumb extends DebugCrumb implements DebugCrumbInterface
     public $variableType;
 
     /**
-     * Debug information about variable
+     * Dbug information about variable
      *
      * @var string
      */
     public $variableData;
 
     /**
-     * Method where DebugTool was called
+     * Method where DbugTool was called
      *
      * @var string
      */
     public $callingMethodInfo;
 
     /**
-     * Debug comment
+     * Dbug comment
      *
      * @var string
      */
-    public $debugComment;
+    public $dbugComment;
 
     /**
      * @inheritDoc
@@ -51,12 +59,14 @@ class DebugDumpCrumb extends DebugCrumb implements DebugCrumbInterface
     public function render()
     {
         return <<<OUTPUT
-<pre style="{$this->cssStyles['pre']}"><div style="{$this->cssStyles['alias']}">{$this->toolAlias}</div>
-<div style="{$this->cssStyles['div']}">{$this->callingMethodInfo}
+<div style="{$this->cssStyles['container']}">
+<div style="{$this->cssStyles['toolAlias']}">{$this->toolAlias}</div>
+<pre style="{$this->cssStyles['pre']}"><div style="{$this->cssStyles['dbugDiv']}">{$this->callingMethodInfo}
 
-{$this->debugComment}Var Type: {$this->variableType}
+{$this->dbugComment}Var Type: {$this->variableType}
 
-<p style="{$this->cssStyles['p']}">{$this->variableData}</p></div></pre>
+<div style="{$this->cssStyles['varDataDiv']}">{$this->variableData}</div></div></pre>
+</div>
 OUTPUT;
     }
 

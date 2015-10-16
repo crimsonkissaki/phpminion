@@ -11,94 +11,116 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\Debug;
+namespace PHPMinion\Utilities\Dbug;
 
-use PHPMinion\Utilities\Debug\Tools\DebugToolInterface;
-use PHPMinion\Utilities\Debug\Exceptions\DebugException;
+use PHPMinion\Utilities\Core\Common;
+use PHPMinion\Utilities\Dbug\Tools\DbugTool;
+use PHPMinion\Utilities\Dbug\Tools\DbugToolInterface;
+use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
 /**
- * Class Debug
+ * Class Dbug
  *
- * Making debugging a bit simpler
+ * Gateway and container for debugging tools/results
  *
- * @package PHPMinion\Utilities
+ * @created     October 9, 2015
+ * @version     0.1
  */
-class Debug
+class Dbug
 {
 
     /**
-     * Registered Debug Tools
+     * Registered Dbug Tools
      *
      * @var array
      */
     private $_tools = [];
 
     /**
-     * Registered Debug output crumbs
+     * Registered Dbug output crumbs
      *
      * @var array
      */
     private $_crumbs = [];
 
     /**
-     * Stack of Debug outputs
+     * Stack of Dbug outputs
      *
      * @var array
      */
-    private $_debugStack = [];
+    private $_dbugStack = [];
 
     /**
-     * @var Debug
+     * @var Dbug
      */
     private static $_instance;
 
     /**
-     * Initial setup registers default tools
+     * Default message shown upon kill()
+     *
+     * @var string
+     */
+    private $_dieMsg = '<br>Killed by PHPMinion::Dbug<br>';
+
+    public function getTools()
+    {
+        return $this->_tools;
+    }
+
+    public function getCrumbs()
+    {
+        return $this->_crumbs;
+    }
+
+    public function getDbugStack()
+    {
+        return $this->_dbugStack;
+    }
+
+    /**
+     * Initial setup registers default DbugTools
      */
     private function __construct()
     {
-        $this->registerTool('dbug', '\PHPMinion\Utilities\Debug\Tools\DebugDump')
-            ->registerTool('trace', '\PHPMinion\Utilities\Debug\Tools\DebugTrace')
-            ->registerTool('color', '\PHPMinion\Utilities\Debug\Tools\DebugColor')
-            ->registerTool('textarea', '\PHPMinion\Utilities\Debug\Tools\DebugTextarea')
-            ->registerTool('type', '\PHPMinion\Utilities\Debug\Tools\DebugType');
+        $toolPath = '\PHPMinion\Utilities\Dbug\Tools';
+        $this->registerTool('dbug', $toolPath.'\DbugDump')
+            //->registerTool('trace', $toolPath.'\DbugTrace')
+            //->registerTool('color', $toolPath.'\DbugColor')
+            //->registerTool('textarea', $toolPath.'\DbugTextarea')
+            //->registerTool('type', $toolPath.'\DbugType')
+            ;
 
-        $this->registerCrumb('dbug', '\PHPMinion\Utilities\Debug\Crumbs\DebugDumpCrumb');
+        $crumbPath = '\PHPMinion\Utilities\Dbug\Crumbs';
+        $this->registerCrumb('dbug', $crumbPath.'\DbugDumpCrumb');
 
     }
 
     public function getInstance()
     {
         if (is_null(self::$_instance)) {
-            self::$_instance = new Debug();
+            self::$_instance = new Dbug();
         }
 
         return self::$_instance;
     }
 
     /**
-     * Registers a tool with Debug
+     * Registers a tool with Dbug
      *
      * TODO: allow tool registration with arrays?
      *
-     * @param string $alias   Alias to call the DebugTool via static Debug:: calls
+     * @param string $alias   Alias to call the DbugTool via static Dbug:: calls
      * @param string $class   Class to handle debug work
      * @param bool   $replace Allow replacing of a previously declared aliased tool?
-     * @return Debug
-     * @throws DebugException
+     * @return Dbug
+     * @throws DbugException
      */
     public function registerTool($alias, $class, $replace = false)
     {
-        if (!$this->validateAlias($alias)) {
-            throw new DebugException("Unable to register a Debug Tool without an alias.");
-        }
+        $this->validateRegisterArgs($alias, $class);
 
         if (isset($this->_tools[$alias]) && !$replace) {
-            throw new DebugException("A Debug Tool with alias '{$alias}' is already registered.");
-        }
-
-        if (!$this->validateClass($class)) {
-            throw new DebugException("Unable to register a Debug Tool without a valid Tool class.");
+            throw new DbugException("ERROR: A Dbug Tool with alias '{$alias}' is already registered.");
         }
 
         $this->_tools[$alias] = $class;
@@ -107,28 +129,22 @@ class Debug
     }
 
     /**
-     * Registers a Crumb for rendering a DebugTool result
+     * Registers a Crumb for rendering a DbugTool result
      *
      * TODO: allow crumb registration with arrays?
      *
-     * @param string $toolAlias Previously declared DebugTool alias that will use the Crumb
-     * @param string $class     Class to handle Debug Tool output generation
-     * @param bool   $replace   Allow replacing of a previously declared DebugTool Crumb?
-     * @return Debug
-     * @throws DebugException
+     * @param string $toolAlias Previously declared DbugTool alias that will use the Crumb
+     * @param string $class     Class to handle Dbug Tool output generation
+     * @param bool   $replace   Allow replacing of a previously declared DbugTool Crumb?
+     * @return Dbug
+     * @throws DbugException
      */
     public function registerCrumb($toolAlias, $class, $replace = false)
     {
-        if (!$this->validateAlias($toolAlias)) {
-            throw new DebugException("Unable to register a Tool Crumb without an alias.");
-        }
+        $this->validateRegisterArgs($toolAlias, $class, 'crumb');
 
         if (isset($this->_crumbs[$toolAlias]) && !$replace) {
-            throw new DebugException("A Tool Crumb has already been registered for a Debug Tool with alias '{$toolAlias}'.");
-        }
-
-        if (!$this->validateClass($class)) {
-            throw new DebugException("Unable to register a Tool Crumb without a valid Crumb class.");
+            throw new DbugException("ERROR: A Tool Crumb has already been registered for a Dbug Tool with alias '{$toolAlias}'.");
         }
 
         $this->_crumbs[$toolAlias] = $class;
@@ -141,38 +157,25 @@ class Debug
      *
      * @param string $name
      * @param array  $args
-     * @return DebugToolInterface
-     * @throws DebugException
+     * @return DbugToolInterface
      */
     public static function __callStatic($name, $args)
     {
-        $debug = self::getInstance();
+        $dbug = self::getInstance();
 
         /*
         echo "calling __callStatic for method '{$name}'<BR>";
         echo "using args:<BR>";
         var_dump($args);
-
         echo "<BR><BR>";
-        echo "debug obj:<BR>";
-        var_dump($debug);
 
+        echo "debug obj:<BR>";
+        var_dump($dbug);
         echo "<BR><BR><HR><BR><BR>";
         */
 
-        if (!isset($debug->_tools[$name])) {
-            throw new DebugException("'{$name}' is not a registered DebugTool.");
-        }
-
-        if (!isset($debug->_crumbs[$name])) {
-            throw new DebugException("'{$name}' is not a registered DebugTool Crumb.");
-        }
-
-        $crumb = new $debug->_crumbs[$name];
-        $crumb->toolAlias = $name;
-
-        $tool = new $debug->_tools[$name]($debug);
-        $tool->setCrumb($crumb);
+        $dbug->validateCalledTool($name);
+        $tool = $dbug->getDbugTool($name);
 
         /*
         echo "tool:<BR>";
@@ -181,23 +184,50 @@ class Debug
         die();
         */
 
-        $debug->_debugStack[] = $tool->analyze($args)->getCrumb()->render();
+        $tool->analyze($args);
+        $dbug->_dbugStack[] = $tool->getDbugResults();
 
-        return $tool;
+        return $dbug;
     }
 
     /**
-     * Kills the script
+     * Outputs all accumulated DbugTool results && die()
      *
-     * @param string $dieMsg
+     * @param string|bool $dieMsg
      */
-    public function kill($dieMsg)
+    public function kill($dieMsg = false)
     {
-        foreach ($this->_debugStack as $dbug) {
+        foreach ($this->_dbugStack as $dbug) {
             echo $dbug;
         }
 
-        die($dieMsg);
+        $dieMsg = (!$dieMsg) ? $this->_dieMsg : $dieMsg;
+
+        die(Common::_colorize($dieMsg));
+    }
+
+    /**
+     * Validates register args
+     *
+     * @param string $alias
+     * @param string $class
+     * @param string $which
+     * @throws DbugException
+     */
+    private function validateRegisterArgs($alias, $class, $which = 'tool')
+    {
+        //list($ele, $bit) = ($which === 'tool') ? ['DbugTool', ''] : ['DbugToolCrumb', 'Crumb '];
+        $ele = ($which === 'tool') ? 'DbugTool' : 'DbugToolCrumb';
+        $invalidAliasErr = "Unable to register {$ele}: invalid alias '{$alias}'.";
+        $invalidClassErr = "Unable to register {$ele}: invalid class '{$class}'.";
+
+        if (!$this->validateAlias($alias)) {
+            throw new DbugException($invalidAliasErr);
+        }
+
+        if (!$this->validateClass($class)) {
+            throw new DbugException($invalidClassErr);
+        }
     }
 
     /**
@@ -222,7 +252,36 @@ class Debug
         return (is_string($class) && !empty($class) && class_exists($class));
     }
 
+    /**
+     * @param  string $name
+     * @throws DbugException
+     */
+    private function validateCalledTool($name)
+    {
+        if (!isset($this->_tools[$name])) {
+            throw new DbugException("'{$name}' is not a registered DbugTool.");
+        }
+        if (!isset($this->_crumbs[$name])) {
+            throw new DbugException("'{$name}' is not a registered DbugTool Crumb.");
+        }
+    }
 
+    /**
+     * Gets the requested DbugTool object
+     *
+     * @param  string $name
+     * @return DbugTool
+     */
+    private function getDbugTool($name)
+    {
+        $crumb = new $this->_crumbs[$name];
+        $crumb->toolAlias = $name;
 
+        /** @var DbugTool $tool */
+        $tool = new $this->_tools[$name]($name, $this);
+        $tool->setCrumb($crumb);
+
+        return $tool;
+    }
 
 }

@@ -1,22 +1,30 @@
 <?php
-
-namespace PHPMinion\Utilities\Debug\Crumbs;
-
 /**
- * DebugCrumb
+ * PHPMinion
  *
- * Base Crumb class
+ * A suite of tools to facilitate development and debugging.
  *
  * @package     PHPMinion
  * @author      Evan Johnson
+ * @created     October 9, 2015
+ * @version     0.1
+ */
+
+namespace PHPMinion\Utilities\Dbug\Crumbs;
+
+/**
+ * DbugCrumb
+ *
+ * Base Crumb class
+ *
  * @created     October 15, 2015
  * @version     0.1
  */
-abstract class DebugCrumb
+abstract class DbugCrumb
 {
 
     /**
-     * Alias used for DebugTool
+     * Alias used for DbugTool
      *
      * @var string
      */
@@ -28,10 +36,11 @@ abstract class DebugCrumb
      * @var array
      */
     public $cssStyles = [
-        'pre'   => 'border: 1px dashed black; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
-        'alias' => 'position: relative; top: -9px; left: 10px; background-color: #FFF; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content; padding: 0px 5px;',
-        'div'   => 'text-align: left; margin: 0px 25px 25px;',
-        'p'     => 'border: 1px solid black; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content; margin: 0px 35px 0px 10px; padding: 10px;',
+        'container'  => 'text-align: left; margin: 10px; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
+        'toolAlias'  => 'background-color: #FFF; border: 1px solid black; border-bottom-style: hidden; border-radius: 5px 5px 0 0; padding: 2px 5px; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
+        'pre'        => 'background-color: #FFF; border: 1px dashed black;',
+        'dbugDiv'    => 'margin: 5px 10px;',
+        'varDataDiv' => 'padding: 5px 10px; border: 1px solid black;',
     ];
 
 }
