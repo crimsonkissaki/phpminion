@@ -1,12 +1,20 @@
 <?php
 /**
- * @copyright Copyright (c) 2015, StoneEagle.com
+ * PHPMinion
+ *
+ * A suite of tools to facilitate development and debugging.
+ *
+ * @package     PHPMinion
+ * @author      Evan Johnson
+ * @created     October 9, 2015
+ * @version     0.1
  */
 
-namespace PHPMinion\Utilities\Debug\Exceptions;
+namespace PHPMinion\Utilities\Dbug\Exceptions;
 
+use PHPMinion\Utilities\Core\Exceptions\PHPMinionException;
 
-class DebugException extends \Exception
+class DbugException extends PHPMinionException
 {
 
     public function __construct($msg, $code = 0, \Exception $prev = null)

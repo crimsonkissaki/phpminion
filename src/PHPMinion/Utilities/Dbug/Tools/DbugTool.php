@@ -10,19 +10,29 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\Debug\Tools;
+namespace PHPMinion\Utilities\Dbug\Tools;
 
 use PHPMinion\Utilities\Core\Common;
-use PHPMinion\Utilities\Debug\Debug;
-use PHPMinion\Utilities\Debug\Crumbs\DebugCrumbInterface;
+use PHPMinion\Utilities\Dbug\Dbug;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
+use PHPMinion\Utilities\Dbug\Models\TraceModel;
+use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
-abstract class DebugTool
+/**
+ * Class DbugTool
+ *
+ * Parent class for all DbugTools
+ *
+ * @created     October 15, 2015
+ * @version     0.1
+ */
+abstract class DbugTool implements DbugToolInterface
 {
 
     /**
-     * Debug instance
+     * Dbug instance
      *
-     * @var Debug
+     * @var Dbug
      */
     protected $debug;
 
@@ -34,16 +44,32 @@ abstract class DebugTool
     protected $common;
 
     /**
-     * DebugTool rendering Crumb object
+     * DbugTool rendering Crumb object
      *
      * @var mixed
      */
     protected $crumb;
 
     /**
-     * @param DebugCrumbInterface $crumb
+     * Alias used to reference the DbugTool object
+     *
+     * @var string
      */
-    public function setCrumb(DebugCrumbInterface $crumb)
+    protected $toolAlias;
+
+    /**
+     * Default message to display if die()
+     *
+     * Override in child DbugTool if desired
+     *
+     * @var string
+     */
+    protected $dieMessage = "<br>Killed by PHPMinion::Dbug<br>";
+
+    /**
+     * @param DbugCrumbInterface $crumb
+     */
+    public function setCrumb(DbugCrumbInterface $crumb)
     {
         $this->crumb = $crumb;
     }
@@ -53,13 +79,29 @@ abstract class DebugTool
         return $this->crumb;
     }
 
-    /**
-     * @param Debug|null $debug
-     */
-    public function __construct(Debug $debug = null)
+    public function getToolAlias()
     {
+        return $this->toolAlias;
+    }
+
+    /**
+     * @param string    $toolAlias
+     * @param Dbug|null $debug
+     */
+    public function __construct($toolAlias, Dbug $debug = null)
+    {
+        $this->toolAlias = $toolAlias;
         $this->debug = $debug;
         $this->common = new Common();
+    }
+
+    /**
+     * @inheritDoc
+     * @throws DbugException
+     */
+    public function analyze(array $args = null)
+    {
+        throw new DbugException(get_class($this) . ' must override DbugTool\'s analyze() method.');
     }
 
     /**
@@ -116,15 +158,15 @@ abstract class DebugTool
     }
 
     /**
-     * Gets a string with data for the method DebugTool was called
+     * Gets a string with data for the method where the DbugTool was called
      *
-     * @param  array $methodData
+     * @param  TraceModel $trace
      * @return string
      */
-    protected function getMethodInfoString($methodData)
+    protected function getMethodInfoString(TraceModel $trace)
     {
-        $str = (!is_null($methodData['class'])) ? $methodData['class'] . '->' : '';
-        $str .= $methodData['func'] . '() :: ' . $methodData['line'];
+        $str = (!is_null($trace->class)) ? $trace->class . '->' : '';
+        $str .= $trace->function . '() :: ' . $trace->line;
 
         return $str;
     }

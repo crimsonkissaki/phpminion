@@ -10,29 +10,32 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\Debug\Tools;
+namespace PHPMinion\Utilities\Dbug\Tools;
 
-use PHPMinion\Utilities\Debug\Exceptions\DebugException;
+use PHPMinion\Utilities\Dbug\Dbug;
+use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
-class DebugDump extends DebugTool implements DebugToolInterface
+/**
+ * Class DbugDump
+ *
+ * More robust var_dump() & print_r() alternative that *should* be
+ * able to prevent out of memory errors caused by large objects/arrays.
+ *
+ * @created     October 16, 2015
+ * @version     0.1
+ */
+class DbugDump extends DbugTool
 {
-
-    /**
-     * Message to display if die()
-     *
-     * @var string
-     */
-    protected $dieMessage = "<br>Killed by DebugDump<br>";
 
     /**
      * Variable to debug
      *
      * @var mixed
      */
-    protected $target;
+    protected $dbugTarget;
 
     /**
-     * Debug comments
+     * Dbug comments
      *
      * @var string
      */
@@ -41,30 +44,61 @@ class DebugDump extends DebugTool implements DebugToolInterface
     /**
      * Kill the script or not?
      *
+     * If true script dumps output && die()
+     *
      * @var bool
      */
     protected $kill = false;
 
     /**
-     * Color to set DebugDump comment text
+     * Debugging output from DbugDumpCrumb
+     *
+     * @var string
+     */
+    protected $dbugResults;
+
+    /**
+     * Color to set DbugDump comment text
      *
      * @var string
      */
     protected $commentColor = '#F00';
 
+    public function getDbugResults()
+    {
+        return $this->dbugResults;
+    }
+
     /**
+     * @inheritDoc
+     */
+    public function __construct($toolAlias, Dbug $dbug = null)
+    {
+        //parent::__construct($toolAlias, $dbug);
+        parent::__construct($toolAlias);
+        $this->dieMessage = "<br>Killed by Dbug::{$toolAlias}<br>";
+    }
+
+    /**
+     * <code>
+     * Method Args:
+     *  mixed   $target   Variable to target
+     *  string  $comment  Comments to display in debug output (default = '')
+     *  bool    $kill     Immediately terminate script (default = false)
+     * </code>
+     *
      * @inheritDoc
      */
     public function analyze(array $args)
     {
         $this->processArgs($args);
 
-        /** @var \PHPMinion\Utilities\Debug\Crumbs\DebugDumpCrumb $crumb */
+        /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugDumpCrumb $crumb */
         $crumb = $this->crumb;
         $crumb->callingMethodInfo = $this->getMethodInfoString($this->common->getMethodInfo());
-        $crumb->variableType = gettype($this->target);
-        $crumb->variableData = $this->getSimpleTypeValue($this->target);
-        $crumb->debugComment = (empty($this->comment)) ? ''
+        $crumb->variableType = $this->common->getSimpleTypeValue($this->dbugTarget);
+        $crumb->variableData = $this->common->getFullSimpleTypeValue($this->dbugTarget);
+        $crumb->dbugComment = (empty($this->comment)) ? ''
                                : $this->common->colorize($this->comment, $this->commentColor)."\n\n";
 
         $this->render();
@@ -73,22 +107,20 @@ class DebugDump extends DebugTool implements DebugToolInterface
     }
 
     /**
-     * Kills the script
+     * Processes arguments supplied to DbugDump
+     *
+     * @param array $args
+     * @throws DbugException
      */
-    public function kill()
+    private function processArgs(array $args)
     {
-        if (empty($this->debugResults)) {
-            $this->render();
+        if (empty($args[0])) {
+            throw new DbugException("ERROR: No variable provided to DbugDump");
         }
 
-        $msg = $this->common->colorize($this->dieMessage);
-
-        if (!is_null($this->debug)) {
-            $this->debug->kill($msg);
-        }
-
-        echo $this->debugResults;
-        die($msg);
+        $this->dbugTarget = $args[0];
+        $this->comment = (!empty($args[1])) ? $args[1] : null;
+        $this->kill = (!empty($args[2])) ? $args[2] : false;
     }
 
     /**
@@ -98,29 +130,23 @@ class DebugDump extends DebugTool implements DebugToolInterface
      */
     private function render()
     {
-        $this->debugResults = $this->crumb->render();
+        $this->dbugResults = $this->crumb->render();
+        $this->checkKillScript();
 
-        if ($this->kill) {
-            $this->kill();
-        }
-
-        return $this->debugResults;
+        return $this->dbugResults;
     }
 
     /**
-     * Processes arguments supplied to DebugDump
-     *
-     * @param array $args
+     * Kills the script if kill flag set in analyze()
      */
-    private function processArgs(array $args)
+    private function checkKillScript()
     {
-        if (empty($args[0])) {
-            throw new DebugException("ERROR: No variable provided to DebugDump");
+        if (!$this->kill) {
+            return;
         }
 
-        $this->target = $args[0];
-        $this->comment = (!empty($args[1])) ? $args[1] : null;
-        $this->kill = (!empty($args[2])) ? $args[2] : false;
+        echo $this->dbugResults;
+        die($this->common->colorize($this->dieMessage));
     }
 
 }
