@@ -13,7 +13,7 @@
 
 namespace PHPMinion;
 
-use ass\XmlSecurity\Exception\InvalidArgumentException;
+use PHPMinion\Utilities\Core\Config;
 
 /**
  * Primary entry point for suite tools
@@ -25,18 +25,9 @@ class PHPMinion
 {
 
     /**
-     * Path to PHPMinion
-     *
-     * @var string
+     * @var Config
      */
-    private $_pathToPM;
-
-    /**
-     * Path to the project root
-     *
-     * @var string
-     */
-    private $_projectRoot;
+    private $config;
 
     /**
      * @var PHPMinion
@@ -50,20 +41,9 @@ class PHPMinion
      */
     private $_classes = [];
 
-    public function getPathToPM()
-    {
-        return $this->_pathToPM;
-    }
-
-    public function getProjectRoot()
-    {
-        return $this->_projectRoot;
-    }
-
     private function __construct()
     {
-        $this->_pathToPM = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-        $this->_projectRoot = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . DIRECTORY_SEPARATOR;
+        $this->config = new Config();
     }
 
     /**
@@ -96,6 +76,23 @@ class PHPMinion
 
         die("<BR><BR>__callStatic()<BR><BR>");
 
+    }
+
+    /**
+     * Gets a property from the PHPMinion Config class
+     *
+     * @param  string $param
+     * @return mixed
+     * @throws \InvalidArgumentException
+     */
+    public static function getConfig($param)
+    {
+        $_this = self::getInstance();
+        if (!property_exists($_this->config, $param)) {
+            throw new \InvalidArgumentException("Config property '{$param}' does not exist.");
+        }
+
+        return $_this->config->$param;
     }
 
     /**
@@ -175,4 +172,3 @@ class PHPMinion
     }
 
 }
-

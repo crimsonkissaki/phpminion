@@ -24,11 +24,9 @@ class DebugTrace extends DebugTool implements DebugToolInterface
     }
 
     /**
-     * Renders analysis results
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function render()
+    public function kill()
     {
 
     }

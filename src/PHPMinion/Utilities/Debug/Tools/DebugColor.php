@@ -12,25 +12,21 @@
 
 namespace PHPMinion\Utilities\Debug\Tools;
 
-class DebugColor implements DebugToolInterface
+class DebugColor extends DebugTool implements DebugToolInterface
 {
 
     /**
-     * Analyzes a variable
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function analyze()
+    public function analyze(array $args)
     {
 
     }
 
     /**
-     * Renders analysis results
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function render()
+    public function kill()
     {
 
     }

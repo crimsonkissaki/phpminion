@@ -24,15 +24,13 @@ interface DebugToolInterface
      * Analyzes a variable
      *
      * @param  array  $args  Args to be passed to DebugTool
-     * @return mixed
+     * @return DebugToolInterface
      */
     public function analyze(array $args);
 
     /**
-     * Renders analysis results
-     *
-     * @return mixed
+     * Kills the script
      */
-    public function render();
+    public function kill();
 
 }

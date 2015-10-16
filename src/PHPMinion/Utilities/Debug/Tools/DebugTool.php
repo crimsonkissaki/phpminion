@@ -12,15 +12,55 @@
 
 namespace PHPMinion\Utilities\Debug\Tools;
 
+use PHPMinion\Utilities\Core\Common;
+use PHPMinion\Utilities\Debug\Debug;
+use PHPMinion\Utilities\Debug\Crumbs\DebugCrumbInterface;
+
 abstract class DebugTool
 {
 
     /**
-     * Target of DebugTool analysis
+     * Debug instance
+     *
+     * @var Debug
+     */
+    protected $debug;
+
+    /**
+     * Common utility class
+     *
+     * @var Common
+     */
+    protected $common;
+
+    /**
+     * DebugTool rendering Crumb object
      *
      * @var mixed
      */
-    protected $target;
+    protected $crumb;
+
+    /**
+     * @param DebugCrumbInterface $crumb
+     */
+    public function setCrumb(DebugCrumbInterface $crumb)
+    {
+        $this->crumb = $crumb;
+    }
+
+    public function getCrumb()
+    {
+        return $this->crumb;
+    }
+
+    /**
+     * @param Debug|null $debug
+     */
+    public function __construct(Debug $debug = null)
+    {
+        $this->debug = $debug;
+        $this->common = new Common();
+    }
 
     /**
      * Returns a simple value for a variable
@@ -28,7 +68,7 @@ abstract class DebugTool
      * For arrays it returns their length
      * Ignores objects
      *
-     * @param   mixed       $var
+     * @param   mixed $var
      * @return  int|string
      */
     protected function getSimpleTypeValue($var)
@@ -73,6 +113,20 @@ abstract class DebugTool
             default:
                 return $this->getSimpleTypeValue($var);
         }
+    }
+
+    /**
+     * Gets a string with data for the method DebugTool was called
+     *
+     * @param  array $methodData
+     * @return string
+     */
+    protected function getMethodInfoString($methodData)
+    {
+        $str = (!is_null($methodData['class'])) ? $methodData['class'] . '->' : '';
+        $str .= $methodData['func'] . '() :: ' . $methodData['line'];
+
+        return $str;
     }
 
 
