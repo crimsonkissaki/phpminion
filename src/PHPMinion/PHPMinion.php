@@ -16,10 +16,15 @@ namespace PHPMinion;
 use PHPMinion\Utilities\Core\Config;
 
 /**
+ * Class PHPMinion
+ *
  * Primary entry point for suite tools
  *
  * Can be used as a simple facade gateway or bypassed entirely if you want to
  * directly instantiate the * utility classes.
+ *
+ * @created     October 9, 2015
+ * @version     0.1
  */
 class PHPMinion
 {
