@@ -184,9 +184,9 @@ class Common
     {
         switch (true) {
             case ($var === false):
-                return 'FALSE';
+                return 'BOOLEAN (FALSE)';
             case ($var === true):
-                return 'TRUE';
+                return 'BOOLEAN (TRUE)';
             case ($var === null):
                 return 'NULL';
             case (is_numeric($var)):

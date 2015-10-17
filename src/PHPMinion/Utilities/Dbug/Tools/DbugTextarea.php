@@ -13,6 +13,7 @@
 namespace PHPMinion\Utilities\Dbug\Tools;
 
 use PHPMinion\Utilities\Dbug\Crumbs\DbugTextareaCrumb;
+use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
 class DbugTextarea extends DbugDump implements DbugToolInterface
 {

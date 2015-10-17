@@ -22,7 +22,7 @@ use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
  * @created     October 17, 2015
  * @version     0.1
  */
-class DbugTextareaCrumb extends DbugDumpCrumb implements DbugCrumbInterface
+class DbugTextareaCrumb extends DbugCrumb implements DbugCrumbInterface
 {
 
     /**
@@ -46,7 +46,6 @@ class DbugTextareaCrumb extends DbugDumpCrumb implements DbugCrumbInterface
      */
     public function setRowCount($rowCount)
     {
-        echo "setting row count<BR>";
         if (!is_int($rowCount)) {
             throw new DbugException("DbugTextareaCrumb->setRowCount() only accepts integer values.");
         }
@@ -62,7 +61,6 @@ class DbugTextareaCrumb extends DbugDumpCrumb implements DbugCrumbInterface
      */
     public function setColCount($colCount)
     {
-        echo "setting col count<BR>";
         if (!is_int($colCount)) {
             throw new DbugException("DbugTextareaCrumb->setColCount() only accepts integer values.");
         }
@@ -78,7 +76,7 @@ class DbugTextareaCrumb extends DbugDumpCrumb implements DbugCrumbInterface
     {
         return <<<OUTPUT
 <div style="{$this->cssStyles['container']}">
-<div style="{$this->cssStyles['toolAlias']}">{$this->toolAlias}</div>
+<div style="{$this->cssStyles['toolTitle']}">{$this->toolTitle}</div>
 <pre style="{$this->cssStyles['pre']}"><div style="{$this->cssStyles['dbugDiv']}">{$this->callingMethodInfo}
 
 {$this->dbugComment}Var Type: {$this->variableType}

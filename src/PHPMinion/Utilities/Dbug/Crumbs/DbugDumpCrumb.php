@@ -24,41 +24,13 @@ class DbugDumpCrumb extends DbugCrumb implements DbugCrumbInterface
 {
 
     /**
-     * Type of variable
-     *
-     * @var string
-     */
-    public $variableType;
-
-    /**
-     * Dbug information about variable
-     *
-     * @var string
-     */
-    public $variableData;
-
-    /**
-     * Method where DbugTool was called
-     *
-     * @var string
-     */
-    public $callingMethodInfo;
-
-    /**
-     * Dbug comment
-     *
-     * @var string
-     */
-    public $dbugComment;
-
-    /**
      * @inheritDoc
      */
     public function render()
     {
         return <<<OUTPUT
 <div style="{$this->cssStyles['container']}">
-<div style="{$this->cssStyles['toolAlias']}">{$this->toolAlias}</div>
+<div style="{$this->cssStyles['toolTitle']}">{$this->toolTitle}</div>
 <pre style="{$this->cssStyles['pre']}"><div style="{$this->cssStyles['dbugDiv']}">{$this->callingMethodInfo}
 
 {$this->dbugComment}Var Type: {$this->variableType}

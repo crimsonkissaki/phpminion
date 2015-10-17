@@ -20,6 +20,8 @@ use PHPMinion\Utilities\Core\Common;
 /**
  * Class DbugTrace
  *
+ * TODO: add config ability for defaultLevels
+ *
  * Outputs a quick trace showing which classes/functions
  * were called, and on which line numbers, to get to
  * the current location.

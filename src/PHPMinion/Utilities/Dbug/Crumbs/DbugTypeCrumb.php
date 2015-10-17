@@ -13,14 +13,14 @@
 namespace PHPMinion\Utilities\Dbug\Crumbs;
 
 /**
- * DbugTraceCrumb
+ * DbugTypeCrumb
  *
- * Rendering Crumb for DbugTrace tool
+ * Rendering Crumb for DbugType tool
  *
- * @created     October 16, 2015
+ * @created     October 17, 2015
  * @version     0.1
  */
-class DbugTraceCrumb extends DbugCrumb implements DbugCrumbInterface
+class DbugTypeCrumb extends DbugCrumb implements DbugCrumbInterface
 {
 
     /**
@@ -32,7 +32,7 @@ class DbugTraceCrumb extends DbugCrumb implements DbugCrumbInterface
 <div style="{$this->cssStyles['container']}">
 <div style="{$this->cssStyles['toolTitle']}">{$this->toolTitle}</div>
 <pre style="{$this->cssStyles['pre']}"><div style="{$this->cssStyles['dbugDiv']}">{$this->callingMethodInfo}
-
+{$this->dbugComment}
 <div style="{$this->cssStyles['varDataDiv']}">{$this->variableData}</div></div></pre>
 </div>
 OUTPUT;

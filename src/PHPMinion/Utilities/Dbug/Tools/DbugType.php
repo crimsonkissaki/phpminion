@@ -12,20 +12,11 @@
 
 namespace PHPMinion\Utilities\Dbug\Tools;
 
-use PHPMinion\Utilities\Dbug\Crumbs\DbugDumpCrumb;
-use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugTypeCrumb;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 
-/**
- * Class DbugDump
- *
- * More robust var_dump() & print_r() alternative that *should* be
- * able to prevent out of memory errors caused by large objects/arrays.
- *
- * @created     October 16, 2015
- * @version     0.1
- */
-class DbugDump extends DbugTool implements DbugToolInterface
+class DbugType extends DbugTool implements DbugToolInterface
 {
 
     public function getDbugResults()
@@ -39,7 +30,7 @@ class DbugDump extends DbugTool implements DbugToolInterface
     public function __construct($toolAlias)
     {
         parent::__construct($toolAlias);
-        $this->crumb = new DbugDumpCrumb($toolAlias);
+        $this->crumb = new DbugTypeCrumb($toolAlias);
     }
 
     /**
@@ -56,13 +47,11 @@ class DbugDump extends DbugTool implements DbugToolInterface
     {
         $this->processArgs($args);
 
-        /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugDumpCrumb $crumb */
+        /** @var DbugTypeCrumb $crumb */
         $crumb = $this->crumb;
         $crumb->callingMethodInfo = $this->common->getMethodInfoString($this->common->getMethodInfo());
-        $crumb->variableType = $this->common->getSimpleTypeValue($this->dbugTarget);
-        $crumb->variableData = $this->common->getFullSimpleTypeValue($this->dbugTarget);
-        $crumb->dbugComment = (empty($this->comment)) ? ''
-                               : $this->common->colorize($this->comment, $this->commentColor).PHP_EOL.PHP_EOL;
+        $crumb->dbugComment = (!is_null($this->comment)) ? PHP_EOL.$this->common->colorize($this->comment).PHP_EOL : '';
+        $crumb->variableData = $this->common->getSimpleTypeValue($this->dbugTarget);
 
         $this->render();
 
@@ -70,7 +59,7 @@ class DbugDump extends DbugTool implements DbugToolInterface
     }
 
     /**
-     * Processes arguments supplied to DbugDump
+     * Processes arguments supplied to DbugTrace
      *
      * @param array $args
      * @throws DbugException
@@ -78,9 +67,8 @@ class DbugDump extends DbugTool implements DbugToolInterface
     protected function processArgs(array $args)
     {
         if (empty($args[0])) {
-            throw new DbugException("ERROR: No variable provided to DbugDump");
+            throw new DbugException("Unable to execute '{$this->toolAlias}': no variable provided.");
         }
-
         $this->dbugTarget = $args[0];
         $this->comment = (!empty($args[1])) ? $args[1] : null;
         $this->kill = (!empty($args[2])) ? $args[2] : false;

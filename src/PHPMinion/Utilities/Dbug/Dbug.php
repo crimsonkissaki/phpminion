@@ -14,7 +14,6 @@
 namespace PHPMinion\Utilities\Dbug;
 
 use PHPMinion\Utilities\Core\Common;
-use PHPMinion\Utilities\Dbug\Tools\DbugTool;
 use PHPMinion\Utilities\Dbug\Tools\DbugToolInterface;
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
@@ -80,7 +79,7 @@ class Dbug
             ->registerTool('trace', $toolPath.'\DbugTrace')
             ->registerTool('color', $toolPath.'\DbugColor')
             ->registerTool('textarea', $toolPath.'\DbugTextarea')
-            //->registerTool('type', $toolPath.'\DbugType')
+            ->registerTool('type', $toolPath.'\DbugType')
         ;
     }
 

@@ -13,6 +13,7 @@
 namespace PHPMinion\Utilities\Dbug\Tools;
 
 use PHPMinion\Utilities\Core\Common;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumb;
 use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
@@ -128,6 +129,7 @@ abstract class DbugTool
     public function __construct($toolAlias)
     {
         $this->toolAlias = $toolAlias;
+        $this->crumb = new DbugCrumb($toolAlias);
         $this->dieMessage = "<br>Killed by Dbug::{$toolAlias}<br>";
         $this->common = new Common();
     }
