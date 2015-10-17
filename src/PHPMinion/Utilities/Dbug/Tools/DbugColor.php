@@ -49,7 +49,7 @@ class DbugColor extends DbugTool
         /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugColorCrumb $crumb */
         $crumb = $this->crumb;
         $crumb->callingMethodInfo = $this->getMethodInfoString($this->common->getMethodInfo());
-        $crumb->dbugComment = $this->common->colorize($this->comment, $this->commentColor);
+        $crumb->variableData = $this->common->colorize($this->dbugResults, $this->commentColor);
 
         $this->render();
 
@@ -68,35 +68,32 @@ class DbugColor extends DbugTool
             throw new DbugException("ERROR: No variable provided to DbugColor");
         }
 
-        $this->comment = trim($args[0]);
+        $this->dbugTarget = $args[0];
+        $this->dbugResults = $this->convertTargetToUsableValue($this->dbugTarget);
         $this->commentColor = (!empty($args[1])) ? $args[1] : $this->defaultColor;
         $this->kill = (!empty($args[2])) ? $args[2] : false;
     }
 
     /**
-     * Renders analysis results
+     * Converts the var to a format usable by DbugColor
      *
+     * @param $target
      * @return string
      */
-    private function render()
+    private function convertTargetToUsableValue($target)
     {
-        $this->dbugResults = $this->crumb->render();
-        $this->checkKillScript();
-
-        return $this->dbugResults;
-    }
-
-    /**
-     * Kills the script if kill flag set in analyze()
-     */
-    private function checkKillScript()
-    {
-        if (!$this->kill) {
-            return;
+        if (is_object($target)) {
+            ob_start();
+            var_dump($target);
+            return ob_get_clean();
+        }
+        if (is_array($target)) {
+            ob_start();
+            print_r($target);
+            return ob_get_clean();
         }
 
-        echo $this->dbugResults;
-        die($this->common->colorize($this->dieMessage));
+        return $target;
     }
 
 }

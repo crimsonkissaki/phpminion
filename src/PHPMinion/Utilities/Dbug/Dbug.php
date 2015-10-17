@@ -84,15 +84,17 @@ class Dbug
     {
         $toolPath = '\PHPMinion\Utilities\Dbug\Tools';
         $this->registerTool('dbug', $toolPath.'\DbugDump')
-            //->registerTool('trace', $toolPath.'\DbugTrace')
+            ->registerTool('trace', $toolPath.'\DbugTrace')
             ->registerTool('color', $toolPath.'\DbugColor')
             //->registerTool('textarea', $toolPath.'\DbugTextarea')
             //->registerTool('type', $toolPath.'\DbugType')
-            ;
+        ;
 
         $crumbPath = '\PHPMinion\Utilities\Dbug\Crumbs';
         $this->registerCrumb('dbug', $crumbPath.'\DbugDumpCrumb')
-             ->registerCrumb('color', $crumbPath.'\DbugColorCrumb');
+             ->registerCrumb('color', $crumbPath.'\DbugColorCrumb')
+             ->registerCrumb('trace', $crumbPath.'\DbugTraceCrumb')
+        ;
 
     }
 
@@ -163,28 +165,8 @@ class Dbug
     public static function __callStatic($name, $args)
     {
         $dbug = self::getInstance();
-
-        /*
-        echo "calling __callStatic for method '{$name}'<BR>";
-        echo "using args:<BR>";
-        var_dump($args);
-        echo "<BR><BR>";
-
-        echo "debug obj:<BR>";
-        var_dump($dbug);
-        echo "<BR><BR><HR><BR><BR>";
-        */
-
         $dbug->validateCalledTool($name);
         $tool = $dbug->getDbugTool($name);
-
-        /*
-        echo "tool:<BR>";
-        var_dump($tool);
-        echo "<HR>";
-        die();
-        */
-
         $tool->analyze($args);
         $dbug->_dbugStack[] = $tool->getDbugResults();
 
@@ -192,19 +174,64 @@ class Dbug
     }
 
     /**
-     * Outputs all accumulated DbugTool results && die()
+     * Removes & outputs last executed DbugTool results from the stack
      *
-     * @param string|bool $dieMsg
+     * @return Dbug
      */
-    public function kill($dieMsg = false)
+    public function only()
+    {
+        echo array_pop($this->_dbugStack);
+
+        return $this;
+    }
+
+    /**
+     * Outputs the DbugTool results without terminating the script
+     *
+     * @param int $count How far back along the stack to dump.
+     *                   If $count > stack count it will fail silently
+     *                   after dumping any available results.
+     * @return Dbug
+     */
+    public function dump($count = 1)
+    {
+        $total = count($this->_dbugStack) - 1;
+        for ($i=0; $i<=$count; $i+=1) {
+            $next = $total - $i;
+            if (empty($this->_dbugStack[$next])) {
+                break;
+            }
+            echo $this->_dbugStack[$next];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Outputs all accumulated DbugTool results
+     *
+     * @return Dbug
+     */
+    public function dumpAll()
     {
         foreach ($this->_dbugStack as $dbug) {
             echo $dbug;
         }
 
-        $dieMsg = (!$dieMsg) ? $this->_dieMsg : $dieMsg;
+        return $this;
+    }
 
-        die(Common::_colorize($dieMsg));
+    /**
+     * Kills Dbug
+     *
+     * @param string|bool $dieMsg
+     */
+    public function kill($dieMsg = false)
+    {
+        $dieMsg = (!$dieMsg) ? $this->_dieMsg : $dieMsg;
+        $dieOutput = '<div style="position: relative;">'.Common::_colorize($dieMsg).'</div>';
+
+        die($dieOutput);
     }
 
     /**
@@ -263,7 +290,7 @@ class Dbug
             throw new DbugException("'{$name}' is not a registered DbugTool.");
         }
         if (!isset($this->_crumbs[$name])) {
-            throw new DbugException("'{$name}' is not a registered DbugTool Crumb.");
+            throw new DbugException("'{$name}' does not have a registered DbugTool Crumb.");
         }
     }
 

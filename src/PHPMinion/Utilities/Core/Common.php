@@ -28,6 +28,12 @@ class Common
 {
 
     /**
+     * Default debug_backtrace() index to start with
+     * to get accurate trace results
+     */
+    const DEFAULT_STARTING_BACKTRACE_INDEX = 5;
+
+    /**
      * Static accessor for Common class
      *
      * @param string $name
@@ -57,6 +63,9 @@ class Common
     public function getRelativeFilePath($path)
     {
         $root = PHPMinion::getInstance()->getConfig('PROJECT_ROOT_PATH');
+        echo "path: {$path}<br>";
+        echo "root: {$root}<br>";
+        die();
 
         return str_replace($root, '', $path);
     }
@@ -76,23 +85,32 @@ class Common
     }
 
     /**
-     * Gets details of method that called a Util method
+     * Gets details of method calling DbugTool method
      *
      * Can be accessed statically via _getMethodInfo()
      *
-     * @param int $level    Where the calling method's info is in debug_backtrace()
-     *                      Default is 4 since this will likely be called from
-     *                      inside a Utils method.
+     * @param int        $level Where the calling method's info is in debug_backtrace()
+     *                          Default is 4 since this will likely be called from
+     *                          inside a Utils method.
+     * @param array|null $trace debug_backtrace() array
+     *                          If multiple levels of backtrace info is desired, passing
+     *                          in a single debug_backtrace() array will save memory.
      * @return TraceModel
      */
-    public function getMethodInfo($level = 4)
+    public function getMethodInfo($level = self::DEFAULT_STARTING_BACKTRACE_INDEX, array $trace = null)
     {
-        $trace = debug_backtrace();
+        if (!is_null($trace)) {
+            $level -= 1;
+        } else {
+            $trace = debug_backtrace();
+        }
 
         // TODO: modify level if accessing this via Common's static bypass?
+        /*
         if ($trace[$level]['type'] === '::') {
-            //$level += 1;
+            $level += 1;
         }
+        */
 
         /*
         echo "Trace: " . ($level + 2) . "<br>";
@@ -118,27 +136,23 @@ class Common
         echo "Trace: " . ($level - 3) . "<br>";
         var_dump($trace[$level - 3]);
         echo "<br><hr><br>";
+        die();
         */
 
         $model = new TraceModel();
-        $tl = $trace[$level + 1];
-        $model->function = (!empty($tl['function'])) ? $tl['function'] : null;
+        if (!empty($trace[$level])) {
+            $tl = $trace[$level];
+            $model->function = (!empty($tl['function'])) ? $tl['function'] : null;
+            $model->class = (!empty($tl['class'])) ? $this->getRelativeFilePath($tl['class']) : null;
+            $model->object = (!empty($tl['object'])) ? $tl['object'] : null;
+            $model->args = (!empty($tl['args'])) ? $tl['args'] : null;
+        }
 
-        $tl = $trace[$level];
-        $model->class = (!empty($tl['class'])) ? $this->getRelativeFilePath($tl['class']) : null;
-        $model->object = (!empty($tl['object'])) ? $tl['object'] : null;
-        $model->args = (!empty($tl['args'])) ? $tl['args'] : null;
-
-        $tl = $trace[$level - 1];
-        $model->file = (!empty($tl['file'])) ? $this->getRelativeFilePath($tl['file']) : null;
-        $model->line = (!empty($tl['line'])) ? $tl['line'] : null;
-
-        /*
-        echo "Model:<br>";
-        var_dump($model);
-        echo "<br><hr><br>";
-        die();
-        */
+        if (!empty($trace[$level - 1])) {
+            $tl = $trace[$level - 1];
+            $model->file = (!empty($tl['file'])) ? $this->getRelativeFilePath($tl['file']) : null;
+            $model->line = (!empty($tl['line'])) ? $tl['line'] : null;
+        }
 
         return $model;
     }
@@ -185,7 +199,9 @@ class Common
                 print_r($var);
                 return ob_get_clean();
             case (is_object($var)):
-                return __METHOD__ . ' cannot handle objects yet.';
+                ob_start();
+                print_r($var);
+                return ob_get_clean();
             default:
                 return $this->getSimpleTypeValue($var);
         }

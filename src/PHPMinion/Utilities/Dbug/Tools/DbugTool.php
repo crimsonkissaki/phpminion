@@ -148,59 +148,6 @@ abstract class DbugTool implements DbugToolInterface
     }
 
     /**
-     * Returns a simple value for a variable
-     *
-     * For arrays it returns their length
-     * Ignores objects
-     *
-     * @param   mixed $var
-     * @return  int|string
-     */
-    protected function getSimpleTypeValue($var)
-    {
-        switch (true) {
-            case ($var === false):
-                return 'FALSE';
-            case ($var === true):
-                return 'TRUE';
-            case ($var === null):
-                return 'NULL';
-            case (is_numeric($var)):
-                return $var . ' (' . strtoupper(gettype($var)) . ')';
-            case (is_string($var)):
-                return "'{$var}'";
-            case (is_array($var)):
-                return 'ARRAY (' . count($var) . ')';
-            case (is_object($var)):
-                return 'OBJECT (' . get_class($var) . ')';
-            default:
-                return 'UNKNOWN VAR TYPE';
-        }
-    }
-
-    /**
-     * Returns a full value for a variable
-     *
-     * Ignores objects
-     *
-     * @param $var
-     * @return string
-     */
-    protected function getFullSimpleTypeValue($var)
-    {
-        switch (true) {
-            case (is_array($var)):
-                ob_start();
-                print_r($var);
-                return ob_get_clean();
-            case (is_object($var)):
-                return "full object data not available yet";
-            default:
-                return $this->getSimpleTypeValue($var);
-        }
-    }
-
-    /**
      * Gets a string with data for the method where the DbugTool was called
      *
      * @param  TraceModel $trace
@@ -208,11 +155,55 @@ abstract class DbugTool implements DbugToolInterface
      */
     protected function getMethodInfoString(TraceModel $trace)
     {
-        $str = (!is_null($trace->class)) ? $trace->class . '->' : '';
-        $str .= $trace->function . '() :: ' . $trace->line;
+
+        $str = '';
+        if (!is_null($trace->class)) {
+            $str = $trace->class;
+        } elseif (!is_null($trace->file)) {
+            $str = $trace->file;
+        }
+        $str .= (!is_null($trace->function)) ? "->{$trace->function}() " : '';
+        $str .= ":: {$trace->line}";
 
         return $str;
     }
 
+    /**
+     * Renders analysis results
+     *
+     * @return string
+     * @throws DbugException
+     */
+    protected function render()
+    {
+        if (!$this->crumb instanceof DbugCrumbInterface ) {
+            throw new DbugException("Unable to render {$this->toolAlias}: Crumb must be an instance of DbugCrumbInterface.");
+        }
+
+        $this->dbugResults = $this->crumb->render();
+        $this->checkKillScript();
+
+        return $this->dbugResults;
+    }
+
+    /**
+     * Kills the script if kill flag set in analyze()
+     *
+     * @throws DbugException
+     */
+    protected function checkKillScript()
+    {
+        if (!$this->kill) {
+            return;
+        }
+
+        if (is_null($this->dbugResults)) {
+            throw new DbugException("Unable to render {$this->toolAlias}: dbugResults is null.");
+        }
+
+        echo $this->dbugResults;
+        $dieOutput = '<div style="position: relative;">'.$this->common->colorize($this->dieMessage).'</div>';
+        die($dieOutput);
+    }
 
 }

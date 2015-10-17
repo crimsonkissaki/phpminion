@@ -15,15 +15,22 @@ namespace PHPMinion\Utilities\Dbug\Crumbs;
 use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 
 /**
- * DbugColorCrumb
+ * DbugTraceCrumb
  *
- * Rendering Crumb for DbugColor tool
+ * Rendering Crumb for DbugTrace tool
  *
- * @created     October 15, 2015
+ * @created     October 16, 2015
  * @version     0.1
  */
-class DbugColorCrumb extends DbugCrumb implements DbugCrumbInterface
+class DbugTraceCrumb extends DbugCrumb implements DbugCrumbInterface
 {
+
+    /**
+     * Dbug information about variable
+     *
+     * @var string
+     */
+    public $variableData;
 
     /**
      * Method where DbugTool was called
@@ -33,11 +40,11 @@ class DbugColorCrumb extends DbugCrumb implements DbugCrumbInterface
     public $callingMethodInfo;
 
     /**
-     * Dbug information about variable
+     * Dbug comment
      *
      * @var string
      */
-    public $variableData;
+    public $dbugComment;
 
     /**
      * @inheritDoc

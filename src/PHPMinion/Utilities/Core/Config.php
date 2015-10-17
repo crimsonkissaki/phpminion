@@ -16,13 +16,6 @@ class Config
 {
 
     /**
-     * Path to PHPMinion
-     *
-     * @var string
-     */
-    public $PATH_TO_PHPMINION;
-
-    /**
      * Path to the project root
      *
      * @var string
@@ -31,8 +24,7 @@ class Config
 
     public function __construct()
     {
-        $this->PATH_TO_PHPMINION = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR;
-        $this->PROJECT_ROOT_PATH = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . DIRECTORY_SEPARATOR;
+        $this->PROJECT_ROOT_PATH = dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR;
     }
 
 }

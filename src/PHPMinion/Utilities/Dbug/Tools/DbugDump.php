@@ -71,30 +71,4 @@ class DbugDump extends DbugTool
         $this->kill = (!empty($args[2])) ? $args[2] : false;
     }
 
-    /**
-     * Renders analysis results
-     *
-     * @return string
-     */
-    private function render()
-    {
-        $this->dbugResults = $this->crumb->render();
-        $this->checkKillScript();
-
-        return $this->dbugResults;
-    }
-
-    /**
-     * Kills the script if kill flag set in analyze()
-     */
-    private function checkKillScript()
-    {
-        if (!$this->kill) {
-            return;
-        }
-
-        echo $this->dbugResults;
-        die($this->common->colorize($this->dieMessage));
-    }
-
 }
