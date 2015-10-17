@@ -78,7 +78,7 @@ class DbugColor extends DbugTool implements DbugToolInterface
      * @param array $args
      * @throws DbugException
      */
-    private function processArgs(array $args)
+    protected function processArgs(array $args)
     {
         if (empty($args[0])) {
             throw new DbugException("ERROR: No variable provided to DbugColor");
@@ -96,7 +96,7 @@ class DbugColor extends DbugTool implements DbugToolInterface
      * @param $target
      * @return string
      */
-    private function convertTargetToUsableValue($target)
+    protected function convertTargetToUsableValue($target)
     {
         if (is_object($target)) {
             ob_start();
@@ -118,7 +118,7 @@ class DbugColor extends DbugTool implements DbugToolInterface
      * @return string
      * @throws DbugException
      */
-    private function render()
+    protected function render()
     {
         if (!$this->crumb instanceof DbugCrumbInterface) {
             throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");

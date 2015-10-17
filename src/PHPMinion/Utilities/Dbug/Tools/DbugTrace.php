@@ -88,7 +88,7 @@ class DbugTrace extends DbugTool implements DbugToolInterface
      *
      * @param array $args
      */
-    private function processArgs(array $args)
+    protected function processArgs(array $args)
     {
         $this->comment = (!empty($args[0])) ? $args[0] : null;
         $this->levels = (!empty($args[1])) ? $args[1] : $this->defaultLevels;
@@ -100,7 +100,7 @@ class DbugTrace extends DbugTool implements DbugToolInterface
      *
      * @return string
      */
-    private function parseStackTrace()
+    protected function parseStackTrace()
     {
         $trace = debug_backtrace();
         $traceStr = '';
@@ -119,7 +119,7 @@ class DbugTrace extends DbugTool implements DbugToolInterface
      * @return string
      * @throws DbugException
      */
-    private function render()
+    protected function render()
     {
         if (!$this->crumb instanceof DbugCrumbInterface) {
             throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");

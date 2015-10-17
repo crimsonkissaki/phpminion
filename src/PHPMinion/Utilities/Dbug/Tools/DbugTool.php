@@ -98,6 +98,15 @@ abstract class DbugTool
     protected $dieMessage = "<br>Killed by PHPMinion::DbugTool<br>";
 
     /**
+     * Placeholder for valid config parameters and data types
+     *
+     * Set in DbugTool
+     *
+     * @var array
+     */
+    protected $validConfigParams = [];
+
+    /**
      * @param DbugCrumbInterface $crumb
      */
     public function setCrumb(DbugCrumbInterface $crumb)
@@ -121,6 +130,38 @@ abstract class DbugTool
         $this->toolAlias = $toolAlias;
         $this->dieMessage = "<br>Killed by Dbug::{$toolAlias}<br>";
         $this->common = new Common();
+    }
+
+    /**
+     * Passthrough for setting config options for the DbugTool
+     *
+     * @param string $param
+     * @param mixed  $value
+     * @throws DbugException
+     */
+    public function config($param, $value)
+    {
+        throw new DbugException("No config options available for " . get_class($this));
+    }
+
+    /**
+     * Validates config() arguments for DbugTools
+     *
+     * @param string $param
+     * @param mixed  $value
+     * @return bool
+     * @throws DbugException
+     */
+    protected function validateConfigArgs($param, $value)
+    {
+        if (empty($this->validConfigParams[$param])) {
+            throw new DbugException("'{$param}' is not a valid config option for '{$this->toolAlias}'.");
+        }
+        if (!in_array(gettype($value), $this->validConfigParams[$param])) {
+            throw new DbugException("'{$value}' is not a valid datatype for config param '{$param}' in '{$this->toolAlias}'.");
+        }
+
+        return true;
     }
 
     /**

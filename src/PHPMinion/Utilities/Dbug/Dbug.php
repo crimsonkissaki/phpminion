@@ -79,7 +79,7 @@ class Dbug
         $this->registerTool('dbug', $toolPath.'\DbugDump')
             ->registerTool('trace', $toolPath.'\DbugTrace')
             ->registerTool('color', $toolPath.'\DbugColor')
-            //->registerTool('textarea', $toolPath.'\DbugTextarea')
+            ->registerTool('textarea', $toolPath.'\DbugTextarea')
             //->registerTool('type', $toolPath.'\DbugType')
         ;
     }
@@ -91,6 +91,42 @@ class Dbug
         }
 
         return self::$_instance;
+    }
+
+    /**
+     * Returns a previously defined DbugTool
+     *
+     * @param  string $alias
+     * @return DbugToolInterface
+     * @throws DbugException
+     */
+    public static function getTool($alias)
+    {
+        $_this = self::getInstance();
+        if (empty($_this->_tools[$alias])) {
+            throw new DbugException("No DbugTool registered under alias '{$alias}'");
+        }
+
+        return $_this->getDbugTool($alias);
+    }
+
+    /**
+     * Static accessibility mutator
+     *
+     * @param string $name
+     * @param array  $args
+     * @return DbugToolInterface
+     */
+    public static function __callStatic($name, $args)
+    {
+        $dbug = self::getInstance();
+        $dbug->validateCalledTool($name);
+        /** @var DbugToolInterface $tool */
+        $tool = $dbug->getDbugTool($name);
+        $tool->analyze($args);
+        $dbug->_dbugStack[] = $tool->getDbugResults();
+
+        return $dbug;
     }
 
     /**
@@ -112,44 +148,9 @@ class Dbug
             throw new DbugException("ERROR: A Dbug Tool with alias '{$alias}' is already registered.");
         }
 
-        $this->_tools[$alias] = $class;
+        $this->_tools[$alias] = new $class($alias);
 
         return $this;
-    }
-
-    /**
-     * Returns a previously defined DbugTool
-     *
-     * @param  string $name
-     * @return DbugToolInterface
-     * @throws DbugException
-     */
-    public function getTool($name)
-    {
-        if (empty($this->_tools[$name])) {
-            throw new DbugException("No DbugTool registered under alias '{$alias}'");
-        }
-
-        return $this->_tools[$name];
-    }
-
-    /**
-     * Static accessibility mutator
-     *
-     * @param string $name
-     * @param array  $args
-     * @return DbugToolInterface
-     */
-    public static function __callStatic($name, $args)
-    {
-        $dbug = self::getInstance();
-        $dbug->validateCalledTool($name);
-        /** @var DbugToolInterface $tool */
-        $tool = $dbug->getDbugTool($name);
-        $tool->analyze($args);
-        $dbug->_dbugStack[] = $tool->getDbugResults();
-
-        return $dbug;
     }
 
     /**
@@ -271,7 +272,7 @@ class Dbug
      */
     private function getDbugTool($name)
     {
-        return new $this->_tools[$name]($name);
+        return $this->_tools[$name];
     }
 
 }

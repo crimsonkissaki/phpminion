@@ -75,7 +75,7 @@ class DbugDump extends DbugTool implements DbugToolInterface
      * @param array $args
      * @throws DbugException
      */
-    private function processArgs(array $args)
+    protected function processArgs(array $args)
     {
         if (empty($args[0])) {
             throw new DbugException("ERROR: No variable provided to DbugDump");
@@ -92,7 +92,7 @@ class DbugDump extends DbugTool implements DbugToolInterface
      * @return string
      * @throws DbugException
      */
-    private function render()
+    protected function render()
     {
         if (!$this->crumb instanceof DbugCrumbInterface) {
             throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
