@@ -17,6 +17,12 @@ namespace PHPMinion\Utilities\Dbug\Crumbs;
  *
  * Base Crumb class
  *
+ * Crumbs are used to render the results of DbugTool analysis.
+ *
+ * Whether or not a DbugTool uses a Crumb class, the analysis
+ * results MUST be assigned to DbugTool->dbugResults for proper
+ * handling.
+ *
  * @created     October 15, 2015
  * @version     0.1
  */
@@ -42,5 +48,13 @@ abstract class DbugCrumb
         'dbugDiv'    => 'position: relative; margin: 10px;',
         'varDataDiv' => 'position: relative; padding: 5px 10px; border: 1px solid black; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
     ];
+
+    /**
+     * @param string $toolAlias
+     */
+    public function __construct($toolAlias)
+    {
+        $this->toolAlias = $toolAlias;
+    }
 
 }

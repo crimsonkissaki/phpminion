@@ -13,6 +13,8 @@
 namespace PHPMinion\Utilities\Dbug\Tools;
 
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugTraceCrumb;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 use PHPMinion\Utilities\Core\Common;
 
 /**
@@ -25,7 +27,7 @@ use PHPMinion\Utilities\Core\Common;
  * @created     October 16, 2015
  * @version     0.1
  */
-class DbugTrace extends DbugTool
+class DbugTrace extends DbugTool implements DbugToolInterface
 {
 
     /**
@@ -42,6 +44,20 @@ class DbugTrace extends DbugTool
      */
     protected $levels;
 
+    public function getDbugResults()
+    {
+        return $this->dbugResults;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct($toolAlias)
+    {
+        parent::__construct($toolAlias);
+        $this->crumb = new DbugTraceCrumb($toolAlias);
+    }
+
     /**
      * <code>
      * Method Args:
@@ -56,9 +72,9 @@ class DbugTrace extends DbugTool
     {
         $this->processArgs($args);
 
-        /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugTraceCrumb $crumb */
+        /** @var DbugTraceCrumb $crumb */
         $crumb = $this->crumb;
-        $crumb->callingMethodInfo = $this->getMethodInfoString($this->common->getMethodInfo());
+        $crumb->callingMethodInfo = $this->common->getMethodInfoString($this->common->getMethodInfo());
         $crumb->dbugComment = (!is_null($this->comment)) ? $this->common->colorize($this->comment) . "\n\n" : '';
         $crumb->variableData = $this->parseStackTrace();
 
@@ -71,7 +87,6 @@ class DbugTrace extends DbugTool
      * Processes arguments supplied to DbugTrace
      *
      * @param array $args
-     * @throws DbugException
      */
     private function processArgs(array $args)
     {
@@ -92,10 +107,28 @@ class DbugTrace extends DbugTool
         for ($i = 0; $i <= $this->levels; $i += 1 ) {
             $nextIndex = Common::DEFAULT_STARTING_BACKTRACE_INDEX + $this->levels - $i;
             $model = $this->common->getMethodInfo($nextIndex, $trace);
-            $traceStr .= $this->getMethodInfoString($model) . PHP_EOL;
+            $traceStr .= $this->common->getMethodInfoString($model) . PHP_EOL;
         }
 
         return $traceStr;
+    }
+
+    /**
+     * Generates Dbug results
+     *
+     * @return string
+     * @throws DbugException
+     */
+    private function render()
+    {
+        if (!$this->crumb instanceof DbugCrumbInterface) {
+            throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
+        }
+
+        $this->dbugResults = $this->crumb->render();
+        $this->checkKillScript();
+
+        return $this->dbugResults;
     }
 
 }

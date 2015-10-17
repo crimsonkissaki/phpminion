@@ -13,6 +13,8 @@
 namespace PHPMinion\Utilities\Dbug\Tools;
 
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugColorCrumb;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 
 /**
  * Class DbugColor
@@ -22,7 +24,7 @@ use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
  * @created     October 16, 2015
  * @version     0.1
  */
-class DbugColor extends DbugTool
+class DbugColor extends DbugTool implements DbugToolInterface
 {
 
     /**
@@ -31,6 +33,20 @@ class DbugColor extends DbugTool
      * @var string
      */
     protected $defaultColor = '#F00';
+
+    public function getDbugResults()
+    {
+        return $this->dbugResults;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct($toolAlias)
+    {
+        parent::__construct($toolAlias);
+        $this->crumb = new DbugColorCrumb($toolAlias);
+    }
 
     /**
      * <code>
@@ -48,7 +64,7 @@ class DbugColor extends DbugTool
 
         /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugColorCrumb $crumb */
         $crumb = $this->crumb;
-        $crumb->callingMethodInfo = $this->getMethodInfoString($this->common->getMethodInfo());
+        $crumb->callingMethodInfo = $this->common->getMethodInfoString($this->common->getMethodInfo());
         $crumb->variableData = $this->common->colorize($this->dbugResults, $this->commentColor);
 
         $this->render();
@@ -94,6 +110,24 @@ class DbugColor extends DbugTool
         }
 
         return $target;
+    }
+
+    /**
+     * Generates Dbug results
+     *
+     * @return string
+     * @throws DbugException
+     */
+    private function render()
+    {
+        if (!$this->crumb instanceof DbugCrumbInterface) {
+            throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
+        }
+
+        $this->dbugResults = $this->crumb->render();
+        $this->checkKillScript();
+
+        return $this->dbugResults;
     }
 
 }

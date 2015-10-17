@@ -63,9 +63,6 @@ class Common
     public function getRelativeFilePath($path)
     {
         $root = PHPMinion::getInstance()->getConfig('PROJECT_ROOT_PATH');
-        echo "path: {$path}<br>";
-        echo "root: {$root}<br>";
-        die();
 
         return str_replace($root, '', $path);
     }
@@ -155,6 +152,26 @@ class Common
         }
 
         return $model;
+    }
+
+    /**
+     * Gets a string with data for the method where the DbugTool was called
+     *
+     * @param  TraceModel $trace
+     * @return string
+     */
+    public function getMethodInfoString(TraceModel $trace)
+    {
+        $str = '';
+        if (!is_null($trace->class)) {
+            $str = $trace->class;
+        } elseif (!is_null($trace->file)) {
+            $str = $trace->file;
+        }
+        $str .= (!is_null($trace->function)) ? "->{$trace->function}() " : '';
+        $str .= ":: {$trace->line}";
+
+        return $str;
     }
 
     /**

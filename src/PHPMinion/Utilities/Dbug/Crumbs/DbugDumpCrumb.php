@@ -12,8 +12,6 @@
 
 namespace PHPMinion\Utilities\Dbug\Crumbs;
 
-use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
-
 /**
  * DbugDumpCrumb
  *

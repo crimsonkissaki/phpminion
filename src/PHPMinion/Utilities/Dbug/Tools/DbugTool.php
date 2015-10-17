@@ -13,9 +13,7 @@
 namespace PHPMinion\Utilities\Dbug\Tools;
 
 use PHPMinion\Utilities\Core\Common;
-use PHPMinion\Utilities\Dbug\Dbug;
 use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
-use PHPMinion\Utilities\Dbug\Models\TraceModel;
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
 /**
@@ -23,18 +21,16 @@ use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
  *
  * Parent class for all DbugTools
  *
+ * Provides basic properties applicable to most DbugTool use cases.
+ *
+ * Results from DbugTool analysis MUST be assigned to dbugResults
+ * for proper handling.
+ *
  * @created     October 15, 2015
  * @version     0.1
  */
-abstract class DbugTool implements DbugToolInterface
+abstract class DbugTool
 {
-
-    /**
-     * Dbug instance
-     *
-     * @var Dbug
-     */
-    protected $debug;
 
     /**
      * Common utility class
@@ -46,7 +42,7 @@ abstract class DbugTool implements DbugToolInterface
     /**
      * DbugTool rendering Crumb object
      *
-     * @var mixed
+     * @var DbugCrumbInterface
      */
     protected $crumb;
 
@@ -72,7 +68,7 @@ abstract class DbugTool implements DbugToolInterface
     protected $comment;
 
     /**
-     * Color to set DbugDump comment text
+     * Default color to set DbugDump comment text
      *
      * @var string
      */
@@ -95,18 +91,11 @@ abstract class DbugTool implements DbugToolInterface
     protected $kill = false;
 
     /**
-     * Default message to display if die()
-     *
-     * Override in child DbugTool if desired
+     * Message to display on kill()
      *
      * @var string
      */
-    protected $dieMessage = "<br>Killed by PHPMinion::Dbug<br>";
-
-    public function getDbugResults()
-    {
-        return $this->dbugResults;
-    }
+    protected $dieMessage = "<br>Killed by PHPMinion::DbugTool<br>";
 
     /**
      * @param DbugCrumbInterface $crumb
@@ -116,74 +105,22 @@ abstract class DbugTool implements DbugToolInterface
         $this->crumb = $crumb;
     }
 
-    public function getCrumb()
-    {
-        return $this->crumb;
-    }
-
+    /**
+     * @return string
+     */
     public function getToolAlias()
     {
         return $this->toolAlias;
     }
 
     /**
-     * @param string    $toolAlias
-     * @param Dbug|null $debug
+     * @param string $toolAlias Alias name for DbugTool
      */
-    public function __construct($toolAlias, Dbug $debug = null)
+    public function __construct($toolAlias)
     {
         $this->toolAlias = $toolAlias;
         $this->dieMessage = "<br>Killed by Dbug::{$toolAlias}<br>";
-        $this->debug = $debug;
         $this->common = new Common();
-    }
-
-    /**
-     * @inheritDoc
-     * @throws DbugException
-     */
-    public function analyze(array $args = null)
-    {
-        throw new DbugException(get_class($this) . ' must override DbugTool\'s analyze() method.');
-    }
-
-    /**
-     * Gets a string with data for the method where the DbugTool was called
-     *
-     * @param  TraceModel $trace
-     * @return string
-     */
-    protected function getMethodInfoString(TraceModel $trace)
-    {
-
-        $str = '';
-        if (!is_null($trace->class)) {
-            $str = $trace->class;
-        } elseif (!is_null($trace->file)) {
-            $str = $trace->file;
-        }
-        $str .= (!is_null($trace->function)) ? "->{$trace->function}() " : '';
-        $str .= ":: {$trace->line}";
-
-        return $str;
-    }
-
-    /**
-     * Renders analysis results
-     *
-     * @return string
-     * @throws DbugException
-     */
-    protected function render()
-    {
-        if (!$this->crumb instanceof DbugCrumbInterface ) {
-            throw new DbugException("Unable to render {$this->toolAlias}: Crumb must be an instance of DbugCrumbInterface.");
-        }
-
-        $this->dbugResults = $this->crumb->render();
-        $this->checkKillScript();
-
-        return $this->dbugResults;
     }
 
     /**
@@ -202,7 +139,7 @@ abstract class DbugTool implements DbugToolInterface
         }
 
         echo $this->dbugResults;
-        $dieOutput = '<div style="position: relative;">'.$this->common->colorize($this->dieMessage).'</div>';
+        $dieOutput = '<div style="position: relative;">' . $this->common->colorize($this->dieMessage) . '</div>';
         die($dieOutput);
     }
 

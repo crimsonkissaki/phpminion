@@ -12,7 +12,8 @@
 
 namespace PHPMinion\Utilities\Dbug\Tools;
 
-use PHPMinion\Utilities\Dbug\Dbug;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugDumpCrumb;
+use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
 /**
@@ -24,8 +25,22 @@ use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
  * @created     October 16, 2015
  * @version     0.1
  */
-class DbugDump extends DbugTool
+class DbugDump extends DbugTool implements DbugToolInterface
 {
+
+    public function getDbugResults()
+    {
+        return $this->dbugResults;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct($toolAlias)
+    {
+        parent::__construct($toolAlias);
+        $this->crumb = new DbugDumpCrumb($toolAlias);
+    }
 
     /**
      * <code>
@@ -43,7 +58,7 @@ class DbugDump extends DbugTool
 
         /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugDumpCrumb $crumb */
         $crumb = $this->crumb;
-        $crumb->callingMethodInfo = $this->getMethodInfoString($this->common->getMethodInfo());
+        $crumb->callingMethodInfo = $this->common->getMethodInfoString($this->common->getMethodInfo());
         $crumb->variableType = $this->common->getSimpleTypeValue($this->dbugTarget);
         $crumb->variableData = $this->common->getFullSimpleTypeValue($this->dbugTarget);
         $crumb->dbugComment = (empty($this->comment)) ? ''
@@ -69,6 +84,24 @@ class DbugDump extends DbugTool
         $this->dbugTarget = $args[0];
         $this->comment = (!empty($args[1])) ? $args[1] : null;
         $this->kill = (!empty($args[2])) ? $args[2] : false;
+    }
+
+    /**
+     * Generates Dbug results
+     *
+     * @return string
+     * @throws DbugException
+     */
+    private function render()
+    {
+        if (!$this->crumb instanceof DbugCrumbInterface) {
+            throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
+        }
+
+        $this->dbugResults = $this->crumb->render();
+        $this->checkKillScript();
+
+        return $this->dbugResults;
     }
 
 }

@@ -30,16 +30,10 @@ interface DbugToolInterface
     public function analyze(array $args);
 
     /**
-     * Returns the Crumb renderer object
+     * Returns DbugTool results
      *
-     * @return DbugCrumbInterface
+     * @return string
      */
-    public function getCrumb();
-
-
-    /**
-     * Kills the script
-    public function kill();
-     */
+    public function getDbugResults();
 
 }

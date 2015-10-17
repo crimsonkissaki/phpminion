@@ -23,6 +23,11 @@ use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
  *
  * Gateway and container for debugging tools/results
  *
+ * TODO: configuration options for Dbug
+ *  - have output scrollable
+ *  - expand/contract dbug statements (folder structure)
+ *  - better exception handling
+ *
  * @created     October 9, 2015
  * @version     0.1
  */
@@ -35,13 +40,6 @@ class Dbug
      * @var array
      */
     private $_tools = [];
-
-    /**
-     * Registered Dbug output crumbs
-     *
-     * @var array
-     */
-    private $_crumbs = [];
 
     /**
      * Stack of Dbug outputs
@@ -67,11 +65,6 @@ class Dbug
         return $this->_tools;
     }
 
-    public function getCrumbs()
-    {
-        return $this->_crumbs;
-    }
-
     public function getDbugStack()
     {
         return $this->_dbugStack;
@@ -89,13 +82,6 @@ class Dbug
             //->registerTool('textarea', $toolPath.'\DbugTextarea')
             //->registerTool('type', $toolPath.'\DbugType')
         ;
-
-        $crumbPath = '\PHPMinion\Utilities\Dbug\Crumbs';
-        $this->registerCrumb('dbug', $crumbPath.'\DbugDumpCrumb')
-             ->registerCrumb('color', $crumbPath.'\DbugColorCrumb')
-             ->registerCrumb('trace', $crumbPath.'\DbugTraceCrumb')
-        ;
-
     }
 
     public function getInstance()
@@ -132,27 +118,19 @@ class Dbug
     }
 
     /**
-     * Registers a Crumb for rendering a DbugTool result
+     * Returns a previously defined DbugTool
      *
-     * TODO: allow crumb registration with arrays?
-     *
-     * @param string $toolAlias Previously declared DbugTool alias that will use the Crumb
-     * @param string $class     Class to handle Dbug Tool output generation
-     * @param bool   $replace   Allow replacing of a previously declared DbugTool Crumb?
-     * @return Dbug
+     * @param  string $name
+     * @return DbugToolInterface
      * @throws DbugException
      */
-    public function registerCrumb($toolAlias, $class, $replace = false)
+    public function getTool($name)
     {
-        $this->validateRegisterArgs($toolAlias, $class, 'crumb');
-
-        if (isset($this->_crumbs[$toolAlias]) && !$replace) {
-            throw new DbugException("ERROR: A Tool Crumb has already been registered for a Dbug Tool with alias '{$toolAlias}'.");
+        if (empty($this->_tools[$name])) {
+            throw new DbugException("No DbugTool registered under alias '{$alias}'");
         }
 
-        $this->_crumbs[$toolAlias] = $class;
-
-        return $this;
+        return $this->_tools[$name];
     }
 
     /**
@@ -166,6 +144,7 @@ class Dbug
     {
         $dbug = self::getInstance();
         $dbug->validateCalledTool($name);
+        /** @var DbugToolInterface $tool */
         $tool = $dbug->getDbugTool($name);
         $tool->analyze($args);
         $dbug->_dbugStack[] = $tool->getDbugResults();
@@ -239,22 +218,15 @@ class Dbug
      *
      * @param string $alias
      * @param string $class
-     * @param string $which
      * @throws DbugException
      */
-    private function validateRegisterArgs($alias, $class, $which = 'tool')
+    private function validateRegisterArgs($alias, $class)
     {
-        //list($ele, $bit) = ($which === 'tool') ? ['DbugTool', ''] : ['DbugToolCrumb', 'Crumb '];
-        $ele = ($which === 'tool') ? 'DbugTool' : 'DbugToolCrumb';
-        $invalidAliasErr = "Unable to register {$ele}: invalid alias '{$alias}'.";
-        $invalidClassErr = "Unable to register {$ele}: invalid class '{$class}'.";
-
         if (!$this->validateAlias($alias)) {
-            throw new DbugException($invalidAliasErr);
+            throw new DbugException("Unable to register DbugTool: invalid alias '{$alias}'.");
         }
-
         if (!$this->validateClass($class)) {
-            throw new DbugException($invalidClassErr);
+            throw new DbugException("Unable to register DbugTool: invalid class '{$class}'.");
         }
     }
 
@@ -289,27 +261,17 @@ class Dbug
         if (!isset($this->_tools[$name])) {
             throw new DbugException("'{$name}' is not a registered DbugTool.");
         }
-        if (!isset($this->_crumbs[$name])) {
-            throw new DbugException("'{$name}' does not have a registered DbugTool Crumb.");
-        }
     }
 
     /**
      * Gets the requested DbugTool object
      *
      * @param  string $name
-     * @return DbugTool
+     * @return DbugToolInterface
      */
     private function getDbugTool($name)
     {
-        $crumb = new $this->_crumbs[$name];
-        $crumb->toolAlias = $name;
-
-        /** @var DbugTool $tool */
-        $tool = new $this->_tools[$name]($name, $this);
-        $tool->setCrumb($crumb);
-
-        return $tool;
+        return new $this->_tools[$name]($name);
     }
 
 }
