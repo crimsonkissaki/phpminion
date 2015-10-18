@@ -12,6 +12,7 @@
 
 namespace PHPMinion\Utilities\Dbug\Tools;
 
+use PHPMinion\Utilities\Dbug\Dbug;
 use PHPMinion\Utilities\Dbug\Crumbs\DbugDumpCrumb;
 use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
@@ -51,11 +52,13 @@ class DbugDump extends DbugTool implements DbugToolInterface
     {
         $this->processArgs($args);
 
+        $objectAnalyzer = Dbug::getInstance()->getConfig()->getObjectAnalyzer();
+
         /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugDumpCrumb $crumb */
         $crumb = $this->crumb;
         $crumb->callingMethodInfo = $this->common->getMethodInfoString($this->common->getMethodInfo());
         $crumb->variableType = $this->common->getSimpleTypeValue($this->dbugTarget);
-        $crumb->variableData = $this->common->getFullSimpleTypeValue($this->dbugTarget);
+        $crumb->variableData = $objectAnalyzer->analyzeObject($this->dbugTarget);
         $crumb->dbugComment = (empty($this->comment)) ? ''
                                : $this->common->colorize($this->comment, $this->commentColor).PHP_EOL.PHP_EOL;
 

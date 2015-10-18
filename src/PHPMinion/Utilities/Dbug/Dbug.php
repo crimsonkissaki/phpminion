@@ -14,6 +14,7 @@
 namespace PHPMinion\Utilities\Dbug;
 
 use PHPMinion\Utilities\Core\Common;
+use PHPMinion\Utilities\Core\Config;
 use PHPMinion\Utilities\Dbug\Tools\DbugToolInterface;
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
@@ -32,6 +33,13 @@ use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
  */
 class Dbug
 {
+
+    /**
+     * Configuration class
+     *
+     * @var Config
+     */
+    private $_config;
 
     /**
      * Registered Dbug Tools
@@ -86,6 +94,14 @@ class Dbug
     private $_ignoreCurrent = false;
 
     /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->_config;
+    }
+
+    /**
      * @return array
      */
     public function getTools()
@@ -106,15 +122,8 @@ class Dbug
      */
     private function __construct()
     {
+        $this->_config = new Config();
         $toolPath = '\PHPMinion\Utilities\Dbug\Tools';
-        /*
-        $this->registerTool('dbug', $toolPath.'\DbugDump')
-            ->registerTool('trace', $toolPath.'\DbugTrace')
-            ->registerTool('color', $toolPath.'\DbugColor')
-            ->registerTool('textarea', $toolPath.'\DbugTextarea')
-            ->registerTool('type', $toolPath.'\DbugType')
-        ;
-        */
         $this->registerTools([
             'dbug' => $toolPath.'\DbugDump',
             'trace' => $toolPath.'\DbugTrace',
