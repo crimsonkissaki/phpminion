@@ -25,19 +25,24 @@ use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 class DbugTextareaCrumb extends DbugCrumb implements DbugCrumbInterface
 {
 
+    protected $validConfigParams = [
+        'cols' => ['integer'],
+        'rows' => ['integer'],
+    ];
+
     /**
      * Number of rows in textarea
      *
      * @var int
      */
-    protected $rowCount = 25;
+    protected $rows = 25;
 
     /**
      * Number of columns in textarea
      *
      * @var int
      */
-    protected $colCount = 100;
+    protected $cols = 100;
 
     /**
      * @param int $rowCount
@@ -74,6 +79,11 @@ class DbugTextareaCrumb extends DbugCrumb implements DbugCrumbInterface
      */
     public function render()
     {
+        $this->validateConfigArgs();
+
+        $cols = (!empty($this->config['cols'])) ? $this->config['cols'] : $this->cols;
+        $rows = (!empty($this->config['rows'])) ? $this->config['rows'] : $this->rows;
+
         return <<<OUTPUT
 <div style="{$this->cssStyles['container']}">
 <div style="{$this->cssStyles['toolTitle']}">{$this->toolTitle}</div>
@@ -81,7 +91,7 @@ class DbugTextareaCrumb extends DbugCrumb implements DbugCrumbInterface
 
 {$this->dbugComment}Var Type: {$this->variableType}
 
-<textarea rows="{$this->rowCount}" cols="{$this->colCount}" style="{$this->cssStyles['varDataDiv']}">{$this->variableData}</textarea></div></pre>
+<textarea rows="{$rows}" cols="{$cols}" style="{$this->cssStyles['varDataDiv']}">{$this->variableData}</textarea></div></pre>
 </div>
 OUTPUT;
     }

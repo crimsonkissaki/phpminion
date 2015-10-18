@@ -46,11 +46,6 @@ class DbugTrace extends DbugTool implements DbugToolInterface
      */
     protected $levels;
 
-    public function getDbugResults()
-    {
-        return $this->dbugResults;
-    }
-
     /**
      * @inheritDoc
      */
@@ -64,7 +59,7 @@ class DbugTrace extends DbugTool implements DbugToolInterface
      * <code>
      * Method Args:
      *  string  $comment  Comments to display in debug output (default null)
-     *  int     $index    Starting debug_backtrace() index (default 2)
+     *  int     $levels   Levels of debug_backtrace() to go back (default 2)
      *  bool    $kill     Immediately terminate script (default false)
      * </code>
      *
@@ -80,9 +75,27 @@ class DbugTrace extends DbugTool implements DbugToolInterface
         $crumb->dbugComment = (!is_null($this->comment)) ? $this->common->colorize($this->comment) . "\n\n" : '';
         $crumb->variableData = $this->parseStackTrace();
 
-        $this->render();
+        $this->checkKillScript();
 
         return $this;
+    }
+
+    /**
+     * Generates Dbug results
+     *
+     * @return string
+     * @throws DbugException
+     */
+    public function render()
+    {
+        if (!$this->crumb instanceof DbugCrumbInterface) {
+            throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
+        }
+
+        $this->crumb->config = $this->config;
+        $this->dbugResults = $this->crumb->render();
+
+        return $this->dbugResults;
     }
 
     /**
@@ -106,31 +119,13 @@ class DbugTrace extends DbugTool implements DbugToolInterface
     {
         $trace = debug_backtrace();
         $traceStr = '';
-        for ($i = 0; $i <= $this->levels; $i += 1 ) {
+        for ($i = 0; $i < $this->levels; $i += 1 ) {
             $nextIndex = Common::DEFAULT_STARTING_BACKTRACE_INDEX + $this->levels - $i;
             $model = $this->common->getMethodInfo($nextIndex, $trace);
             $traceStr .= $this->common->getMethodInfoString($model) . PHP_EOL;
         }
 
         return $traceStr;
-    }
-
-    /**
-     * Generates Dbug results
-     *
-     * @return string
-     * @throws DbugException
-     */
-    protected function render()
-    {
-        if (!$this->crumb instanceof DbugCrumbInterface) {
-            throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
-        }
-
-        $this->dbugResults = $this->crumb->render();
-        $this->checkKillScript();
-
-        return $this->dbugResults;
     }
 
 }

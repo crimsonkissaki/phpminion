@@ -17,15 +17,6 @@ use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
 
 class DbugTextarea extends DbugDump implements DbugToolInterface
 {
-    /**
-     * Valid config parameters and data types
-     *
-     * @var array
-     */
-    protected $validConfigParams = [
-        'colCount' => ['integer'],
-        'rowCount' => ['integer'],
-    ];
 
     /**
      * @inheritDoc
@@ -34,26 +25,6 @@ class DbugTextarea extends DbugDump implements DbugToolInterface
     {
         parent::__construct($toolAlias);
         $this->crumb = new DbugTextareaCrumb($toolAlias);
-    }
-
-    /**
-     * Sets config options for DbugTextarea
-     *
-     * @param string $param
-     * @param mixed  $value
-     * @return DbugToolInterface
-     * @throws DbugException
-     */
-    public function config($param, $value)
-    {
-        $this->validateConfigArgs($param, $value);
-
-        $func = 'set'.ucfirst($param);
-        if (method_exists($this->crumb, $func)) {
-            call_user_func_array([$this->crumb, $func], [$value]);
-        }
-
-        return $this;
     }
 
 }

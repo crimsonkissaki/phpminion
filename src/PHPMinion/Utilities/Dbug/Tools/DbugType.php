@@ -19,11 +19,6 @@ use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 class DbugType extends DbugTool implements DbugToolInterface
 {
 
-    public function getDbugResults()
-    {
-        return $this->dbugResults;
-    }
-
     /**
      * @inheritDoc
      */
@@ -53,9 +48,26 @@ class DbugType extends DbugTool implements DbugToolInterface
         $crumb->dbugComment = (!is_null($this->comment)) ? PHP_EOL.$this->common->colorize($this->comment).PHP_EOL : '';
         $crumb->variableData = $this->common->getSimpleTypeValue($this->dbugTarget);
 
-        $this->render();
+        $this->checkKillScript();
 
         return $this;
+    }
+
+    /**
+     * Generates Dbug results
+     *
+     * @return string
+     * @throws DbugException
+     */
+    public function render()
+    {
+        if (!$this->crumb instanceof DbugCrumbInterface) {
+            throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
+        }
+
+        $this->dbugResults = $this->crumb->render();
+
+        return $this->dbugResults;
     }
 
     /**
@@ -72,24 +84,6 @@ class DbugType extends DbugTool implements DbugToolInterface
         $this->dbugTarget = $args[0];
         $this->comment = (!empty($args[1])) ? $args[1] : null;
         $this->kill = (!empty($args[2])) ? $args[2] : false;
-    }
-
-    /**
-     * Generates Dbug results
-     *
-     * @return string
-     * @throws DbugException
-     */
-    protected function render()
-    {
-        if (!$this->crumb instanceof DbugCrumbInterface) {
-            throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
-        }
-
-        $this->dbugResults = $this->crumb->render();
-        $this->checkKillScript();
-
-        return $this->dbugResults;
     }
 
 }

@@ -12,6 +12,8 @@
 
 namespace PHPMinion\Utilities\Dbug\Crumbs;
 
+use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
+
 /**
  * DbugCrumb
  *
@@ -26,7 +28,7 @@ namespace PHPMinion\Utilities\Dbug\Crumbs;
  * @created     October 15, 2015
  * @version     0.1
  */
-class DbugCrumb
+class DbugCrumb implements DbugCrumbInterface
 {
 
     /**
@@ -72,6 +74,13 @@ class DbugCrumb
     public $dbugComment;
 
     /**
+     * Config settings
+     *
+     * @var array
+     */
+    public $config = [];
+
+    /**
      * CSS used in render()
      *
      * @var array
@@ -85,6 +94,15 @@ class DbugCrumb
     ];
 
     /**
+     * Placeholder for valid config parameters and data types
+     *
+     * Set in DbugToolCrumb
+     *
+     * @var array
+     */
+    protected $validConfigParams = [];
+
+    /**
      * @param string $toolAlias
      */
     public function __construct($toolAlias)
@@ -94,11 +112,9 @@ class DbugCrumb
     }
 
     /**
-     * Renders the Crumb to HTML for output
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function render()
+    public function render(array $config = null)
     {
         return <<<OUTPUT
 <div style="{$this->cssStyles['container']}">
@@ -110,6 +126,30 @@ class DbugCrumb
 <div style="{$this->cssStyles['varDataDiv']}">{$this->variableData}</div></div></pre>
 </div>
 OUTPUT;
+    }
+
+    /**
+     * Validates config() arguments for DbugToolCrumb
+     *
+     * @return bool
+     * @throws DbugException
+     */
+    protected function validateConfigArgs()
+    {
+        $alias = $this->toolAlias;
+        foreach ($this->config as $param => $value) {
+            if (empty($this->validConfigParams[$param])) {
+                $validParams = implode(', ', array_keys($this->validConfigParams));
+                throw new DbugException("'{$alias}' invalid config param: '{$param}'. Valid params: '{$validParams}'");
+            }
+            if (!in_array(gettype($value), $this->validConfigParams[$param])) {
+                $validValues = implode(', ', $this->validConfigParams[$param]);
+                $badType = gettype($value);
+                throw new DbugException("'{$alias}' invalid config param '{$param}' value datatype: '{$badType}'. Valid datatypes: '{$validValues}'");
+            }
+        }
+
+        return true;
     }
 
 }

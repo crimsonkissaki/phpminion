@@ -59,11 +59,43 @@ class Dbug
      */
     private $_dieMsg = '<br>Killed by PHPMinion::Dbug<br>';
 
+    /**
+     * Current DbugTool accessed
+     *
+     * @var DbugToolInterface
+     */
+    private $_currentTool;
+
+    /**
+     * Results from current DbugTool
+     * @var string
+     */
+    private $_currentToolResults;
+
+    /**
+     * Config options for current DbugTool
+     * @var array
+     */
+    private $_currentToolConfigs = [];
+
+    /**
+     * Prevent current DbugTool results from being added to result stack
+     *
+     * @var bool
+     */
+    private $_ignoreCurrent = false;
+
+    /**
+     * @return array
+     */
     public function getTools()
     {
         return $this->_tools;
     }
 
+    /**
+     * @return array
+     */
     public function getDbugStack()
     {
         return $this->_dbugStack;
@@ -75,21 +107,88 @@ class Dbug
     private function __construct()
     {
         $toolPath = '\PHPMinion\Utilities\Dbug\Tools';
+        /*
         $this->registerTool('dbug', $toolPath.'\DbugDump')
             ->registerTool('trace', $toolPath.'\DbugTrace')
             ->registerTool('color', $toolPath.'\DbugColor')
             ->registerTool('textarea', $toolPath.'\DbugTextarea')
             ->registerTool('type', $toolPath.'\DbugType')
         ;
+        */
+        $this->registerTools([
+            'dbug' => $toolPath.'\DbugDump',
+            'trace' => $toolPath.'\DbugTrace',
+            'color' => $toolPath.'\DbugColor',
+            'textarea' => $toolPath.'\DbugTextarea',
+            'type' => $toolPath.'\DbugType',
+        ]);
     }
 
-    public function getInstance()
+    /**
+     * @return Dbug
+     */
+    public static function getInstance()
     {
         if (is_null(self::$_instance)) {
             self::$_instance = new Dbug();
         }
 
         return self::$_instance;
+    }
+
+    /**
+     * Static accessibility mutator to access registered DbugTools
+     *
+     * @param string $alias
+     * @param array  $args
+     * @return Dbug
+     */
+    public static function __callStatic($alias, $args)
+    {
+        $_this = self::getInstance();
+        $_this->validateCalledTool($alias);
+        $_this->resetInstanceProperties();
+        $_this->_currentTool = $_this->getDbugTool($alias);
+        $_this->_currentTool->analyze($args);
+
+        return $_this;
+    }
+
+    /**
+     * Registers multiple tools with Dbug
+     *
+     * @param array      $tools
+     * @param bool|false $replace
+     * @return Dbug
+     */
+    public function registerTools(array $tools, $replace = false)
+    {
+        foreach ($tools as $alias => $class) {
+            $this->registerTool($alias, $class, $replace);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Registers a tool with Dbug
+     *
+     * @param string $alias   Alias to call the DbugTool via static Dbug:: calls
+     * @param string $class   Class to handle debug work
+     * @param bool   $replace Allow replacing of a previously declared aliased tool?
+     * @return Dbug
+     * @throws DbugException
+     */
+    public function registerTool($alias, $class, $replace = false)
+    {
+        $this->validateRegisterArgs($alias, $class);
+        if (isset($this->_tools[$alias]) && !$replace) {
+            throw new DbugException("ERROR: A Dbug Tool with alias '{$alias}' is already registered.");
+        }
+
+        $this->_tools[$alias] = new $class($alias);
+
+        return $this;
     }
 
     /**
@@ -110,78 +209,87 @@ class Dbug
     }
 
     /**
-     * Static accessibility mutator
+     * Current DbugTool results won't be added to _dbugStack
      *
-     * @param string $name
-     * @param array  $args
-     * @return DbugToolInterface
+     * @return Dbug
      */
-    public static function __callStatic($name, $args)
+    public function ignore()
     {
-        $dbug = self::getInstance();
-        $dbug->validateCalledTool($name);
-        /** @var DbugToolInterface $tool */
-        $tool = $dbug->getDbugTool($name);
-        $tool->analyze($args);
-        $dbug->_dbugStack[] = $tool->getDbugResults();
+        $this->_ignoreCurrent = true;
 
-        return $dbug;
+        return $this;
     }
 
     /**
-     * Registers a tool with Dbug
+     * Sets config options that are passed to the DbugTool's Crumb
      *
-     * TODO: allow tool registration with arrays?
+     * <code>
+     * This is an overloaded method!
+     * Accepts:
+     *  ($configs[])     : array of param => value settings
+     *  ($param, $value) : param and its value
+     *  ($param)         : 'flag' param to set to true
+     * </code>
      *
-     * @param string $alias   Alias to call the DbugTool via static Dbug:: calls
-     * @param string $class   Class to handle debug work
-     * @param bool   $replace Allow replacing of a previously declared aliased tool?
+     * @param mixed  $configs
+     * @return Dbug
+     */
+    public function config($configs)
+    {
+        $opts = func_get_args();
+
+        for ($i = 0; $i < count($opts); $i += 1) {
+            $cur = $opts[$i];
+            if (is_array($cur)) {
+                $this->_currentToolConfigs = array_merge($this->_currentToolConfigs, $cur);
+            }
+            if (is_string($cur)) {
+                if (empty($opts[$i + 1])) {
+                    $this->_currentToolConfigs[$cur] = true;
+                } else {
+                    $this->_currentToolConfigs[$cur] = $opts[$i + 1];
+                    $i += 1;
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Renders the tool results
+     *
+     * Appends results to result stack if not ignored
+     *
      * @return Dbug
      * @throws DbugException
      */
-    public function registerTool($alias, $class, $replace = false)
+    public function render()
     {
-        $this->validateRegisterArgs($alias, $class);
-
-        if (isset($this->_tools[$alias]) && !$replace) {
-            throw new DbugException("ERROR: A Dbug Tool with alias '{$alias}' is already registered.");
+        $this->_currentTool->setConfig($this->_currentToolConfigs);
+        if (!$this->_currentToolResults = $this->_currentTool->render()) {
+            throw new DbugException("'{$this->_currentTool->getToolAlias()}' did not return valid render results.");
         }
-
-        $this->_tools[$alias] = new $class($alias);
+        if (!$this->_ignoreCurrent) {
+            $this->_dbugStack[] = $this->_currentToolResults;
+        }
 
         return $this;
     }
 
     /**
-     * Removes & outputs last executed DbugTool results from the stack
+     * Dumps current DbugTool results to the screen
+     *
+     * Appends results to result stack if not ignored
      *
      * @return Dbug
      */
-    public function only()
+    public function dump()
     {
-        echo array_pop($this->_dbugStack);
-
-        return $this;
-    }
-
-    /**
-     * Outputs the DbugTool results without terminating the script
-     *
-     * @param int $count How far back along the stack to dump.
-     *                   If $count > stack count it will fail silently
-     *                   after dumping any available results.
-     * @return Dbug
-     */
-    public function dump($count = 1)
-    {
-        $total = count($this->_dbugStack) - 1;
-        for ($i=0; $i<=$count; $i+=1) {
-            $next = $total - $i;
-            if (empty($this->_dbugStack[$next])) {
-                break;
-            }
-            echo $this->_dbugStack[$next];
+        if (is_null($this->_currentToolResults)) {
+            $this->render();
         }
+        echo $this->_currentToolResults;
 
         return $this;
     }
@@ -254,6 +362,7 @@ class Dbug
 
     /**
      * @param  string $name
+     * @return bool
      * @throws DbugException
      */
     private function validateCalledTool($name)
@@ -261,6 +370,19 @@ class Dbug
         if (!isset($this->_tools[$name])) {
             throw new DbugException("'{$name}' is not a registered DbugTool.");
         }
+
+        return true;
+    }
+
+    /**
+     * Resets Dbug properties that are used on a per-tool call basis
+     */
+    private function resetInstanceProperties()
+    {
+        $this->_currentTool = null;
+        $this->_ignoreCurrent = false;
+        $this->_currentToolResults = null;
+        $this->_currentToolConfigs = [];
     }
 
     /**

@@ -99,13 +99,11 @@ abstract class DbugTool
     protected $dieMessage = "<br>Killed by PHPMinion::DbugTool<br>";
 
     /**
-     * Placeholder for valid config parameters and data types
-     *
-     * Set in DbugTool
+     * Configuration settings
      *
      * @var array
      */
-    protected $validConfigParams = [];
+    protected $config = [];
 
     /**
      * @param DbugCrumbInterface $crumb
@@ -113,6 +111,11 @@ abstract class DbugTool
     public function setCrumb(DbugCrumbInterface $crumb)
     {
         $this->crumb = $crumb;
+    }
+
+    public function setConfig($config)
+    {
+        $this->config = $config;
     }
 
     /**
@@ -135,35 +138,15 @@ abstract class DbugTool
     }
 
     /**
-     * Passthrough for setting config options for the DbugTool
+     * Default implementation
      *
-     * @param string $param
-     * @param mixed  $value
+     * Used for error checking in Dbug
+     *
      * @throws DbugException
      */
-    public function config($param, $value)
+    public function render()
     {
-        throw new DbugException("No config options available for " . get_class($this));
-    }
-
-    /**
-     * Validates config() arguments for DbugTools
-     *
-     * @param string $param
-     * @param mixed  $value
-     * @return bool
-     * @throws DbugException
-     */
-    protected function validateConfigArgs($param, $value)
-    {
-        if (empty($this->validConfigParams[$param])) {
-            throw new DbugException("'{$param}' is not a valid config option for '{$this->toolAlias}'.");
-        }
-        if (!in_array(gettype($value), $this->validConfigParams[$param])) {
-            throw new DbugException("'{$value}' is not a valid datatype for config param '{$param}' in '{$this->toolAlias}'.");
-        }
-
-        return true;
+        throw new DbugException("No render() method defined for " . get_class($this));
     }
 
     /**
@@ -176,6 +159,8 @@ abstract class DbugTool
         if (!$this->kill) {
             return;
         }
+
+        $this->render();
 
         if (is_null($this->dbugResults)) {
             throw new DbugException("Unable to render {$this->toolAlias}: dbugResults is null.");

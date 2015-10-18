@@ -6,7 +6,7 @@
  *
  * @package     PHPMinion
  * @author      Evan Johnson
- * @created     October 16, 2015
+ * @created     October 9, 2015
  * @version     0.1
  */
 

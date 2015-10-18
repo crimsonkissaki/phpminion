@@ -28,10 +28,17 @@ class DbugTraceCrumb extends DbugCrumb implements DbugCrumbInterface
      */
     public function render()
     {
+        $this->validateConfigArgs();
+
+        $preCss = $this->cssStyles['pre'];
+        if (!empty($this->config['scroll'])) {
+            $preCss = $this->cssStyles['pre'] . " overflow-y: scroll; height: {$this->config['scroll']};";
+        }
+
         return <<<OUTPUT
 <div style="{$this->cssStyles['container']}">
 <div style="{$this->cssStyles['toolTitle']}">{$this->toolTitle}</div>
-<pre style="{$this->cssStyles['pre']}"><div style="{$this->cssStyles['dbugDiv']}">{$this->callingMethodInfo}
+<pre style="{$preCss}"><div style="{$this->cssStyles['dbugDiv']}">{$this->callingMethodInfo}
 
 <div style="{$this->cssStyles['varDataDiv']}">{$this->variableData}</div></div></pre>
 </div>

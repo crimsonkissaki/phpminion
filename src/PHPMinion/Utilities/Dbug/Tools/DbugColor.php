@@ -34,11 +34,6 @@ class DbugColor extends DbugTool implements DbugToolInterface
      */
     protected $defaultColor = '#F00';
 
-    public function getDbugResults()
-    {
-        return $this->dbugResults;
-    }
-
     /**
      * @inheritDoc
      */
@@ -67,9 +62,27 @@ class DbugColor extends DbugTool implements DbugToolInterface
         $crumb->callingMethodInfo = $this->common->getMethodInfoString($this->common->getMethodInfo());
         $crumb->variableData = $this->common->colorize($this->dbugResults, $this->commentColor);
 
-        $this->render();
+        $this->checkKillScript();
 
         return $this;
+    }
+
+    /**
+     * Generates Dbug results
+     *
+     * @return string
+     * @throws DbugException
+     */
+    public function render()
+    {
+        if (!$this->crumb instanceof DbugCrumbInterface) {
+            throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
+        }
+
+        $this->crumb->config = $this->config;
+        $this->dbugResults = $this->crumb->render();
+
+        return $this->dbugResults;
     }
 
     /**
@@ -110,24 +123,6 @@ class DbugColor extends DbugTool implements DbugToolInterface
         }
 
         return $target;
-    }
-
-    /**
-     * Generates Dbug results
-     *
-     * @return string
-     * @throws DbugException
-     */
-    protected function render()
-    {
-        if (!$this->crumb instanceof DbugCrumbInterface) {
-            throw new DbugException("Unable to render tool '{$this->toolAlias}': '" . get_class($this->crumb) . "' must be an instance of DbugCrumbInterface.");
-        }
-
-        $this->dbugResults = $this->crumb->render();
-        $this->checkKillScript();
-
-        return $this->dbugResults;
     }
 
 }

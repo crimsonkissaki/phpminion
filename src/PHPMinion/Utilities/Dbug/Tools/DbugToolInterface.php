@@ -22,6 +22,20 @@ interface DbugToolInterface
 {
 
     /**
+     * Gets the alias assigned to the DbugTool
+     *
+     * @return string
+     */
+    public function getToolAlias();
+
+    /**
+     * Sets DbugTool config options (if any)
+     *
+     * @param mixed
+     */
+    public function setConfig($config);
+
+    /**
      * Analyzes a variable
      *
      * @param  array  $args  Args to be passed to DbugTool
@@ -30,10 +44,10 @@ interface DbugToolInterface
     public function analyze(array $args);
 
     /**
-     * Returns DbugTool results
+     * Generates Dbug results
      *
      * @return string
      */
-    public function getDbugResults();
+    public function render();
 
 }

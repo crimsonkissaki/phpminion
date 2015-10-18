@@ -31,7 +31,7 @@ class Common
      * Default debug_backtrace() index to start with
      * to get accurate trace results
      */
-    const DEFAULT_STARTING_BACKTRACE_INDEX = 5;
+    const DEFAULT_STARTING_BACKTRACE_INDEX = 4;
 
     /**
      * Static accessor for Common class
