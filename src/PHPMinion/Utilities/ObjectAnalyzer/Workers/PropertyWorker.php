@@ -180,12 +180,15 @@ class PropertyWorker
         $model = new PropertyModel();
         $model->name = (is_object($value)) ? $value->name : $key;
         //$model->setter = $this->findPropertySetterIfExists($result->name, $this->methods);
+        $model->setter = 'TODO: get this working!';
         $model->visibility = $visibility;
         $model->isStatic = (is_object($value)) ? $value->isStatic() : false;
         $model->currentValue = $this->getCurrentPropertyValue($visibility, $value);
         $model->currentValueDataType = gettype($model->currentValue);
-        $model->defaultValue = $this->getPropertyDefaultValue($visibility, $value);
-        $model->defaultValueDataType = gettype($model->defaultValue);
+        //$model->defaultValue = $this->getPropertyDefaultValue($visibility, $value);
+        //$model->defaultValueDataType = gettype($model->defaultValue);
+        $model->defaultValue = 'TODO: get this working!';
+        $model->defaultValueDataType = 'TODO: get this working!';
         $classData = $this->getValueClassData($model->currentValue);
         $model->className = $classData['className'];
         $model->classNamespace = $classData['classNamespace'];
@@ -221,16 +224,15 @@ class PropertyWorker
             return $value->getValue();
         }
 
-        /*
-        if ($value->class === 'stdClass') {
-            $name = $value->name;
-            return $this->_obj->$name;
+        $curVal = $value->getValue($this->_obj);
+        //\application\Utils::dbug($value, "value object");
+        //\application\Utils::dbug($value->getValue($this->_obj), "property value", true);
+
+        if (is_object($curVal)) {
+            return 'OBJECT ('.get_class($curVal).')';
+        } else {
+            return $curVal;
         }
-        */
-
-        $name = $value->name;
-
-        return $this->_obj->$name;
     }
 
     /**

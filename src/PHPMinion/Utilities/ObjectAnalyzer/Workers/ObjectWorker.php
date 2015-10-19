@@ -17,6 +17,8 @@ use PHPMinion\Utilities\ObjectAnalyzer\Models\PropertyModel;
 use PHPMinion\Utilities\ObjectAnalyzer\Models\MethodModel;
 use PHPMinion\Utilities\ObjectAnalyzer\Workers\PropertyWorker;
 use PHPMinion\Utilities\ObjectAnalyzer\Exceptions\ObjectAnalyzerException;
+use PHPMinion\Utilities\ObjectAnalyzer\Renderer\ObjectModelRendererInterface;
+use PHPMinion\Utilities\ObjectAnalyzer\Renderer\ObjectModelRenderer;
 
 /**
  * Class ObjectWorker
@@ -52,9 +54,28 @@ class ObjectWorker
 
     private $_methodWorker;
 
+    /**
+     * @var ObjectModelRendererInterface
+     */
+    private $_renderer;
+
+    public function setRenderer(ObjectModelRendererInterface $renderer)
+    {
+        $this->_renderer = $renderer;
+    }
+
+    public function getRenderer()
+    {
+        return $this->_renderer;
+    }
+
+    /**
+     * TODO: need to allow custom setting of object model renderers
+     */
     public function __construct()
     {
         $this->_model = new ObjectModel();
+        $this->setRenderer(new ObjectModelRenderer());
     }
 
     /**
@@ -70,10 +91,13 @@ class ObjectWorker
 
         $model = new ObjectModel();
         $model->name = $this->getObjectName($this->_refObj);
+        //$properties = $this->_propertyWorker->getClassProperties();
         $model->properties = $this->_propertyWorker->getClassProperties();
         //$model->methods = $this->getObjectMethods($this->_obj);
 
-        return $model;
+        $renderedModel = $this->_renderer->renderObjectModel($model);
+
+        return $renderedModel;
     }
 
     /**
