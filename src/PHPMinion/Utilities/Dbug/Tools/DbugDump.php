@@ -58,7 +58,7 @@ class DbugDump extends DbugTool implements DbugToolInterface
         $crumb = $this->crumb;
         $crumb->callingMethodInfo = $this->common->getMethodInfoString($this->common->getMethodInfo());
         $crumb->variableType = $this->common->getSimpleTypeValue($this->dbugTarget);
-        $crumb->variableData = $objectAnalyzer->analyzeObject($this->dbugTarget);
+        $crumb->variableData = $this->common->getFullSimpleTypeValue($this->dbugTarget);
         $crumb->dbugComment = (empty($this->comment)) ? ''
                                : $this->common->colorize($this->comment, $this->commentColor).PHP_EOL.PHP_EOL;
 
@@ -91,7 +91,7 @@ class DbugDump extends DbugTool implements DbugToolInterface
      */
     protected function processArgs(array $args)
     {
-        if (empty($args[0])) {
+        if (!isset($args[0])) {
             throw new DbugException("ERROR: No variable provided to DbugDump");
         }
 

@@ -14,6 +14,7 @@ namespace PHPMinion\Utilities\Core;
 
 use PHPMinion\PHPMinion;
 use PHPMinion\Utilities\Core\Exceptions\PHPMinionException;
+use PHPMinion\Utilities\Dbug\Dbug;
 use PHPMinion\Utilities\Dbug\Models\TraceModel;
 
 /**
@@ -216,8 +217,10 @@ class Common
                 print_r($var);
                 return ob_get_clean();
             case (is_object($var)):
+                $objAnalyzer = Dbug::getInstance()->getConfig()->getObjectAnalyzer();
+                $obj = $objAnalyzer->analyzeObject($var);
                 ob_start();
-                print_r($var);
+                print_r($obj);
                 return ob_get_clean();
             default:
                 return $this->getSimpleTypeValue($var);

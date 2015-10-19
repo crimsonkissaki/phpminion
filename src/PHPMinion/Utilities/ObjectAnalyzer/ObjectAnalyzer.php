@@ -12,6 +12,8 @@
 
 namespace PHPMinion\Utilities\ObjectAnalyzer;
 
+use PHPMinion\Utilities\ObjectAnalyzer\Workers\ObjectWorker;
+
 /**
  * Class ObjectAnalyzer
  *
@@ -27,12 +29,33 @@ class ObjectAnalyzer implements ObjectAnalysisInterface
 {
 
     /**
+     * @var ObjectWorker
+     */
+    private $_objWorker;
+
+    public function __construct()
+    {
+        $this->_objWorker = new ObjectWorker();
+    }
+
+    /**
      * @inheritDoc
      */
     public function analyzeObject($obj)
     {
+        if (is_object($obj)) {
+            $refObj = new \ReflectionObject($obj);
+        }
+        if (is_string($obj)) {
+            $refObj = new \ReflectionClass($obj);
+        }
+
+        $this->_objWorker->setObject($obj);
+        $this->_objWorker->setReflectionObject($refObj);
+        $_obj = $this->_objWorker->analyze();
+
         ob_start();
-        var_dump($obj);
+        var_dump($_obj);
         $data = ob_get_clean();
 
         return $data;
