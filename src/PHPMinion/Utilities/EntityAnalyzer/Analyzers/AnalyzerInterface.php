@@ -10,10 +10,10 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\ObjectAnalyzer;
+namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
 /**
- * Class ObjectAnalysisInterface
+ * AnalyzerInterface
  *
  * Interface for any class used by DbugTools to get
  * object information for debugging.
@@ -23,15 +23,15 @@ namespace PHPMinion\Utilities\ObjectAnalyzer;
  * @created     October 18, 2015
  * @version     0.1
  */
-interface ObjectAnalysisInterface
+interface AnalyzerInterface
 {
 
     /**
-     * Analyzes objects and returns a simplified summary
+     * Analyzes entities and returns a simplified summary
      *
-     * @param  object $obj Object to analyze
+     * @param  mixed $entity Entity to analyze
      * @return mixed
      */
-    public function analyzeObject($obj);
+    public function analyze($entity);
 
 }

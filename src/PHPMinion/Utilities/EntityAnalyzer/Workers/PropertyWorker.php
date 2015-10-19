@@ -10,13 +10,13 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\ObjectAnalyzer\Workers;
+namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
 use PHPMinion\Utilities\Dbug\Dbug;
-use PHPMinion\Utilities\ObjectAnalyzer\Models\ObjectModel;
-use PHPMinion\Utilities\ObjectAnalyzer\Models\PropertyModel;
-use PHPMinion\Utilities\ObjectAnalyzer\Models\MethodModel;
-use PHPMinion\Utilities\ObjectAnalyzer\Exceptions\ObjectAnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
  * Class ObjectWorker
@@ -48,12 +48,12 @@ class PropertyWorker
     /**
      * @param object           $targetObj
      * @param \ReflectionClass $reflectionObj
-     * @throws ObjectAnalyzerException
+     * @throws AnalyzerException
      */
     public function __construct($targetObj, \ReflectionClass $reflectionObj)
     {
         if (!is_object($targetObj)) {
-            throw new ObjectAnalyzerException("PropertyWorker \$targetObj must be a valid object instance.");
+            throw new AnalyzerException("PropertyWorker \$targetObj must be a valid object instance.");
         }
 
         $this->_obj = $targetObj;

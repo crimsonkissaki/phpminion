@@ -10,10 +10,10 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\ObjectAnalyzer\Renderer;
+namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
 
-use PHPMinion\Utilities\ObjectAnalyzer\Models\ObjectModel;
-use PHPMinion\Utilities\ObjectAnalyzer\Models\PropertyModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\AnalysisModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
 
 /**
  * Class ObjectModelTranslator
@@ -23,28 +23,36 @@ use PHPMinion\Utilities\ObjectAnalyzer\Models\PropertyModel;
  * @created     October 19, 2015
  * @version     0.1
  */
-class ObjectModelRenderer implements ObjectModelRendererInterface
+class ObjectModelRenderer implements ModelRendererInterface
 {
 
-    public function renderObjectModel(ObjectModel $model, $indent = 2)
+    /**
+     * @inheritDoc
+     */
+    public function renderModel(AnalysisModel $model, $level = 0)
     {
-        $output = "Object ({$model->name})".PHP_EOL;
+        $output = $this->indent($level) . "Object ({$model->name})".PHP_EOL;
         foreach ($model->properties as $vis => $props) {
             /** @var PropertyModel $prop */
             foreach ($props as $prop) {
                 //\application\Utils::dbug($prop, "property", true);
-                $output .= $this->generatePropertyOutput($prop, $indent);
+                $output .= $this->generatePropertyOutput($prop, $level + 1);
             }
         }
 
         return $output;
     }
 
-    private function generatePropertyOutput(PropertyModel $prop, $indent)
+    private function indent($level)
+    {
+        return str_repeat('  ', $level);
+    }
+
+    private function generatePropertyOutput(PropertyModel $prop, $level)
     {
         $type = $prop->currentValueDataType;
         echo "--> generating for '{$type}'<BR>";
-        $output = str_repeat(' ', $indent)."{$prop->visibility} '{$prop->name}' =>";
+        $output = $this->indent($level)."{$prop->visibility} '{$prop->name}' =>";
         // number of spaces to put before the line
         switch(strtolower($prop->currentValueDataType)) {
             case 'string':
@@ -54,10 +62,10 @@ class ObjectModelRenderer implements ObjectModelRendererInterface
                 $output .= $this->generateNullOutput($prop);
                 break;
             case 'object':
-                $output .= $this->generateObjectOutput($prop, $indent);
+                $output .= $this->generateObjectOutput($prop, $level + 1);
                 break;
             case 'array':
-                $output .= $this->generateArrayOutput($prop, $indent);
+                $output .= $this->generateArrayOutput($prop, $level + 1);
                 break;
             default:
                 $output .= " no handler for generating '{$type}'<BR>";
@@ -81,20 +89,24 @@ class ObjectModelRenderer implements ObjectModelRendererInterface
         return $output;
     }
 
-    private function generateObjectOutput(PropertyModel $prop, $indent)
+    private function generateObjectOutput(PropertyModel $prop, $level)
     {
-        $spc = str_repeat(' ', $indent + 2);
-        $output = PHP_EOL.$spc."{$prop->currentValueDataType} {$prop->currentValue}".PHP_EOL;
+        $output = PHP_EOL . $this->indent($level);
+        $output .= "{$prop->currentValueDataType} {$prop->currentValue}".PHP_EOL;
 
         return $output;
     }
 
-    private function generateArrayOutput(PropertyModel $prop, $indent)
+    private function generateArrayOutput(PropertyModel $prop, $level)
     {
-        $spc = str_repeat(' ', $indent + 2);
         $val = $prop->currentValue;
-        $output = PHP_EOL.$spc.'array (size=' . count($val) . ')' . PHP_EOL;
+        $output = PHP_EOL . $this->indent($level);
+        $output .= 'array (size=' . count($val) . ')' . PHP_EOL;
         foreach ($val as $k => $v) {
+            $subLvl = $level + 1;
+            $output .= $this->indent($subLvl) . "{$k} =>" . PHP_EOL;
+            // TODO: array elements should be constructed of propertymodels as well
+            // or use an arrayvaluemodel which inherits propertymodel?
         }
 
         return $output;

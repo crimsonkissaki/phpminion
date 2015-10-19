@@ -52,8 +52,6 @@ class DbugDump extends DbugTool implements DbugToolInterface
     {
         $this->processArgs($args);
 
-        $objectAnalyzer = Dbug::getInstance()->getConfig()->getObjectAnalyzer();
-
         /** @var \PHPMinion\Utilities\Dbug\Crumbs\DbugDumpCrumb $crumb */
         $crumb = $this->crumb;
         $crumb->callingMethodInfo = $this->common->getMethodInfoString($this->common->getMethodInfo());

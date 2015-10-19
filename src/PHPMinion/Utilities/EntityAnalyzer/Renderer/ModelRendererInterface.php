@@ -10,9 +10,9 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\ObjectAnalyzer\Renderer;
+namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
 
-use PHPMinion\Utilities\ObjectAnalyzer\Models\ObjectModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\AnalysisModel;
 
 /**
  * ObjectModelTranslatorInterface
@@ -20,15 +20,16 @@ use PHPMinion\Utilities\ObjectAnalyzer\Models\ObjectModel;
  * @created     October 19, 2015
  * @version     0.1
  */
-interface ObjectModelRendererInterface
+interface ModelRendererInterface
 {
 
     /**
      * Renders valid output from an ObjectModel
      *
-     * @param  ObjectModel $model
+     * @param  AnalysisModel $model Model to render
+     * @param  int           $level Starting indentation level
      * @return string
      */
-    public function renderObjectModel(ObjectModel $model);
+    public function renderModel(AnalysisModel $model, $level = 0);
 
 }

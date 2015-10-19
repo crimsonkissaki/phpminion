@@ -10,28 +10,19 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\ObjectAnalyzer\Models;
+namespace PHPMinion\Utilities\EntityAnalyzer\Models;
 
 /**
- * Class ObjectModel
+ * Class AnalysisModel
  *
- * Model to hold object data
+ * Parent model for all EntityAnalyzer models
  *
  * @package     PHPMinion
  * @author      Evan Johnson
  * @created     October 18, 2015
  * @version     0.1
  */
-class ObjectModel
+abstract class AnalysisModel
 {
-
-    /**
-     * @var string
-     */
-    public $name;
-
-    public $properties = [];
-
-    public $methods = [];
 
 }

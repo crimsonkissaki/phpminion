@@ -10,10 +10,10 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\ObjectAnalyzer;
+namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
-use PHPMinion\Utilities\ObjectAnalyzer\Workers\ObjectWorker;
-use PHPMinion\Utilities\ObjectAnalyzer\Exceptions\ObjectAnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Workers\ObjectWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
  * Class ObjectAnalyzer
@@ -26,7 +26,7 @@ use PHPMinion\Utilities\ObjectAnalyzer\Exceptions\ObjectAnalyzerException;
  * @created     October 18, 2015
  * @version     0.1
  */
-class ObjectAnalyzer implements ObjectAnalysisInterface
+class ObjectAnalyzer implements AnalyzerInterface
 {
 
     /**
@@ -42,11 +42,11 @@ class ObjectAnalyzer implements ObjectAnalysisInterface
     /**
      * @inheritDoc
      */
-    public function analyzeObject($obj)
+    public function analyze($object)
     {
-        $this->validateObj($obj);
+        $this->validateObj($object);
 
-        return $this->_objWorker->analyze($obj);
+        return $this->_objWorker->analyze($object);
     }
 
     /**
@@ -54,7 +54,7 @@ class ObjectAnalyzer implements ObjectAnalysisInterface
      *
      * @param  mixed $obj
      * @return bool
-     * @throws ObjectAnalyzerException
+     * @throws AnalyzerException
      */
     private function validateObj($obj)
     {
@@ -65,7 +65,7 @@ class ObjectAnalyzer implements ObjectAnalysisInterface
             return true;
         }
 
-        throw new ObjectAnalyzerException("ObjectAnalyzer only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
+        throw new AnalyzerException("ObjectAnalyzer only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
     }
 
 }

@@ -10,15 +10,15 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\ObjectAnalyzer\Workers;
+namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
-use PHPMinion\Utilities\ObjectAnalyzer\Models\ObjectModel;
-use PHPMinion\Utilities\ObjectAnalyzer\Models\PropertyModel;
-use PHPMinion\Utilities\ObjectAnalyzer\Models\MethodModel;
-use PHPMinion\Utilities\ObjectAnalyzer\Workers\PropertyWorker;
-use PHPMinion\Utilities\ObjectAnalyzer\Exceptions\ObjectAnalyzerException;
-use PHPMinion\Utilities\ObjectAnalyzer\Renderer\ObjectModelRendererInterface;
-use PHPMinion\Utilities\ObjectAnalyzer\Renderer\ObjectModelRenderer;
+use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
+use PHPMinion\Utilities\EntityAnalyzer\Workers\PropertyWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Renderer\ModelRendererInterface;
+use PHPMinion\Utilities\EntityAnalyzer\Renderer\ObjectModelRenderer;
 
 /**
  * Class ObjectWorker
@@ -55,11 +55,11 @@ class ObjectWorker
     private $_methodWorker;
 
     /**
-     * @var ObjectModelRendererInterface
+     * @var ModelRendererInterface
      */
     private $_renderer;
 
-    public function setRenderer(ObjectModelRendererInterface $renderer)
+    public function setRenderer(ModelRendererInterface $renderer)
     {
         $this->_renderer = $renderer;
     }
@@ -95,7 +95,7 @@ class ObjectWorker
         $model->properties = $this->_propertyWorker->getClassProperties();
         //$model->methods = $this->getObjectMethods($this->_obj);
 
-        $renderedModel = $this->_renderer->renderObjectModel($model);
+        $renderedModel = $this->_renderer->renderModel($model);
 
         return $renderedModel;
     }
@@ -107,7 +107,7 @@ class ObjectWorker
      *
      * @param mixed $obj
      * @return bool
-     * @throws ObjectAnalyzerException
+     * @throws AnalyzerException
      */
     private function setUp($obj)
     {
@@ -123,7 +123,7 @@ class ObjectWorker
                 $this->_obj = new $obj();
                 $this->_refObj = new \ReflectionClass($obj);
             } catch (\Exception $e) {
-                throw new ObjectAnalyzerException("Unknown error while attempting to instantiate '{$obj}': '{$e->getMessage()}'\n\nCreate an object instance and try that instead.");
+                throw new AnalyzerException("Unknown error while attempting to instantiate '{$obj}': '{$e->getMessage()}'\n\nCreate an object instance and try that instead.");
             }
         }
 
@@ -135,7 +135,7 @@ class ObjectWorker
      *
      * @param  mixed $obj
      * @return bool
-     * @throws ObjectAnalyzerException
+     * @throws AnalyzerException
      */
     private function validateTargetObj($obj)
     {
@@ -146,7 +146,7 @@ class ObjectWorker
             return true;
         }
 
-        throw new ObjectAnalyzerException("ObjectWorker only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
+        throw new AnalyzerException("ObjectWorker only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
     }
 
     private function getObjectName(\ReflectionClass $obj)

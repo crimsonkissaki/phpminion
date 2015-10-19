@@ -12,8 +12,8 @@
 
 namespace PHPMinion\Utilities\Core;
 
-use PHPMinion\Utilities\ObjectAnalyzer\ObjectAnalysisInterface;
-use PHPMinion\Utilities\ObjectAnalyzer\ObjectAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\AnalyzerInterface;
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer;
 
 /**
  * Config.php
@@ -38,24 +38,24 @@ class Config
     /**
      * Class used to analyze objects in DbugTools
      *
-     * @var ObjectAnalysisInterface
+     * @var AnalyzerInterface
      */
-    private $_objectAnalyzer;
+    private $_entityAnalyzer;
 
-    public function setObjectAnalyzer(ObjectAnalysisInterface $objectAnalyzer)
+    public function setEntityAnalyzer(AnalyzerInterface $entityAnalyzer)
     {
-        $this->_objectAnalyzer = $objectAnalyzer;
+        $this->_entityAnalyzer = $entityAnalyzer;
     }
 
-    public function getObjectAnalyzer()
+    public function getEntityAnalyzer()
     {
-        return $this->_objectAnalyzer;
+        return $this->_entityAnalyzer;
     }
 
     public function __construct()
     {
         $this->PROJECT_ROOT_PATH = dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR;
-        $this->setObjectAnalyzer(new ObjectAnalyzer());
+        $this->setEntityAnalyzer(new EntityAnalyzer());
     }
 
 }

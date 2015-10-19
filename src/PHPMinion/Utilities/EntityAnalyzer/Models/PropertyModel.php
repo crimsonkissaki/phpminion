@@ -10,7 +10,7 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\ObjectAnalyzer\Models;
+namespace PHPMinion\Utilities\EntityAnalyzer\Models;
 
 /**
  * Class PropertyModel
@@ -22,7 +22,7 @@ namespace PHPMinion\Utilities\ObjectAnalyzer\Models;
  * @created     October 18, 2015
  * @version     0.1
  */
-class PropertyModel
+class PropertyModel extends AnalysisModel
 {
 
     /**

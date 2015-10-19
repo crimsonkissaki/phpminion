@@ -217,8 +217,8 @@ class Common
                 print_r($var);
                 return ob_get_clean();
             case (is_object($var)):
-                $objAnalyzer = Dbug::getInstance()->getConfig()->getObjectAnalyzer();
-                $obj = $objAnalyzer->analyzeObject($var);
+                $analyzer = Dbug::getInstance()->getConfig()->getEntityAnalyzer();
+                $obj = $analyzer->analyze($var);
                 ob_start();
                 print_r($obj);
                 return ob_get_clean();
