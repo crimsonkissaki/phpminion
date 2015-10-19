@@ -88,9 +88,9 @@ class DbugCrumb implements DbugCrumbInterface
     public $cssStyles = [
         'container'  => 'position: relative; font-family: monospace; font-size: 1em; background-color: #FFF; text-align: left; padding-bottom: 0px; margin: 10px; border-radius: 5px; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
         'toolTitle'  => 'position: relative; font-size: 1.2em; border: 1px solid black; border-bottom-style: hidden; border-radius: 5px 5px 0 0; padding: 2px 5px; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
-        'pre'        => 'position: relative; display: block; margin-top: 0px; border-radius: 5px; border: 1px dashed black;',
-        'dbugDiv'    => 'position: relative; margin: 10px;',
-        'varDataDiv' => 'position: relative; padding: 5px 10px; border: 1px solid black; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
+        'pre'        => 'position: relative; background-color: #FFF; display: block; margin-top: 0px; border-radius: 5px; border: 1px dashed black;',
+        'dbugDiv'    => 'position: relative; background-color: #FFF; margin: 10px;',
+        'varDataDiv' => 'position: relative; background-color: #FFF; padding: 5px 10px; border: 1px solid black; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;',
     ];
 
     /**

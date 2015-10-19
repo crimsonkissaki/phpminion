@@ -16,6 +16,7 @@ use PHPMinion\Utilities\Dbug\Dbug;
 use PHPMinion\Utilities\ObjectAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\ObjectAnalyzer\Models\PropertyModel;
 use PHPMinion\Utilities\ObjectAnalyzer\Models\MethodModel;
+use PHPMinion\Utilities\ObjectAnalyzer\Exceptions\ObjectAnalyzerException;
 
 /**
  * Class ObjectWorker
@@ -30,27 +31,39 @@ use PHPMinion\Utilities\ObjectAnalyzer\Models\MethodModel;
 class PropertyWorker
 {
 
+    /**
+     * Target object instance to analyze
+     *
+     * @var object
+     */
     private $_obj;
 
     /**
-     * @var \ReflectionClass
+     * Target object's ReflectionClass instance
+     *
+     * @var \ReflectionClass $_refObj
      */
     private $_refObj;
 
-    public function setObj($obj)
+    /**
+     * @param object           $targetObj
+     * @param \ReflectionClass $reflectionObj
+     * @throws ObjectAnalyzerException
+     */
+    public function __construct($targetObj, \ReflectionClass $reflectionObj)
     {
-        $this->_obj= $obj;
-    }
+        if (!is_object($targetObj)) {
+            throw new ObjectAnalyzerException("PropertyWorker \$targetObj must be a valid object instance.");
+        }
 
-    public function setRefObj(\ReflectionClass $refObj)
-    {
-        $this->_refObj = $refObj;
+        $this->_obj = $targetObj;
+        $this->_refObj = $reflectionObj;
     }
 
     /**
-     * Gets an array of class properties through a reflection class instance
+     * Returns object properties represented as PropertyModel objects
      *
-     * @return  array
+     * @return  PropertyModel[]
      */
     public function getClassProperties()
     {
@@ -59,27 +72,59 @@ class PropertyWorker
         return $this->getClassPropertiesDetails($refProps);
     }
 
+    /**
+     * Returns an associative array of object properties by visibility
+     *
+     * <code>
+     * $props = [
+     *   'constant' => [
+     *     \ReflectionProperty,
+     *     \ReflectionProperty,
+     *   ],
+     *   'public' => [
+     *     \ReflectionProperty,
+     *     \ReflectionProperty,
+     *   ],
+     *   ...
+     * ];
+     * </code>
+     *
+     * @return array
+     */
     private function getReflectionProperties()
     {
         $obj = $this->_refObj;
 
         $props = [];
-        $props['constant'] = $obj->getConstants();
-        $props['private'] = $obj->getProperties(\ReflectionProperty::IS_PRIVATE);
-        $props['protected'] = $obj->getProperties(\ReflectionProperty::IS_PROTECTED);
-        $props['public'] = $obj->getProperties(\ReflectionProperty::IS_PUBLIC);
-        $props['static'] = $obj->getProperties(\ReflectionProperty::IS_STATIC);
+        if ($const = $obj->getConstants()) {
+            $props['constant'] = $const;
+        }
+        if ($priv = $obj->getProperties(\ReflectionProperty::IS_PRIVATE)) {
+            $props['private'] = $priv;
+        }
+        if ($prot = $obj->getProperties(\ReflectionProperty::IS_PROTECTED)) {
+            $props['protected'] = $prot;
+        }
+        if ($pub = $obj->getProperties(\ReflectionProperty::IS_PUBLIC)) {
+            $props['public'] = $pub;
+        }
+        if ($stat = $obj->getProperties(\ReflectionProperty::IS_STATIC)) {
+            $props['static'] = $stat;
+        }
 
         return $props;
     }
 
     /**
-     * Gets an array of PropertyModel objects for the class's properties
+     * Returns an associative array of visibility => [PropertyModel objects] for the class's properties
+     *
+     * @param  array $classProps
+     * @return array
      */
-    private function getClassPropertiesDetails($classProperties)
+    private function getClassPropertiesDetails(array $classProps)
     {
         $models = [];
-        foreach ($classProperties as $visibility => $properties) {
+        foreach ($classProps as $visibility => $properties) {
             if (!empty($properties)) {
                 $models[$visibility] = $this->getPropertiesDetails($visibility, $properties);
             }

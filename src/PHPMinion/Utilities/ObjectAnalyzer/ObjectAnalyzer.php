@@ -13,6 +13,7 @@
 namespace PHPMinion\Utilities\ObjectAnalyzer;
 
 use PHPMinion\Utilities\ObjectAnalyzer\Workers\ObjectWorker;
+use PHPMinion\Utilities\ObjectAnalyzer\Exceptions\ObjectAnalyzerException;
 
 /**
  * Class ObjectAnalyzer
@@ -43,22 +44,28 @@ class ObjectAnalyzer implements ObjectAnalysisInterface
      */
     public function analyzeObject($obj)
     {
+        $this->validateObj($obj);
+
+        return $this->_objWorker->analyze($obj);
+    }
+
+    /**
+     * Verifies the analysis target is workable
+     *
+     * @param  mixed $obj
+     * @return bool
+     * @throws ObjectAnalyzerException
+     */
+    private function validateObj($obj)
+    {
         if (is_object($obj)) {
-            $refObj = new \ReflectionObject($obj);
+            return true;
         }
-        if (is_string($obj)) {
-            $refObj = new \ReflectionClass($obj);
+        if (is_string($obj) && class_exists($obj)) {
+            return true;
         }
 
-        $this->_objWorker->setObject($obj);
-        $this->_objWorker->setReflectionObject($refObj);
-        $_obj = $this->_objWorker->analyze();
-
-        ob_start();
-        var_dump($_obj);
-        $data = ob_get_clean();
-
-        return $data;
+        throw new ObjectAnalyzerException("ObjectAnalyzer only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
     }
 
 }

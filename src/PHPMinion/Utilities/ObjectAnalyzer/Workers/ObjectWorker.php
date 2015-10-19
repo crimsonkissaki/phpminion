@@ -16,6 +16,7 @@ use PHPMinion\Utilities\ObjectAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\ObjectAnalyzer\Models\PropertyModel;
 use PHPMinion\Utilities\ObjectAnalyzer\Models\MethodModel;
 use PHPMinion\Utilities\ObjectAnalyzer\Workers\PropertyWorker;
+use PHPMinion\Utilities\ObjectAnalyzer\Exceptions\ObjectAnalyzerException;
 
 /**
  * Class ObjectWorker
@@ -51,16 +52,6 @@ class ObjectWorker
 
     private $_methodWorker;
 
-    public function setObject($obj)
-    {
-        $this->_obj = $obj;
-    }
-
-    public function setReflectionObject(\ReflectionClass $obj)
-    {
-        $this->_refObj = $obj;
-    }
-
     public function __construct()
     {
         $this->_model = new ObjectModel();
@@ -71,11 +62,11 @@ class ObjectWorker
      *
      * @return ObjectModel
      */
-    public function analyze()
+    public function analyze($obj)
     {
-        $this->_propertyWorker = new PropertyWorker();
-        $this->_propertyWorker->setObj($this->_obj);
-        $this->_propertyWorker->setRefObj($this->_refObj);
+        $this->setUp($obj);
+
+        $this->_propertyWorker = new PropertyWorker($this->_obj, $this->_refObj);
 
         $model = new ObjectModel();
         $model->name = $this->getObjectName($this->_refObj);
@@ -83,6 +74,55 @@ class ObjectWorker
         //$model->methods = $this->getObjectMethods($this->_obj);
 
         return $model;
+    }
+
+    /**
+     * Sets up ObjectWorker
+     *
+     * TODO: this will probably have issues if passing in a class name string and it requires __construct() args to instantiate
+     *
+     * @param mixed $obj
+     * @return bool
+     * @throws ObjectAnalyzerException
+     */
+    private function setUp($obj)
+    {
+        $this->validateTargetObj($obj);
+
+        if (is_object($obj)) {
+            $this->_obj = $obj;
+            $this->_refObj = new \ReflectionObject($obj);
+        }
+
+        if (is_string($obj)) {
+            try {
+                $this->_obj = new $obj();
+                $this->_refObj = new \ReflectionClass($obj);
+            } catch (\Exception $e) {
+                throw new ObjectAnalyzerException("Unknown error while attempting to instantiate '{$obj}': '{$e->getMessage()}'\n\nCreate an object instance and try that instead.");
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Verifies the analysis target is workable
+     *
+     * @param  mixed $obj
+     * @return bool
+     * @throws ObjectAnalyzerException
+     */
+    private function validateTargetObj($obj)
+    {
+        if (is_object($obj)) {
+            return true;
+        }
+        if (is_string($obj) && class_exists($obj)) {
+            return true;
+        }
+
+        throw new ObjectAnalyzerException("ObjectWorker only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
     }
 
     private function getObjectName(\ReflectionClass $obj)
