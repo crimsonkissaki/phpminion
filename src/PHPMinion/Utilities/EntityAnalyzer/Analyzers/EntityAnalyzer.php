@@ -15,6 +15,9 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ObjectAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ArrayAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Renderer\ModelRendererInterface;
+use PHPMinion\Utilities\EntityAnalyzer\Renderer\ObjectModelRenderer;
+//use PHPMinion\Utilities\EntityAnalyzer\Renderer\ArrayModelRenderer;
 
 /**
  * Class EntityAnalyzer
@@ -41,10 +44,25 @@ class EntityAnalyzer implements AnalyzerInterface
      */
     private $_arrayAnalyzer;
 
+    private $_objectRenderer;
+
+    private $_arrayRenderer;
+
+    public function setObjectRenderer(ModelRendererInterface $renderer)
+    {
+        $this->_objectRenderer = $renderer;
+    }
+
+    public function getObjectRenderer()
+    {
+        return $this->_objectRenderer;
+    }
+
     public function __construct()
     {
         $this->_objectAnalyzer = new ObjectAnalyzer();
         $this->_arrayAnalyzer = new ArrayAnalyzer();
+        $this->setObjectRenderer(new ObjectModelRenderer());
     }
 
     /**
@@ -62,6 +80,14 @@ class EntityAnalyzer implements AnalyzerInterface
         }
 
         throw new AnalyzerException("EntityAnalyzer only accepts objects or arrays: '" . gettype($entity) . "' provided.");
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(AnalysisModel $model)
+    {
+        return (string) __METHOD__;
     }
 
 }

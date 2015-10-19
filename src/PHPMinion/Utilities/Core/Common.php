@@ -217,10 +217,11 @@ class Common
                 print_r($var);
                 return ob_get_clean();
             case (is_object($var)):
+                /** @var \PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer $analyzer */
                 $analyzer = Dbug::getInstance()->getConfig()->getEntityAnalyzer();
                 $obj = $analyzer->analyze($var);
                 ob_start();
-                print_r($obj);
+                print_r($obj->render());
                 return ob_get_clean();
             default:
                 return $this->getSimpleTypeValue($var);

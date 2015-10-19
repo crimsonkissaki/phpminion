@@ -12,13 +12,12 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
+use PHPMinion\Utilities\Dbug\Dbug;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\PropertyWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
-use PHPMinion\Utilities\EntityAnalyzer\Renderer\ModelRendererInterface;
-use PHPMinion\Utilities\EntityAnalyzer\Renderer\ObjectModelRenderer;
 
 /**
  * Class ObjectWorker
@@ -54,34 +53,15 @@ class ObjectWorker
 
     private $_methodWorker;
 
-    /**
-     * @var ModelRendererInterface
-     */
-    private $_renderer;
-
-    public function setRenderer(ModelRendererInterface $renderer)
-    {
-        $this->_renderer = $renderer;
-    }
-
-    public function getRenderer()
-    {
-        return $this->_renderer;
-    }
-
-    /**
-     * TODO: need to allow custom setting of object model renderers
-     */
     public function __construct()
     {
         $this->_model = new ObjectModel();
-        $this->setRenderer(new ObjectModelRenderer());
     }
 
     /**
      * TODO: this fucks up when passed a stdClass - cant use \ReflectionProperty->getValue()
      *
-     * @return ObjectModel
+     * @return AnalysisModel
      */
     public function analyze($obj)
     {
@@ -95,9 +75,16 @@ class ObjectWorker
         $model->properties = $this->_propertyWorker->getClassProperties();
         //$model->methods = $this->getObjectMethods($this->_obj);
 
-        $renderedModel = $this->_renderer->renderModel($model);
+        /*
+        echo "<BR>--------------------------------------------------<BR>";
+        echo "calling trace from " . __METHOD__ . "<BR>";
+        Dbug::trace("tracing analyze", 10)->ignore()->dump();
+        echo "<BR>+++++++++++++++++++++++++<BR>";
+        echo "calling dbug from " . __METHOD__ . "<BR>";
+        Dbug::dbug($model, "model after prop worker", true);
+        */
 
-        return $renderedModel;
+        return $model;
     }
 
     /**

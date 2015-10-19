@@ -13,6 +13,8 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
 use PHPMinion\Utilities\Dbug\Dbug;
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\AnalyzerInterface;
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
@@ -30,6 +32,11 @@ use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
  */
 class PropertyWorker
 {
+
+    /**
+     * @var AnalyzerInterface
+     */
+    private $_entityAnalyzer;
 
     /**
      * Target object instance to analyze
@@ -56,6 +63,7 @@ class PropertyWorker
             throw new AnalyzerException("PropertyWorker \$targetObj must be a valid object instance.");
         }
 
+        $this->_entityAnalyzer = new EntityAnalyzer();
         $this->_obj = $targetObj;
         $this->_refObj = $reflectionObj;
     }
@@ -213,7 +221,7 @@ class PropertyWorker
     private function getCurrentPropertyValue($visibility, $value)
     {
         if ($visibility === 'constant') {
-            return $value;
+            return $this->getAnalyzedValueIfRequired($value);
         }
 
         if ($value->isPrivate() || $value->isProtected()) {
@@ -221,18 +229,22 @@ class PropertyWorker
         }
 
         if ($visibility === 'static') {
-            return $value->getValue();
+            return $this->getAnalyzedValueIfRequired($value->getValue());
         }
 
-        $curVal = $value->getValue($this->_obj);
+        return $this->getAnalyzedValueIfRequired($value->getValue($this->_obj));
         //\application\Utils::dbug($value, "value object");
         //\application\Utils::dbug($value->getValue($this->_obj), "property value", true);
+    }
 
-        if (is_object($curVal)) {
-            return 'OBJECT ('.get_class($curVal).')';
-        } else {
-            return $curVal;
+    private function getAnalyzedValueIfRequired($value)
+    {
+        if (is_object($value)) {
+            return 'OBJECT ('.get_class($value).')';
+            //return $this->_entityAnalyzer->analyze($value);
         }
+
+        return $value;
     }
 
     /**
