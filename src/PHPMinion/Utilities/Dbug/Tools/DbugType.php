@@ -78,9 +78,6 @@ class DbugType extends DbugTool implements DbugToolInterface
      */
     protected function processArgs(array $args)
     {
-        if (!isset($args[0])) {
-            throw new DbugException("Unable to execute '{$this->toolAlias}': no variable provided.");
-        }
         $this->dbugTarget = $args[0];
         $this->comment = (!empty($args[1])) ? $args[1] : null;
         $this->kill = (!empty($args[2])) ? $args[2] : false;

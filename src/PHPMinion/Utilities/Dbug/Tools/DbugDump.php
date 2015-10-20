@@ -89,10 +89,6 @@ class DbugDump extends DbugTool implements DbugToolInterface
      */
     protected function processArgs(array $args)
     {
-        if (!isset($args[0])) {
-            throw new DbugException("ERROR: No variable provided to DbugDump");
-        }
-
         $this->dbugTarget = $args[0];
         $this->comment = (!empty($args[1])) ? $args[1] : null;
         $this->kill = (!empty($args[2])) ? $args[2] : false;

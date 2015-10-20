@@ -191,9 +191,9 @@ class Common
             case ($var === null):
                 return 'NULL';
             case (is_numeric($var)):
-                return $var . ' (' . strtoupper(gettype($var)) . ')';
+                return strtoupper(gettype($var)) . " ({$var})";
             case (is_string($var)):
-                return "'{$var}'";
+                return "STRING '({$var})'";
             case (is_array($var)):
                 return 'ARRAY (' . count($var) . ')';
             case (is_object($var)):
@@ -215,20 +215,19 @@ class Common
             case (is_array($var)):
                 ob_start();
                 print_r($var);
-                return ob_get_clean();
+                $value = ob_get_clean();
+                break;
             case (is_object($var)):
                 /** @var \PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer $analyzer */
                 $analyzer = Dbug::getInstance()->getConfig()->getEntityAnalyzer();
                 $analyzerResults = $analyzer->analyzeAndRender($var);
-                return $analyzerResults;
-                /*
-                ob_start();
-                print_r($obj);
-                return ob_get_clean();
-                */
+                $value = $analyzerResults;
+                break;
             default:
-                return $this->getSimpleTypeValue($var);
+                $value = $this->getSimpleTypeValue($var);
         }
+
+        return $value;
     }
 
 }
