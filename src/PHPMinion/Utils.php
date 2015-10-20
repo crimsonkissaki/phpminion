@@ -6,13 +6,7 @@
  * (c) Evan Johnson
  */
 
-namespace application;
-
-use ClassLoaderTest\ClassD;
-use Doctrine\Common\Util\Debug;
-use Doctrine\Common\Persistence\Proxy;
-use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
-use Symfony\Component\Console\Formatter\OutputFormatter;
+namespace PHPMinion;
 
 class Utils
 {

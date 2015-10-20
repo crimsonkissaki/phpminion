@@ -39,7 +39,7 @@ class DbugTraceCrumb extends DbugCrumb implements DbugCrumbInterface
 <div style="{$this->cssStyles['container']}">
 <div style="{$this->cssStyles['toolTitle']}">{$this->toolTitle}</div>
 <pre style="{$preCss}"><div style="{$this->cssStyles['dbugDiv']}">{$this->callingMethodInfo}
-
+{$this->dbugComment}
 <div style="{$this->cssStyles['varDataDiv']}">{$this->variableData}</div></div></pre>
 </div>
 OUTPUT;

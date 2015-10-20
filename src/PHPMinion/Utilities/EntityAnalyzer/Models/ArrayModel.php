@@ -17,14 +17,17 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Models;
  *
  * Model to hold array data
  *
- * @package     PHPMinion
- * @author      Evan Johnson
  * @created     October 18, 2015
  * @version     0.1
  */
 class ArrayModel extends EntityModel
 {
 
+    /**
+     * Array of keys => data models
+     *
+     * @var array
+     */
     public $elements = [];
 
 }

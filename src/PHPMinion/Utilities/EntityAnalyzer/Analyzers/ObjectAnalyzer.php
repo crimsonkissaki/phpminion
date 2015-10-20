@@ -37,8 +37,8 @@ class ObjectAnalyzer implements AnalyzerInterface
 
     /**
      * @var EntityModel
-     */
     private $_objectModel;
+     */
 
     public function __construct()
     {
@@ -51,9 +51,10 @@ class ObjectAnalyzer implements AnalyzerInterface
     public function analyze($object)
     {
         $this->validateObj($object);
-        $this->_objectModel = $this->_objWorker->analyze($object);
+        //$this->_objectModel = $this->_objWorker->analyze($object);
+        $model = $this->_objWorker->workObject($object);
 
-        return $this->_objectModel;
+        return $model;
     }
 
     /**

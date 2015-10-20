@@ -17,6 +17,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Analyzers\AnalyzerInterface;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
@@ -99,9 +100,11 @@ class PropertyWorker
      *
      * @return array
      */
-    private function getReflectionProperties()
+    public function getReflectionProperties($obj = null)
     {
-        $obj = $this->_refObj;
+        if (is_null($obj)) {
+            $obj = $this->_refObj;
+        }
 
         $props = [];
         if ($const = $obj->getConstants()) {
@@ -169,6 +172,19 @@ class PropertyWorker
         return $results;
     }
 
+    public function new_getPropertyDetails($visibility, $key, $value)
+    {
+        $prop = $this->getPropertyDetails($visibility, $key, $value);
+        if ($visibility !== 'static' && empty($prop->isStatic)) {
+            return $prop;
+        }
+        if ($visibility === 'static') {
+            return $prop;
+        }
+
+        return false;
+    }
+
     /**
      * Gets details for an object property
      *
@@ -191,13 +207,20 @@ class PropertyWorker
         $model->setter = 'TODO: get this working!';
         $model->visibility = $visibility;
         $model->isStatic = (is_object($value)) ? $value->isStatic() : false;
-        $model->currentValue = $this->getCurrentPropertyValue($visibility, $value);
-        $model->currentValueDataType = gettype($model->currentValue);
+
+        //$model->currentValue = $this->getCurrentPropertyValue($visibility, $value);
+        //$model->currentValueDataType = gettype($model->currentValue);
         //$model->defaultValue = $this->getPropertyDefaultValue($visibility, $value);
         //$model->defaultValueDataType = gettype($model->defaultValue);
         $model->defaultValue = 'TODO: get this working!';
         $model->defaultValueDataType = 'TODO: get this working!';
-        $classData = $this->getValueClassData($model->currentValue);
+
+
+        $actualValue = $this->getCurrentPropertyValue($visibility, $value);
+        $model->currentValue = $this->getAnalyzedValueIfRequired($actualValue);
+        $model->currentValueDataType = gettype($actualValue);
+        //$classData = $this->getValueClassData($model->currentValue);
+        $classData = $this->getValueClassData($actualValue);
         $model->className = $classData['className'];
         $model->classNamespace = $classData['classNamespace'];
 
@@ -221,7 +244,7 @@ class PropertyWorker
     private function getCurrentPropertyValue($visibility, $value)
     {
         if ($visibility === 'constant') {
-            return $this->getAnalyzedValueIfRequired($value);
+            return $value;
         }
 
         if ($value->isPrivate() || $value->isProtected()) {
@@ -229,19 +252,29 @@ class PropertyWorker
         }
 
         if ($visibility === 'static') {
-            return $this->getAnalyzedValueIfRequired($value->getValue());
+            return $value->getValue();
         }
 
-        return $this->getAnalyzedValueIfRequired($value->getValue($this->_obj));
-        //\application\Utils::dbug($value, "value object");
-        //\application\Utils::dbug($value->getValue($this->_obj), "property value", true);
+        return $value->getValue($this->_obj);
     }
 
+    /**
+     * Returns an analyzed EntityModel or the actual value, depending
+     *
+     * @param mixed $value
+     * @return EntityModel|string
+     */
     private function getAnalyzedValueIfRequired($value)
     {
         if (is_object($value)) {
             return 'OBJECT ('.get_class($value).')';
             //return $this->_entityAnalyzer->analyze($value);
+        }
+        if (is_array($value)) {
+            \PHPMinion\Utilities\Dbug\Dbug::color('calling array validation for an array in a property value!', 'orange')->ignore()->dump();
+            $analyzedArray = $this->_entityAnalyzer->analyze($value);
+            \PHPMinion\Utils::dbug($analyzedArray, "analyzed array in getAnalyzedValueIfRequired()");
+            return $analyzedArray;
         }
 
         return $value;

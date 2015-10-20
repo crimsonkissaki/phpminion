@@ -13,6 +13,7 @@
 namespace PHPMinion\Utilities\Dbug\Tools;
 
 use PHPMinion\Utilities\Dbug\Exceptions\DbugException;
+use PHPMinion\Utilities\Dbug\Models\TraceModel;
 use PHPMinion\Utilities\Dbug\Crumbs\DbugTraceCrumb;
 use PHPMinion\Utilities\Dbug\Crumbs\DbugCrumbInterface;
 use PHPMinion\Utilities\Core\Common;
@@ -72,7 +73,7 @@ class DbugTrace extends DbugTool implements DbugToolInterface
         /** @var DbugTraceCrumb $crumb */
         $crumb = $this->crumb;
         $crumb->callingMethodInfo = $this->common->getMethodInfoString($this->common->getMethodInfo());
-        $crumb->dbugComment = (!is_null($this->comment)) ? $this->common->colorize($this->comment) . "\n\n" : '';
+        $crumb->dbugComment = (!is_null($this->comment)) ? PHP_EOL . $this->common->colorize($this->comment) . PHP_EOL: '';
         $crumb->variableData = $this->parseStackTrace();
 
         $this->checkKillScript();
@@ -122,10 +123,22 @@ class DbugTrace extends DbugTool implements DbugToolInterface
         for ($i = 0; $i < $this->levels; $i += 1 ) {
             $nextIndex = Common::DEFAULT_STARTING_BACKTRACE_INDEX + $this->levels - $i;
             $model = $this->common->getMethodInfo($nextIndex, $trace);
+            if ($this->modelIsNull($model)) {
+                continue;
+            }
             $traceStr .= $this->common->getMethodInfoString($model) . PHP_EOL;
         }
 
         return $traceStr;
+    }
+
+    protected function modelIsNull(TraceModel $model)
+    {
+        if (is_null($model->function) && is_null($model->line)) {
+            return true;
+        }
+
+        return false;
     }
 
 }

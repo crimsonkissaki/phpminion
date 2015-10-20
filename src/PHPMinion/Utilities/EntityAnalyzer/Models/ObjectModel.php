@@ -28,10 +28,35 @@ class ObjectModel extends EntityModel
     /**
      * @var string
      */
-    public $name;
+    private $name;
 
-    public $properties = [];
+    private $properties = [];
 
-    public $methods = [];
+    //public $methods = [];
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function addProperty(PropertyModel $property)
+    {
+        $visibility = $property->visibility;
+        if (empty($this->properties[$visibility])) {
+            $this->properties[$visibility] = [];
+        }
+
+        $this->properties[$visibility][$property->name] = $property;
+    }
+
+    public function getProperties()
+    {
+        return $this->properties;
+    }
 
 }

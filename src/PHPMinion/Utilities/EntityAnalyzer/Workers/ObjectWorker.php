@@ -63,26 +63,25 @@ class ObjectWorker
      *
      * @return EntityModel
      */
-    public function analyze($obj)
+    public function workObject($obj)
     {
         $this->setUp($obj);
 
         $this->_propertyWorker = new PropertyWorker($this->_obj, $this->_refObj);
 
         $model = new ObjectModel();
-        $model->name = $this->getObjectName($this->_refObj);
-        //$properties = $this->_propertyWorker->getClassProperties();
-        $model->properties = $this->_propertyWorker->getClassProperties();
-        //$model->methods = $this->getObjectMethods($this->_obj);
+        $model->setName($this->getObjectName($this->_refObj));
+        //$model->properties = $this->_propertyWorker->getClassProperties();
+        $properties = $this->_propertyWorker->getReflectionProperties();
+        foreach ($properties as $vis => $visProps) {
+            foreach( $visProps as $name => $value) {
+                if ($propModel = $this->_propertyWorker->new_getPropertyDetails($vis, $name, $value)) {
+                    $model->addProperty($propModel);
+                }
+            }
+        }
 
-        /*
-        echo "<BR>--------------------------------------------------<BR>";
-        echo "calling trace from " . __METHOD__ . "<BR>";
-        Dbug::trace("tracing analyze", 10)->ignore()->dump();
-        echo "<BR>+++++++++++++++++++++++++<BR>";
-        echo "calling dbug from " . __METHOD__ . "<BR>";
-        Dbug::dbug($model, "model after prop worker", true);
-        */
+        \PHPMinion\Utils::dbug($model, "model in objectworker->workobject()");
 
         return $model;
     }

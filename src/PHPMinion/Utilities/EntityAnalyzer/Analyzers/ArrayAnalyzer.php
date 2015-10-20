@@ -13,8 +13,9 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
+use PHPMinion\Utilities\EntityAnalyzer\Workers\ArrayWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
  * Class EntityAnalyzer
@@ -29,16 +30,14 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
 class ArrayAnalyzer implements AnalyzerInterface
 {
 
-    private $_arrayWorker;
-
     /**
-     * @var ArrayModel
+     * @var ArrayWorker
      */
-    private $_arrayModel;
+    private $_arrayWorker;
 
     public function __construct()
     {
-        $this->_arrayWorker = '';
+        $this->_arrayWorker = new ArrayWorker();
     }
 
     /**
@@ -46,10 +45,12 @@ class ArrayAnalyzer implements AnalyzerInterface
      */
     public function analyze($array)
     {
-        $this->validateArray($array);
-        $this->_arrayModel = new ArrayModel();
+        \PHPMinion\Utilities\Dbug\Dbug::type($array, "array analyzer param type:")->ignore()->dump();
 
-        return $this->_arrayModel;
+        $this->validateArray($array);
+        $model = $this->_arrayWorker->workArray($array);
+
+        return $model;
     }
 
     public function render(EntityModel $model)
