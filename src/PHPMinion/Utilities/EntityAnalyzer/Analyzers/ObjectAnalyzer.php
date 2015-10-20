@@ -13,14 +13,14 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Workers\ObjectWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
  * Class ObjectAnalyzer
  *
- * Analyzes objects and returns a simpler, less memory intensive
- * version of the object and its data for debugging.
+ * Analyzes objects and returns the results in an ObjectModel
  *
  * @package     PHPMinion
  * @author      Evan Johnson
@@ -36,14 +36,13 @@ class ObjectAnalyzer implements AnalyzerInterface
     private $_objWorker;
 
     /**
-     * @var ObjectModel
+     * @var EntityModel
      */
     private $_objectModel;
 
     public function __construct()
     {
         $this->_objWorker = new ObjectWorker();
-        $this->setRenderer(new ObjectModelRenderer());
     }
 
     /**
@@ -52,17 +51,9 @@ class ObjectAnalyzer implements AnalyzerInterface
     public function analyze($object)
     {
         $this->validateObj($object);
-
         $this->_objectModel = $this->_objWorker->analyze($object);
 
-        return $this;
-    }
-
-    public function render(AnalysisModel $model)
-    {
-        $results = $this->_objRenderer->renderModel($model);
-
-        return $results;
+        return $this->_objectModel;
     }
 
     /**

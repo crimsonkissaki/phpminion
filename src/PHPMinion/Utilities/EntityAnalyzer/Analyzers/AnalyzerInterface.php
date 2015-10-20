@@ -12,7 +12,7 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\AnalysisModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
 
 /**
  * AnalyzerInterface
@@ -32,16 +32,8 @@ interface AnalyzerInterface
      * Analyzes entities and returns a simplified summary
      *
      * @param  mixed $entity Entity to analyze
-     * @return AnalyzerInterface
+     * @return EntityModel
      */
     public function analyze($entity);
-
-    /**
-     * Renders the analyzed entity results
-     *
-     * @param  AnalysisModel $model Analysis model to render for output
-     * @return string
-     */
-    public function render(AnalysisModel $model);
 
 }

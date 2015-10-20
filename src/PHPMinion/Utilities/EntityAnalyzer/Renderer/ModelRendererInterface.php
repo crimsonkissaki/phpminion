@@ -12,10 +12,10 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\AnalysisModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
 
 /**
- * ObjectModelTranslatorInterface
+ * RendererInterface
  *
  * @created     October 19, 2015
  * @version     0.1
@@ -24,12 +24,12 @@ interface ModelRendererInterface
 {
 
     /**
-     * Renders valid output from an ObjectModel
+     * Renders valid output from an EntityModel
      *
-     * @param  AnalysisModel $model Model to render
+     * @param  EntityModel   $model Model to render
      * @param  int           $level Starting indentation level
      * @return string
      */
-    public function renderModel(AnalysisModel $model, $level = 0);
+    public function renderModel(EntityModel $model, $level = 0);
 
 }

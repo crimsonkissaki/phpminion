@@ -219,10 +219,13 @@ class Common
             case (is_object($var)):
                 /** @var \PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer $analyzer */
                 $analyzer = Dbug::getInstance()->getConfig()->getEntityAnalyzer();
-                $obj = $analyzer->analyze($var);
+                $analyzerResults = $analyzer->analyzeAndRender($var);
+                return $analyzerResults;
+                /*
                 ob_start();
-                print_r($obj->render());
+                print_r($obj);
                 return ob_get_clean();
+                */
             default:
                 return $this->getSimpleTypeValue($var);
         }

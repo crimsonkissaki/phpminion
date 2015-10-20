@@ -12,7 +12,7 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\AnalysisModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
 
 /**
@@ -29,14 +29,9 @@ class ObjectModelRenderer implements ModelRendererInterface
     /**
      * @inheritDoc
      */
-    public function renderModel(AnalysisModel $model, $level = 0)
+    public function renderModel(EntityModel $model, $level = 0)
     {
         $output = $this->indent($level) . "Object ({$model->name})".PHP_EOL;
-
-        return $output;
-
-
-
 
         foreach ($model->properties as $vis => $props) {
             /** @var PropertyModel $prop */
@@ -59,31 +54,6 @@ class ObjectModelRenderer implements ModelRendererInterface
         $type = $prop->currentValueDataType;
         echo "--> generating for '{$type}'<BR>";
         $output = $this->indent($level)."{$prop->visibility} '{$prop->name}' =>";
-        // number of spaces to put before the line
-        /*
-        switch(strtolower($prop->currentValueDataType)) {
-            case 'string':
-                $output .= $this->generateStringOutput($prop);
-                break;
-            case 'null':
-                $output .= $this->generateNullOutput($prop);
-                break;
-            case 'object':
-                $output .= $this->generateObjectOutput($prop, $level + 1);
-                break;
-            case 'array':
-                $output .= $this->generateArrayOutput($prop, $level + 1);
-                break;
-            case 'float':
-            case 'integer':
-            case 'double':
-                $output .= $this->generateNumericOutput($prop);
-                break;
-            default:
-                $output .= " no handler for generating '{$type}'<BR>";
-                break;
-        }
-        */
         switch (true) {
             case (is_bool($prop->currentValue)):
                 $output .= $this->generateBooleanOutput($prop);
@@ -112,28 +82,29 @@ class ObjectModelRenderer implements ModelRendererInterface
 
     private function generateBooleanOutput(PropertyModel $prop)
     {
-        $output = " boolean (" . (($prop->currentValue === true) ? 'true' : 'false') . ")";
+        $boolText = ($prop->currentValue === true) ? 'true' : 'false';
+        $output = " boolean ({$boolText})" . PHP_EOL;
 
         return $output;
     }
 
     private function generateNumericOutput(PropertyModel $prop)
     {
-        $output = ' ' . gettype($prop->currentValue) . " {$prop->currentValue}";
+        $output = ' ' . gettype($prop->currentValue) . " {$prop->currentValue}" . PHP_EOL;
 
         return $output;
     }
 
     private function generateStringOutput(PropertyModel $prop)
     {
-        $output = " string '{$prop->currentValue}' (length=".strlen($prop->currentValue).")".PHP_EOL;
+        $output = " string '{$prop->currentValue}' (length=" . strlen($prop->currentValue) . ")" .PHP_EOL;
 
         return $output;
     }
 
     private function generateNullOutput(PropertyModel $prop)
     {
-        $output = " null".PHP_EOL;
+        $output = " null" . PHP_EOL;
 
         return $output;
     }
@@ -141,7 +112,7 @@ class ObjectModelRenderer implements ModelRendererInterface
     private function generateObjectOutput(PropertyModel $prop, $level)
     {
         $output = PHP_EOL . $this->indent($level);
-        $output .= "{$prop->currentValueDataType} {$prop->currentValue}".PHP_EOL;
+        $output .= "{$prop->currentValueDataType} {$prop->currentValue}" . PHP_EOL;
 
         return $output;
     }

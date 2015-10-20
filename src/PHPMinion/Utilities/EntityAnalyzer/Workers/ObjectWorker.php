@@ -61,7 +61,7 @@ class ObjectWorker
     /**
      * TODO: this fucks up when passed a stdClass - cant use \ReflectionProperty->getValue()
      *
-     * @return AnalysisModel
+     * @return EntityModel
      */
     public function analyze($obj)
     {

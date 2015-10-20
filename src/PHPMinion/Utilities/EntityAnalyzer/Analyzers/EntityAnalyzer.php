@@ -12,12 +12,11 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ObjectAnalyzer;
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ArrayAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
+use PHPMinion\Utilities\EntityAnalyzer\Factories\AnalyzerFactory;
+use PHPMinion\Utilities\EntityAnalyzer\Factories\RendererFactory;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
-use PHPMinion\Utilities\EntityAnalyzer\Renderer\ModelRendererInterface;
-use PHPMinion\Utilities\EntityAnalyzer\Renderer\ObjectModelRenderer;
-//use PHPMinion\Utilities\EntityAnalyzer\Renderer\ArrayModelRenderer;
 
 /**
  * Class EntityAnalyzer
@@ -35,34 +34,27 @@ class EntityAnalyzer implements AnalyzerInterface
 {
 
     /**
-     * @var ObjectAnalyzer
+     * Current entity being analyzed
+     *
+     * @var ObjectModel
      */
-    private $_objectAnalyzer;
+    private $_objectModel;
 
     /**
-     * @var ArrayAnalyzer
+     * Analyzes an entity and returns the rendered results
+     *
+     * Analyze() and Render() have been split off into separate
+     * methods to allow for recursive analysis.
+     *
+     * @param  mixed  $entity
+     * @return string
+     * @throws AnalyzerException
      */
-    private $_arrayAnalyzer;
-
-    private $_objectRenderer;
-
-    private $_arrayRenderer;
-
-    public function setObjectRenderer(ModelRendererInterface $renderer)
+    public function analyzeAndRender($entity)
     {
-        $this->_objectRenderer = $renderer;
-    }
+        $model = $this->analyze($entity);
 
-    public function getObjectRenderer()
-    {
-        return $this->_objectRenderer;
-    }
-
-    public function __construct()
-    {
-        $this->_objectAnalyzer = new ObjectAnalyzer();
-        $this->_arrayAnalyzer = new ArrayAnalyzer();
-        $this->setObjectRenderer(new ObjectModelRenderer());
+        return $this->render($model);
     }
 
     /**
@@ -71,23 +63,40 @@ class EntityAnalyzer implements AnalyzerInterface
      */
     public function analyze($entity)
     {
-        if (is_object($entity)) {
-            return $this->_objectAnalyzer->analyze($entity);
-        }
+        $this->validateEntityType($entity);
+        $analyzer = AnalyzerFactory::getAnalyzer($entity);
+        $this->_objectModel = $analyzer->analyze($entity);
 
-        if (is_array($entity)) {
-            return $this->_arrayAnalyzer->analyze($entity);
-        }
-
-        throw new AnalyzerException("EntityAnalyzer only accepts objects or arrays: '" . gettype($entity) . "' provided.");
+        return $this->_objectModel;
     }
 
     /**
-     * @inheritDoc
+     * Converts an EntityModel into viewable results
+     *
+     * @param  EntityModel $model
+     * @return string
      */
-    public function render(AnalysisModel $model)
+    public function render(EntityModel $model)
     {
-        return (string) __METHOD__;
+        $renderer = RendererFactory::getModelRenderer($model);
+
+        return $renderer->renderModel($model);
+    }
+
+    /**
+     * Verifies that the target entity is a workable data type
+     *
+     * @param  mixed $entity
+     * @return bool
+     * @throws AnalyzerException
+     */
+    private function validateEntityType($entity)
+    {
+        if (!is_object($entity) && !is_array($entity)) {
+            throw new AnalyzerException("EntityAnalyzer only accepts objects or arrays: '" . gettype($entity) . "' provided.");
+        }
+
+        return true;
     }
 
 }

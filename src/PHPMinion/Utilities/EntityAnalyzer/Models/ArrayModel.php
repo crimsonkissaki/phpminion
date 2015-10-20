@@ -13,16 +13,18 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Models;
 
 /**
- * Class AnalysisModel
+ * Class ArrayModel
  *
- * Parent model for all EntityAnalyzer models
+ * Model to hold array data
  *
  * @package     PHPMinion
  * @author      Evan Johnson
  * @created     October 18, 2015
  * @version     0.1
  */
-abstract class AnalysisModel
+class ArrayModel extends EntityModel
 {
+
+    public $elements = [];
 
 }
