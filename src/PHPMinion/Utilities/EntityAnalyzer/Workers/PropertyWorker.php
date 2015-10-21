@@ -13,11 +13,11 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
 use PHPMinion\Utilities\Dbug\Dbug;
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\AnalyzerInterface;
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzerInterface;
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityEntityAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
@@ -35,7 +35,7 @@ class PropertyWorker
 {
 
     /**
-     * @var AnalyzerInterface
+     * @var EntityAnalyzerInterface
      */
     private $_entityAnalyzer;
 
@@ -64,7 +64,7 @@ class PropertyWorker
             throw new AnalyzerException("PropertyWorker \$targetObj must be a valid object instance.");
         }
 
-        $this->_entityAnalyzer = new EntityAnalyzer();
+        $this->_entityAnalyzer = new EntityEntityAnalyzer();
         $this->_obj = $targetObj;
         $this->_refObj = $reflectionObj;
     }
@@ -259,10 +259,10 @@ class PropertyWorker
     }
 
     /**
-     * Returns an analyzed EntityModel or the actual value, depending
+     * Returns an analyzed DataTypeModel or the actual value, depending
      *
      * @param mixed $value
-     * @return EntityModel|string
+     * @return DataTypeModel|string
      */
     private function getAnalyzedValueIfRequired($value)
     {

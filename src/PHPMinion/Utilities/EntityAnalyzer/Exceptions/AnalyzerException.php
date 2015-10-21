@@ -17,7 +17,7 @@ use PHPMinion\Utilities\Core\Exceptions\PHPMinionException;
 /**
  * Class AnalyzerException
  *
- * Primary exception for EntityAnalyzer classes
+ * Primary exception for EntityEntityAnalyzer classes
  *
  * @created     October 9, 2015
  * @version     0.1

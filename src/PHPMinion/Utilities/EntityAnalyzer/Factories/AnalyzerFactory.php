@@ -12,8 +12,10 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Factories;
 
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzerInterface;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ObjectAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ArrayAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
@@ -28,22 +30,74 @@ class AnalyzerFactory
 {
 
     /**
+     * @var AnalyzerFactory
+     */
+    private static $_instance;
+
+    /**
+     * Array of data analyzers
+     *
+     * @var array
+     */
+    private $_analyzers = [];
+
+    public static function getInstance()
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new AnalyzerFactory();
+        }
+
+        return self::$_instance;
+    }
+
+    private function __construct() {}
+
+    /**
      * Returns the proper analyzer class for the entity data type
      *
      * @param  mixed $entity
-     * @return ArrayAnalyzer|ObjectAnalyzer
-     * @throws AnalyzerException
+     * @return DataTypeModel
      */
     public static function getAnalyzer($entity)
     {
-        if (is_object($entity)) {
-            return new ObjectAnalyzer();
-        }
-        if (is_array($entity)) {
-            return new ArrayAnalyzer();
+        $dataType = gettype($entity);
+        $_this = self::getInstance();
+
+        if (isset($_this->_analyzers[$dataType])) {
+            return $_this->_analyzers[$dataType];
         }
 
-        throw new AnalyzerException("No analyzer available in AnalyzerFactory for data type '" . gettype($entity) . "'.");
+        $entityAnalyzer = $_this->getEntityAnalyzer($dataType);
+
+        \PHPMinion\Utils::dbug($entityAnalyzer, "entity analyzer", true);
+
+        return $entityAnalyzer->analyze($entity);
+    }
+
+    /**
+     * Gets the appropriate EntityEntityAnalyzer class depending on the entity's data type
+     *
+     * @param string $dataType
+     * @return EntityAnalyzerInterface
+     * @throws AnalyzerException
+     */
+    private function getEntityAnalyzer($dataType)
+    {
+        $analyzer = false;
+        switch (strtolower($dataType)) {
+            case 'object':
+                $analyzer = new ObjectAnalyzer();
+                break;
+            case 'array':
+                $analyzer = new ArrayAnalyzer();
+                break;
+        }
+
+        if (!$analyzer) {
+            throw new AnalyzerException("No Analyzer defined for data type: '{$dataType}'.");
+        }
+
+        return $analyzer;
     }
 
 }

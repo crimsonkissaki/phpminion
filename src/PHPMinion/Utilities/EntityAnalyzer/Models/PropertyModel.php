@@ -22,7 +22,7 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Models;
  * @created     October 18, 2015
  * @version     0.1
  */
-class PropertyModel extends EntityModel
+class PropertyModel extends DataTypeModel
 {
 
     /**

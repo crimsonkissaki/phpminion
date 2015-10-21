@@ -218,7 +218,7 @@ class Common
                 $value = ob_get_clean();
                 break;
             case (is_object($var)):
-                /** @var \PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer $analyzer */
+                /** @var \PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityEntityAnalyzer $analyzer */
                 $analyzer = Dbug::getInstance()->getConfig()->getEntityAnalyzer();
                 $analyzerResults = $analyzer->analyzeAndRender($var);
                 $value = $analyzerResults;

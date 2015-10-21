@@ -12,7 +12,7 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Factories;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
 use PHPMinion\Utilities\EntityAnalyzer\Renderer\ObjectModelRenderer;
@@ -37,7 +37,7 @@ class RendererFactory
      * @return ModelRendererInterface
      * @throws AnalyzerException
      */
-    public static function getModelRenderer(EntityModel $model)
+    public static function getModelRenderer(DataTypeModel $model)
     {
         if ($model instanceof ObjectModel) {
             return new ObjectModelRenderer();

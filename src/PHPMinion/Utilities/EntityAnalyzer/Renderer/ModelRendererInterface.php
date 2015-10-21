@@ -12,7 +12,7 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 
 /**
  * RendererInterface
@@ -24,12 +24,12 @@ interface ModelRendererInterface
 {
 
     /**
-     * Renders valid output from an EntityModel
+     * Renders valid output from an DataTypeModel
      *
-     * @param  EntityModel   $model Model to render
+     * @param  DataTypeModel   $model Model to render
      * @param  int           $level Starting indentation level
      * @return string
      */
-    public function renderModel(EntityModel $model, $level = 0);
+    public function renderModel(DataTypeModel $model, $level = 0);
 
 }

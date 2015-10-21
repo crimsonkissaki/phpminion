@@ -12,10 +12,10 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 
 /**
- * AnalyzerInterface
+ * EntityAnalyzerInterface
  *
  * Interface for any class used by DbugTools to get
  * object information for debugging.
@@ -25,14 +25,14 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
  * @created     October 18, 2015
  * @version     0.1
  */
-interface AnalyzerInterface
+interface EntityAnalyzerInterface
 {
 
     /**
      * Analyzes entities and returns a simplified summary
      *
      * @param  mixed $entity Entity to analyze
-     * @return EntityModel
+     * @return DataTypeModel
      */
     public function analyze($entity);
 

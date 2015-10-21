@@ -12,7 +12,7 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 
 /**
  * ArrayModelTranslator
@@ -28,7 +28,7 @@ class ArrayModelRenderer implements ModelRendererInterface
     /**
      * @inheritDoc
      */
-    public function renderModel(EntityModel $model, $level = 0)
+    public function renderModel(DataTypeModel $model, $level = 0)
     {
         $output = "Non-functional ArrayModelRenderer->renderModel()";
 

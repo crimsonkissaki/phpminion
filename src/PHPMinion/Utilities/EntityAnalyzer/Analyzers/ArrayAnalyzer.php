@@ -12,13 +12,13 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\ArrayWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
- * Class EntityAnalyzer
+ * Class ArrayAnalyzer
  *
  * Analyzes arrays and returns the results in an ArrayModel
  *
@@ -27,7 +27,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
  * @created     October 18, 2015
  * @version     0.1
  */
-class ArrayAnalyzer implements AnalyzerInterface
+class ArrayAnalyzer implements EntityAnalyzerInterface
 {
 
     /**
@@ -53,7 +53,7 @@ class ArrayAnalyzer implements AnalyzerInterface
         return $model;
     }
 
-    public function render(EntityModel $model)
+    public function render(DataTypeModel $model)
     {
 
     }
@@ -71,7 +71,7 @@ class ArrayAnalyzer implements AnalyzerInterface
             return true;
         }
 
-        throw new AnalyzerException("ArrayAnalyzer only accept arrays: '" . gettype($obj) . "' supplied.");
+        throw new AnalyzerException("ArrayEntityAnalyzer only accept arrays: '" . gettype($obj) . "' supplied.");
     }
 
 }

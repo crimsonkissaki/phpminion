@@ -12,7 +12,7 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\EntityModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
@@ -31,7 +31,7 @@ class ObjectModelRenderer implements ModelRendererInterface
     /**
      * @inheritDoc
      */
-    public function renderModel(EntityModel $model, $level = 0)
+    public function renderModel(DataTypeModel $model, $level = 0)
     {
         $output = $this->indent($level) . "Object ({$model->getName()})" . PHP_EOL;
         $output .= $this->generateModelSummary($model, $level);
@@ -52,7 +52,7 @@ class ObjectModelRenderer implements ModelRendererInterface
         return str_repeat('  ', $level);
     }
 
-    private function generateModelSummary(EntityModel $model, $level)
+    private function generateModelSummary(DataTypeModel $model, $level)
     {
         $tldr = '';
         $propCount = 0;
