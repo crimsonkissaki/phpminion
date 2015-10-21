@@ -1,5 +1,7 @@
 <?php
 
+namespace PHPMinionTest\Utilities\Core;
+
 use PHPMinion\Utilities\Core\Common;
 use PHPMinion\Utilities\Core\Config;
 use PHPMinion\Utilities\Dbug\Models\TraceModel;
@@ -12,7 +14,7 @@ use PHPMinion\Utilities\Dbug\Models\TraceModel;
  * @created     October 20, 2015
  * @version     0.1
  */
-class CommonTest extends PHPUnit_Framework_TestCase
+class CommonTest extends \PHPUnit_Framework_TestCase
 {
 
     /**

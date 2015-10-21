@@ -56,22 +56,7 @@ class EntityAnalyzer implements EntityAnalyzerInterface
      */
     public function analyze($entity)
     {
-        /*
-        \PHPMinion\Utilities\Dbug\Dbug::type($entity, "entity type:")->ignore()->dump();
-        \PHPMinion\Utilities\Dbug\Dbug::trace("entity type trace:", 15)->ignore()->dump();
-        if (gettype($entity) === 'array') {
-            \PHPMinion\Utilities\Dbug\Dbug::trace("array entity type:", 15)->ignore()->dump();
-            \PHPMinion\Utilities\Dbug\Dbug::dbug($entity, "array entity dbug data:")->ignore()->dump();
-        }
-        */
-
         $analyzer = AnalyzerFactory::getAnalyzer($entity);
-
-        \PHPMinion\Utilities\Dbug\Dbug::type($analyzer, "entity analyzer type:")->ignore()->dump()->kill();
-        /*
-        $this->_objectModel = $analyzer->analyze($entity);
-        return $this->_objectModel;
-        */
 
         return $analyzer->analyze($entity);
     }

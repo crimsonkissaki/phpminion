@@ -16,7 +16,6 @@ use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzerInterface;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ObjectAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ArrayAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\SimpleAnalyzer;
-use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
@@ -57,31 +56,16 @@ class AnalyzerFactory
      * Returns the proper analyzer class for the entity data type
      *
      * @param  mixed $entity
-     * @return DataTypeModel
+     * @return EntityAnalyzerInterface
+     * @throws AnalyzerException
      */
     public static function getAnalyzer($entity)
     {
         $_this = self::getInstance();
-        $entityAnalyzer = $_this->getEntityAnalyzer($entity);
-
-        \PHPMinion\Utils::dbug($entityAnalyzer, "entity analyzer", true);
-
-        return $entityAnalyzer->analyze($entity);
-    }
-
-    /**
-     * Gets the appropriate EntityEntityAnalyzer class depending on the entity's data type
-     *
-     * @param mixed $entity
-     * @return EntityAnalyzerInterface
-     * @throws AnalyzerException
-     */
-    private function getEntityAnalyzer($entity)
-    {
         $dataType = gettype($entity);
 
-        if (isset($this->_analyzers[$dataType])) {
-            return $this->_analyzers[$dataType];
+        if (isset($_this->_analyzers[$dataType])) {
+            return $_this->_analyzers[$dataType];
         }
 
         $analyzer = false;
@@ -104,9 +88,9 @@ class AnalyzerFactory
             throw new AnalyzerException("No Analyzer defined for data type: '{$dataType}'.");
         }
 
-        $this->_analyzers[$dataType] = $analyzer;
+        $_this->_analyzers[$dataType] = $analyzer;
 
-        return $this->_analyzers[$dataType];
+        return $_this->_analyzers[$dataType];
     }
 
 }
