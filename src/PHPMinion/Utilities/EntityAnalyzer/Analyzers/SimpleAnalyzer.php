@@ -32,35 +32,29 @@ class SimpleAnalyzer implements EntityAnalyzerInterface
     /**
      * @inheritDoc
      */
-    public function analyze($simple)
+    public function analyze($entity)
     {
-        \PHPMinion\Utilities\Dbug\Dbug::type($simple, "simple analyzer param type:")->ignore()->dump();
+        $this->validateDataType($entity);
 
-        $this->validateArray($simple);
-        $model = $this->_arrayWorker->workArray($simple);
+        $model = new SimpleModel();
 
         return $model;
     }
 
-    public function render(DataTypeModel $model)
-    {
-
-    }
-
     /**
-     * Verifies the analysis target is workable
+     * Verifies the analysis target entity is workable
      *
-     * @param  mixed $obj
+     * @param  mixed $entity
      * @return bool
      * @throws AnalyzerException
      */
-    private function validateArray($obj)
+    private function validateDataType($entity)
     {
-        if (is_array($obj)) {
-            return true;
+        if (!is_bool($entity) && !is_numeric($entity) && !is_string($entity) && !is_null($entity)) {
+            throw new AnalyzerException("ArrayEntityAnalyzer only accept arrays: '" . gettype($entity) . "' supplied.");
         }
 
-        throw new AnalyzerException("ArrayEntityAnalyzer only accept arrays: '" . gettype($obj) . "' supplied.");
+        return true;
     }
 
 }

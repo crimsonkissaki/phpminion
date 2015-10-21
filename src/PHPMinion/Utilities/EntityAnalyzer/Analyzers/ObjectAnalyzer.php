@@ -31,28 +31,12 @@ class ObjectAnalyzer implements EntityAnalyzerInterface
 {
 
     /**
-     * @var ObjectWorker
-     */
-    private $_objWorker;
-
-    /**
-     * @var DataTypeModel
-    private $_objectModel;
-     */
-
-    public function __construct()
-    {
-        $this->_objWorker = new ObjectWorker();
-    }
-
-    /**
      * @inheritDoc
      */
-    public function analyze($object)
+    public function analyze($entity)
     {
-        $this->validateObj($object);
-        //$this->_objectModel = $this->_objWorker->analyze($object);
-        $model = $this->_objWorker->workObject($object);
+        $this->validateObj($entity);
+        $model = new ObjectModel();
 
         return $model;
     }
@@ -60,20 +44,20 @@ class ObjectAnalyzer implements EntityAnalyzerInterface
     /**
      * Verifies the analysis target is workable
      *
-     * @param  mixed $obj
+     * @param  mixed $entity
      * @return bool
      * @throws AnalyzerException
      */
-    private function validateObj($obj)
+    private function validateObj($entity)
     {
-        if (is_object($obj)) {
+        if (is_object($entity)) {
             return true;
         }
-        if (is_string($obj) && class_exists($obj)) {
+        if (is_string($entity) && class_exists($entity)) {
             return true;
         }
 
-        throw new AnalyzerException("ObjectEntityAnalyzer only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
+        throw new AnalyzerException("ObjectEntityAnalyzer only accept objects or fully qualified class names: '" . gettype($entity) . "' supplied.");
     }
 
 }

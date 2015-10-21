@@ -12,9 +12,7 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
-use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
-use PHPMinion\Utilities\EntityAnalyzer\Workers\ArrayWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
@@ -31,47 +29,31 @@ class ArrayAnalyzer implements EntityAnalyzerInterface
 {
 
     /**
-     * @var ArrayWorker
-     */
-    private $_arrayWorker;
-
-    public function __construct()
-    {
-        $this->_arrayWorker = new ArrayWorker();
-    }
-
-    /**
      * @inheritDoc
      */
-    public function analyze($array)
+    public function analyze($entity)
     {
-        \PHPMinion\Utilities\Dbug\Dbug::type($array, "array analyzer param type:")->ignore()->dump();
+        $this->validateArray($entity);
 
-        $this->validateArray($array);
-        $model = $this->_arrayWorker->workArray($array);
+        $model = new ArrayModel();
 
         return $model;
-    }
-
-    public function render(DataTypeModel $model)
-    {
-
     }
 
     /**
      * Verifies the analysis target is workable
      *
-     * @param  mixed $obj
+     * @param  mixed $entity
      * @return bool
      * @throws AnalyzerException
      */
-    private function validateArray($obj)
+    private function validateArray($entity)
     {
-        if (is_array($obj)) {
-            return true;
+        if (!is_array($entity)) {
+            throw new AnalyzerException("ArrayEntityAnalyzer only accept arrays: '" . gettype($entity) . "' supplied.");
         }
 
-        throw new AnalyzerException("ArrayEntityAnalyzer only accept arrays: '" . gettype($obj) . "' supplied.");
+        return true;
     }
 
 }
