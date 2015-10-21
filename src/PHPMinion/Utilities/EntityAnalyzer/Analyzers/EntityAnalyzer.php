@@ -34,13 +34,6 @@ class EntityAnalyzer implements EntityAnalyzerInterface
 {
 
     /**
-     * Current entity being analyzed
-     *
-     * @var ObjectModel
-     */
-    private $_objectModel;
-
-    /**
      * Analyzes an entity and returns the rendered results
      *
      * Analyze() and Render() have been split off into separate

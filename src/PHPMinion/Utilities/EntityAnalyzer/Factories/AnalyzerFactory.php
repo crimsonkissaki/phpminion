@@ -15,6 +15,7 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Factories;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzerInterface;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ObjectAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ArrayAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\SimpleAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
@@ -60,14 +61,8 @@ class AnalyzerFactory
      */
     public static function getAnalyzer($entity)
     {
-        $dataType = gettype($entity);
         $_this = self::getInstance();
-
-        if (isset($_this->_analyzers[$dataType])) {
-            return $_this->_analyzers[$dataType];
-        }
-
-        $entityAnalyzer = $_this->getEntityAnalyzer($dataType);
+        $entityAnalyzer = $_this->getEntityAnalyzer($entity);
 
         \PHPMinion\Utils::dbug($entityAnalyzer, "entity analyzer", true);
 
@@ -77,19 +72,31 @@ class AnalyzerFactory
     /**
      * Gets the appropriate EntityEntityAnalyzer class depending on the entity's data type
      *
-     * @param string $dataType
+     * @param mixed $entity
      * @return EntityAnalyzerInterface
      * @throws AnalyzerException
      */
-    private function getEntityAnalyzer($dataType)
+    private function getEntityAnalyzer($entity)
     {
+        $dataType = gettype($entity);
+
+        if (isset($this->_analyzers[$dataType])) {
+            return $this->_analyzers[$dataType];
+        }
+
         $analyzer = false;
-        switch (strtolower($dataType)) {
-            case 'object':
+        switch (true) {
+            case (is_object($entity)):
                 $analyzer = new ObjectAnalyzer();
                 break;
-            case 'array':
+            case (is_array($entity)):
                 $analyzer = new ArrayAnalyzer();
+                break;
+            case (is_numeric($entity)):
+            case (is_null($entity)):
+            case (is_string($entity)):
+            case (is_bool($entity)):
+                $analyzer = new SimpleAnalyzer();
                 break;
         }
 
@@ -97,7 +104,9 @@ class AnalyzerFactory
             throw new AnalyzerException("No Analyzer defined for data type: '{$dataType}'.");
         }
 
-        return $analyzer;
+        $this->_analyzers[$dataType] = $analyzer;
+
+        return $this->_analyzers[$dataType];
     }
 
 }
