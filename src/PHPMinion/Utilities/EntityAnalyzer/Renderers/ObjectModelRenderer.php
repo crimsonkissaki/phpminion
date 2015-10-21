@@ -10,7 +10,7 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
+namespace PHPMinion\Utilities\EntityAnalyzer\Renderers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
@@ -18,9 +18,9 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
 
 /**
- * Class ObjectModelTranslator
+ * Class ObjectModelRenderer
  *
- * Translates an ObjectModel to something more human-readable
+ * Renders an ObjectModel to something more human-readable
  *
  * @created     October 19, 2015
  * @version     0.1

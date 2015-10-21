@@ -10,12 +10,12 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
+namespace PHPMinion\Utilities\EntityAnalyzer\Renderers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 
 /**
- * RendererInterface
+ * ModelRendererInterface
  *
  * @created     October 19, 2015
  * @version     0.1

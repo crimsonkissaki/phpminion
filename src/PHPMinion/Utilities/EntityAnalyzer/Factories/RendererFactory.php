@@ -13,10 +13,9 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Factories;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
-use PHPMinion\Utilities\EntityAnalyzer\Renderer\ObjectModelRenderer;
-use PHPMinion\Utilities\EntityAnalyzer\Renderer\ArrayModelRenderer;
+use PHPMinion\Utilities\EntityAnalyzer\Renderers\ObjectModelRenderer;
+use PHPMinion\Utilities\EntityAnalyzer\Renderers\ArrayModelRenderer;
+use PHPMinion\Utilities\EntityAnalyzer\Renderers\SimpleModelRenderer;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
@@ -31,6 +30,27 @@ class RendererFactory
 {
 
     /**
+     * @var RendererFactory
+     */
+    public static $_instance;
+
+    /**
+     * Array of renderers
+     *
+     * @var array
+     */
+    private $_renderers = [];
+
+    public static function getInstance()
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new RendererFactory();
+        }
+
+        return self::$_instance;
+    }
+
+    /**
      * Returns the proper renderer class for the model data type
      *
      * @param  mixed $model
@@ -39,14 +59,39 @@ class RendererFactory
      */
     public static function getModelRenderer(DataTypeModel $model)
     {
-        if ($model instanceof ObjectModel) {
-            return new ObjectModelRenderer();
-        }
-        if ($model instanceof ArrayModel) {
-            return new ArrayModelRenderer();
+        $_this = self::getInstance();
+        $modelType = strtolower($model->getDataType());
+
+        if (isset($_this->_renderers[$modelType])) {
+            return $_this->_renderers[$modelType];
         }
 
-        throw new AnalyzerException("No model renderer available in RendererFactory for model type '" . get_class($model) . "'.");
+        $renderer = false;
+        switch ($modelType) {
+            case 'object':
+                $renderer = new ObjectModelRenderer();
+                break;
+            case 'array':
+                $renderer = new ArrayModelRenderer();
+                break;
+            case 'boolean':
+            case 'integer':
+            case 'float':
+            case 'double':
+            case 'null':
+            case 'string':
+                $renderer = new SimpleModelRenderer();
+                break;
+
+        }
+
+        if (!$renderer) {
+            throw new AnalyzerException("No model renderer available in RendererFactory for model type '{$modelType}'.");
+        }
+
+        $_this->_renderers[$modelType] = $renderer;
+
+        return $_this->_renderers[$modelType];
     }
 
 }

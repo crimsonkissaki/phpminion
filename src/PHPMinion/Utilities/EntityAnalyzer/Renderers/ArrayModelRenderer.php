@@ -10,14 +10,14 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\EntityAnalyzer\Renderer;
+namespace PHPMinion\Utilities\EntityAnalyzer\Renderers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 
 /**
- * ArrayModelTranslator
+ * ArrayModelRenderer
  *
- * Translates an ArrayModel to something more human-readable
+ * Renders an ArrayModel to something more human-readable
  *
  * @created     October 19, 2015
  * @version     0.1
