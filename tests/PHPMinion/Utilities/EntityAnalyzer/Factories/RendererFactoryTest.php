@@ -5,7 +5,7 @@ namespace PHPMinionTest\Utilities\EntityAnalyzer\Factories;
 use PHPMinion\Utilities\EntityAnalyzer\Factories\RendererFactory;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\SimpleModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
 
 /**
  * Class RendererFactoryTest
@@ -42,29 +42,29 @@ class RendererFactoryTest extends \PHPUnit_Framework_TestCase
         $objectModel->setDataType(gettype($objectModel));
         $arrayModel = new ArrayModel();
         $arrayModel->setDataType(gettype(['var1', 'var2']));
-        $simpleModelTrue = new SimpleModel();
+        $simpleModelTrue = new ScalarModel();
         $simpleModelTrue->setDataType(gettype(true));
-        $simpleModelFalse = new SimpleModel();
+        $simpleModelFalse = new ScalarModel();
         $simpleModelFalse->setDataType(gettype(false));
-        $simpleModelNull = new SimpleModel();
+        $simpleModelNull = new ScalarModel();
         $simpleModelNull->setDataType(gettype(null));
-        $simpleModelString = new SimpleModel();
+        $simpleModelString = new ScalarModel();
         $simpleModelString->setDataType(gettype('string'));
-        $simpleModelInteger = new SimpleModel();
+        $simpleModelInteger = new ScalarModel();
         $simpleModelInteger->setDataType(gettype(10));
-        $simpleModelDouble = new SimpleModel();
+        $simpleModelDouble = new ScalarModel();
         $simpleModelDouble->setDataType(gettype(3.14));
 
         $path = '\PHPMinion\Utilities\EntityAnalyzer\Renderers\\';
         return array(
             array( $path.'ArrayModelRenderer', $arrayModel ),
             array( $path.'ObjectModelRenderer', $objectModel ),
-            array( $path.'SimpleModelRenderer', $simpleModelTrue ),
-            array( $path.'SimpleModelRenderer', $simpleModelFalse ),
-            array( $path.'SimpleModelRenderer', $simpleModelNull ),
-            array( $path.'SimpleModelRenderer', $simpleModelString ),
-            array( $path.'SimpleModelRenderer', $simpleModelInteger ),
-            array( $path.'SimpleModelRenderer', $simpleModelDouble ),
+            array( $path.'ScalarModelRenderer', $simpleModelTrue ),
+            array( $path.'ScalarModelRenderer', $simpleModelFalse ),
+            array( $path.'ScalarModelRenderer', $simpleModelNull ),
+            array( $path.'ScalarModelRenderer', $simpleModelString ),
+            array( $path.'ScalarModelRenderer', $simpleModelInteger ),
+            array( $path.'ScalarModelRenderer', $simpleModelDouble ),
         );
     }
 

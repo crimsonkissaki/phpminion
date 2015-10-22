@@ -44,12 +44,12 @@ class EntityAnalyzerTest extends \PHPUnit_Framework_TestCase
         $path = '\PHPMinion\Utilities\EntityAnalyzer\Models\\';
         return array(
             array( $path.'ArrayModel', ['var1','var2']),
-            array( $path.'SimpleModel', true ),
-            array( $path.'SimpleModel', false ),
-            array( $path.'SimpleModel', null ),
-            array( $path.'SimpleModel', 10 ),
-            array( $path.'SimpleModel', 3.14 ),
-            array( $path.'SimpleModel', 'string var' ),
+            array( $path.'ScalarModel', true ),
+            array( $path.'ScalarModel', false ),
+            array( $path.'ScalarModel', null ),
+            array( $path.'ScalarModel', 10 ),
+            array( $path.'ScalarModel', 3.14 ),
+            array( $path.'ScalarModel', 'string var' ),
             array( $path.'ObjectModel', new \stdClass() ),
         );
     }

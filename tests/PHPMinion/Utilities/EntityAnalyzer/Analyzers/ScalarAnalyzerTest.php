@@ -2,39 +2,39 @@
 
 namespace PHPMinionTest\Utilities\EntityAnalyzer\Analyzers;
 
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\SimpleAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ScalarAnalyzer;
 
 /**
- * Class SimpleAnalyzerTest
+ * Class ScalarAnalyzerTest
  *
  * @package     PHPMinion
  * @author      Evan Johnson
  * @created     October 20, 2015
  * @version     0.1
  */
-class SimpleAnalyzerTest extends \PHPUnit_Framework_TestCase
+class ScalarAnalyzerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var SimpleAnalyzer
+     * @var ScalarAnalyzer
      */
     public $analyzer;
 
     public function setUp()
     {
-        $this->analyzer = new SimpleAnalyzer();
+        $this->analyzer = new ScalarAnalyzer();
     }
 
     public function validAnalyzeDataProvider()
     {
         $path = '\PHPMinion\Utilities\EntityAnalyzer\Models\\';
         return array(
-            array( $path.'SimpleModel', true ),
-            array( $path.'SimpleModel', false ),
-            array( $path.'SimpleModel', null ),
-            array( $path.'SimpleModel', 10 ),
-            array( $path.'SimpleModel', 3.14 ),
-            array( $path.'SimpleModel', 'string var' ),
+            array( $path.'ScalarModel', true ),
+            array( $path.'ScalarModel', false ),
+            array( $path.'ScalarModel', null ),
+            array( $path.'ScalarModel', 10 ),
+            array( $path.'ScalarModel', 3.14 ),
+            array( $path.'ScalarModel', 'string var' ),
         );
     }
 

@@ -15,7 +15,7 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Factories;
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Renderers\ObjectModelRenderer;
 use PHPMinion\Utilities\EntityAnalyzer\Renderers\ArrayModelRenderer;
-use PHPMinion\Utilities\EntityAnalyzer\Renderers\SimpleModelRenderer;
+use PHPMinion\Utilities\EntityAnalyzer\Renderers\ScalarModelRenderer;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
@@ -80,7 +80,7 @@ class RendererFactory
             case 'double':
             case 'null':
             case 'string':
-                $renderer = new SimpleModelRenderer();
+                $renderer = new ScalarModelRenderer();
                 break;
 
         }

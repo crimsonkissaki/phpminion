@@ -13,7 +13,7 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Models;
 
 /**
- * Class SimpleModel
+ * Class ScalarModel
  *
  * Model to hold simple data type values
  *
@@ -22,7 +22,7 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Models;
  * @created     October 20, 2015
  * @version     0.1
  */
-class SimpleModel extends DataTypeModel
+class ScalarModel extends DataTypeModel
 {
 
     /**

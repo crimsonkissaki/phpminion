@@ -15,14 +15,14 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Renderers;
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 
 /**
- * SimpleModelRenderer
+ * ScalarModelRenderer
  *
- * Renders a SimpleModel to something more human-readable
+ * Renders a ScalarModel to something more human-readable
  *
  * @created     October 19, 2015
  * @version     0.1
  */
-class SimpleModelRenderer implements ModelRendererInterface
+class ScalarModelRenderer implements ModelRendererInterface
 {
 
     /**
@@ -30,7 +30,7 @@ class SimpleModelRenderer implements ModelRendererInterface
      */
     public function renderModel(DataTypeModel $model, $level = 0)
     {
-        $output = "Non-functional SimpleModelRenderer->renderModel()";
+        $output = "Non-functional ScalarModelRenderer->renderModel()";
 
         return $output;
     }

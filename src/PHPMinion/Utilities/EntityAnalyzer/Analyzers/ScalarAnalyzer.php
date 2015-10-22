@@ -13,20 +13,20 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\SimpleModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
- * Class SimpleAnalyzer
+ * Class ScalarAnalyzer
  *
- * Analyzes simple data types and returns the results in a SimpleModel
+ * Analyzes simple data types and returns the results in a ScalarModel
  *
  * @package     PHPMinion
  * @author      Evan Johnson
  * @created     October 18, 2015
  * @version     0.1
  */
-class SimpleAnalyzer implements EntityAnalyzerInterface
+class ScalarAnalyzer implements EntityAnalyzerInterface
 {
 
     /**
@@ -36,7 +36,7 @@ class SimpleAnalyzer implements EntityAnalyzerInterface
     {
         $this->validateDataType($entity);
 
-        $model = new SimpleModel();
+        $model = new ScalarModel();
 
         return $model;
     }

@@ -15,7 +15,7 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Factories;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzerInterface;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ObjectAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ArrayAnalyzer;
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\SimpleAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ScalarAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
@@ -80,7 +80,7 @@ class AnalyzerFactory
             case (is_null($entity)):
             case (is_string($entity)):
             case (is_bool($entity)):
-                $analyzer = new SimpleAnalyzer();
+                $analyzer = new ScalarAnalyzer();
                 break;
         }
 
