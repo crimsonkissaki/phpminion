@@ -61,7 +61,7 @@ class ObjectAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider invalidAnalyzeDataProvider
-     * @expectedException \PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException
+     * @expectedException \PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException
      */
     public function test_analyze_throwsExceptionForInvalidDataTypes($value)
     {

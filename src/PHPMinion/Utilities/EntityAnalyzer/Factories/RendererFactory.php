@@ -16,7 +16,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Renderers\ObjectModelRenderer;
 use PHPMinion\Utilities\EntityAnalyzer\Renderers\ArrayModelRenderer;
 use PHPMinion\Utilities\EntityAnalyzer\Renderers\ScalarModelRenderer;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * RendererFactory
@@ -55,7 +55,7 @@ class RendererFactory
      *
      * @param  mixed $model
      * @return ModelRendererInterface
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     public static function getModelRenderer(DataTypeModel $model)
     {
@@ -86,7 +86,7 @@ class RendererFactory
         }
 
         if (!$renderer) {
-            throw new AnalyzerException("No model renderer available in RendererFactory for model type '{$modelType}'.");
+            throw new EntityAnalyzerException("No model renderer available in RendererFactory for model type '{$modelType}'.");
         }
 
         $_this->_renderers[$modelType] = $renderer;

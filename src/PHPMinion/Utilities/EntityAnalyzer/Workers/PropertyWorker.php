@@ -19,7 +19,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * Class ObjectWorker
@@ -56,12 +56,12 @@ class PropertyWorker
     /**
      * @param object           $targetObj
      * @param \ReflectionClass $reflectionObj
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     public function __construct($targetObj, \ReflectionClass $reflectionObj)
     {
         if (!is_object($targetObj)) {
-            throw new AnalyzerException("PropertyWorker \$targetObj must be a valid object instance.");
+            throw new EntityAnalyzerException("PropertyWorker \$targetObj must be a valid object instance.");
         }
 
         $this->_entityAnalyzer = new EntityEntityAnalyzer();

@@ -16,7 +16,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzerInterface;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ObjectAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ArrayAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Analyzers\ScalarAnalyzer;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * AnalyzerFactory
@@ -57,7 +57,7 @@ class AnalyzerFactory
      *
      * @param  mixed $entity
      * @return EntityAnalyzerInterface
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     public static function getAnalyzer($entity)
     {
@@ -85,7 +85,7 @@ class AnalyzerFactory
         }
 
         if (!$analyzer) {
-            throw new AnalyzerException("No Analyzer defined for data type: '{$dataType}'.");
+            throw new EntityAnalyzerException("No Analyzer defined for data type: '{$dataType}'.");
         }
 
         $_this->_analyzers[$dataType] = $analyzer;

@@ -12,7 +12,12 @@
 
 namespace PHPMinion\Utilities\Core\Exceptions;
 
-
+/**
+ * Class PHPMinionException
+ *
+ * The penultimate exception class for entire PHPMinion suite.
+ * All PHPMinion utility exceptions inherit from this class.
+ */
 class PHPMinionException extends \Exception
 {
 

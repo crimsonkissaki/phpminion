@@ -16,7 +16,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Factories\AnalyzerFactory;
 use PHPMinion\Utilities\EntityAnalyzer\Factories\RendererFactory;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * Class EntityEntityAnalyzer
@@ -41,7 +41,7 @@ class EntityAnalyzer implements EntityAnalyzerInterface
      *
      * @param  mixed  $entity
      * @return string
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     public function analyzeAndRender($entity)
     {
@@ -52,7 +52,7 @@ class EntityAnalyzer implements EntityAnalyzerInterface
 
     /**
      * @inheritDoc
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     public function analyze($entity)
     {

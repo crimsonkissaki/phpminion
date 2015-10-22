@@ -13,7 +13,7 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * ArrayWorker
@@ -55,7 +55,7 @@ class ArrayWorker
      *
      * @param  mixed $array
      * @return bool
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     private function validateTargetArr($array)
     {
@@ -65,7 +65,7 @@ class ArrayWorker
             return true;
         }
 
-        throw new AnalyzerException("ArrayWorker only accepts arrays: '" . gettype($array) . "' supplied.");
+        throw new EntityAnalyzerException("ArrayWorker only accepts arrays: '" . gettype($array) . "' supplied.");
     }
 
 }

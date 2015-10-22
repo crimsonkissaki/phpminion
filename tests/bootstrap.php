@@ -9,8 +9,17 @@
  * file that was distributed with this source code.
  */
 
-// path to Composer autoload file
-$loader = require dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+$DS = DIRECTORY_SEPARATOR;
+$phpminionVendor = dirname(dirname(__FILE__)) . "{$DS}vendor";
+$parentVendor = dirname(dirname(dirname(dirname(__FILE__))));
+$autoLoad = "{$DS}autoload.php";
 
+$loaderPath = ((is_dir($phpminionVendor)) ? $phpminionVendor : $parentVendor) . $autoLoad;
+
+if (!is_file($loaderPath)) {
+    die("Sorry. Can't run unit tests without a valid autoloader file.\n\n");
+}
+
+$loader = require $loaderPath;
 // define PSR4 namespace to "project root" folder in /tests
-$loader->addPsr4('PHPMinionTest\\', dirname(__FILE__) . '/PHPMinion/');
+$loader->addPsr4('PHPMinionTest\\', dirname(__FILE__) . "{$DS}PHPMinion{$DS}");

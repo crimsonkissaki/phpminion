@@ -15,7 +15,7 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\ObjectWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * Class ObjectAnalyzer
@@ -46,7 +46,7 @@ class ObjectAnalyzer implements EntityAnalyzerInterface
      *
      * @param  mixed $entity
      * @return bool
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     private function validateObj($entity)
     {
@@ -57,7 +57,7 @@ class ObjectAnalyzer implements EntityAnalyzerInterface
             return true;
         }
 
-        throw new AnalyzerException("ObjectEntityAnalyzer only accept objects or fully qualified class names: '" . gettype($entity) . "' supplied.");
+        throw new EntityAnalyzerException("ObjectEntityAnalyzer only accept objects or fully qualified class names: '" . gettype($entity) . "' supplied.");
     }
 
 }

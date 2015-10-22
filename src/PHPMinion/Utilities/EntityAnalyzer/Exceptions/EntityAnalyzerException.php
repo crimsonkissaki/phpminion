@@ -15,14 +15,11 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Exceptions;
 use PHPMinion\Utilities\Core\Exceptions\PHPMinionException;
 
 /**
- * Class AnalyzerException
+ * Class EntityAnalyzerException
  *
- * Primary exception for EntityEntityAnalyzer classes
- *
- * @created     October 9, 2015
- * @version     0.1
+ * All EntityAnalyzer utility exceptions inherit from this class.
  */
-class AnalyzerException extends PHPMinionException
+class EntityAnalyzerException extends PHPMinionException
 {
 
     public function __construct($msg, $code = 0, \Exception $prev = null)

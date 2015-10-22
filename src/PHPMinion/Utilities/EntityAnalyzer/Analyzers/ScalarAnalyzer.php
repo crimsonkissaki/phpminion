@@ -16,7 +16,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\ScalarWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Factories\WorkerFactory;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * Class ScalarAnalyzer
@@ -51,12 +51,12 @@ class ScalarAnalyzer implements EntityAnalyzerInterface
      *
      * @param  mixed $entity
      * @return bool
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     private function validateDataType($entity)
     {
         if (!is_bool($entity) && !is_numeric($entity) && !is_string($entity) && !is_null($entity)) {
-            throw new AnalyzerException("ArrayEntityAnalyzer only accept arrays: '" . gettype($entity) . "' supplied.");
+            throw new EntityAnalyzerException("ArrayEntityAnalyzer only accept arrays: '" . gettype($entity) . "' supplied.");
         }
 
         return true;

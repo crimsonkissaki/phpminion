@@ -17,7 +17,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\PropertyWorker;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * Class ObjectWorker
@@ -93,7 +93,7 @@ class ObjectWorker
      *
      * @param mixed $obj
      * @return bool
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     private function setUp($obj)
     {
@@ -109,7 +109,7 @@ class ObjectWorker
                 $this->_obj = new $obj();
                 $this->_refObj = new \ReflectionClass($obj);
             } catch (\Exception $e) {
-                throw new AnalyzerException("Unknown error while attempting to instantiate '{$obj}': '{$e->getMessage()}'\n\nCreate an object instance and try that instead.");
+                throw new EntityAnalyzerException("Unknown error while attempting to instantiate '{$obj}': '{$e->getMessage()}'\n\nCreate an object instance and try that instead.");
             }
         }
 
@@ -121,7 +121,7 @@ class ObjectWorker
      *
      * @param  mixed $obj
      * @return bool
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     private function validateTargetObj($obj)
     {
@@ -132,7 +132,7 @@ class ObjectWorker
             return true;
         }
 
-        throw new AnalyzerException("ObjectWorker only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
+        throw new EntityAnalyzerException("ObjectWorker only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
     }
 
     private function getObjectName(\ReflectionClass $obj)

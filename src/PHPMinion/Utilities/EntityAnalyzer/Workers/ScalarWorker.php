@@ -13,7 +13,7 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * ScalarWorker
@@ -40,7 +40,7 @@ class ScalarWorker
      *
      * @param  mixed $array
      * @return bool
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     private function validateTargetEntity($array)
     {
@@ -50,7 +50,7 @@ class ScalarWorker
             return true;
         }
 
-        throw new AnalyzerException("ScalarWorker only accepts arrays: '" . gettype($array) . "' supplied.");
+        throw new EntityAnalyzerException("ScalarWorker only accepts arrays: '" . gettype($array) . "' supplied.");
     }
 
 }

@@ -14,6 +14,11 @@ namespace PHPMinion\Utilities\Dbug\Exceptions;
 
 use PHPMinion\Utilities\Core\Exceptions\PHPMinionException;
 
+/**
+ * Class DbugException
+ *
+ * All Dbug utility exceptions inherit from this class.
+ */
 class DbugException extends PHPMinionException
 {
 

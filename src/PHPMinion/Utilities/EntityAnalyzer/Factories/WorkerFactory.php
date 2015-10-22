@@ -16,7 +16,7 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Factories;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\ScalarWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\ObjectWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\ArrayWorker;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * WorkerFactory
@@ -57,7 +57,7 @@ class WorkerFactory
      *
      * @param  mixed $entity
      * @return EntityWorkerInterface
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     public static function getWorker($entity)
     {
@@ -85,7 +85,7 @@ class WorkerFactory
         }
 
         if (!$worker) {
-            throw new AnalyzerException("No Worker defined for data type: '{$dataType}'.");
+            throw new EntityAnalyzerException("No Worker defined for data type: '{$dataType}'.");
         }
 
         $_this->_workers[$dataType] = $worker;

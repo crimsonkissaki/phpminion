@@ -13,7 +13,7 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * Class ArrayAnalyzer
@@ -45,12 +45,12 @@ class ArrayAnalyzer implements EntityAnalyzerInterface
      *
      * @param  mixed $entity
      * @return bool
-     * @throws AnalyzerException
+     * @throws EntityAnalyzerException
      */
     private function validateArray($entity)
     {
         if (!is_array($entity)) {
-            throw new AnalyzerException("ArrayEntityAnalyzer only accept arrays: '" . gettype($entity) . "' supplied.");
+            throw new EntityAnalyzerException("ArrayEntityAnalyzer only accept arrays: '" . gettype($entity) . "' supplied.");
         }
 
         return true;
