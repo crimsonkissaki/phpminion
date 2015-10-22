@@ -14,6 +14,8 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
+use PHPMinion\Utilities\EntityAnalyzer\Workers\ScalarWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Factories\WorkerFactory;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\AnalyzerException;
 
 /**
@@ -37,6 +39,9 @@ class ScalarAnalyzer implements EntityAnalyzerInterface
         $this->validateDataType($entity);
 
         $model = new ScalarModel();
+        $worker = WorkerFactory::getInstance()->getWorker($entity);
+        $worker->workEntity($entity);
+
 
         return $model;
     }
