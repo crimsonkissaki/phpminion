@@ -40,15 +40,20 @@ class RendererFactoryTest extends \PHPUnit_Framework_TestCase
     public function getModelRendererDataProvider()
     {
         $path = '\PHPMinion\Utilities\EntityAnalyzer\Renderers\\';
+        $arr = ['var1', 'var2'];
+        $obj = new \stdClass();
+        $str = 'test string';
+        $int = 10;
+        $float = 3.14;
         return array(
-            array( $path.'ArrayModelRenderer', new ArrayModel(), ['var1','var2'] ),
-            array( $path.'ObjectModelRenderer', new ObjectModel(), new \stdClass() ),
-            array( $path.'ScalarModelRenderer', new ScalarModel(), true ),
-            array( $path.'ScalarModelRenderer', new ScalarModel(), false ),
-            array( $path.'ScalarModelRenderer', new ScalarModel(), null ),
-            array( $path.'ScalarModelRenderer', new ScalarModel(), 'test string' ),
-            array( $path.'ScalarModelRenderer', new ScalarModel(), 10 ),
-            array( $path.'ScalarModelRenderer', new ScalarModel(), 3.14 ),
+            array( $path.'ArrayModelRenderer', new ArrayModel($arr), $arr ),
+            array( $path.'ObjectModelRenderer', new ObjectModel($obj), $obj ),
+            array( $path.'ScalarModelRenderer', new ScalarModel(true), true ),
+            array( $path.'ScalarModelRenderer', new ScalarModel(false), false ),
+            array( $path.'ScalarModelRenderer', new ScalarModel(null), null ),
+            array( $path.'ScalarModelRenderer', new ScalarModel($str), $str ),
+            array( $path.'ScalarModelRenderer', new ScalarModel($int), $int ),
+            array( $path.'ScalarModelRenderer', new ScalarModel($float), $float ),
         );
     }
 
@@ -59,10 +64,6 @@ class RendererFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $expected = '\PHPMinion\Utilities\EntityAnalyzer\Renderers\ModelRendererInterface';
         /** @var DataTypeModel $model */
-        $model->setDataType(gettype($entity));
-        $boom = explode('\\', $rendererClass);
-        $class = str_replace('ModelRenderer', '', array_pop($boom));
-        $model->setRendererType(strtolower($class));
         $actual = RendererFactory::getModelRenderer($model);
 
         $this->assertInstanceOf($expected, $actual);
@@ -73,14 +74,9 @@ class RendererFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function test_getModelRenderer_returnsProperRendererObject($rendererClass, $model, $entity)
     {
-        /** @var DataTypeModel $model */
-        $model->setDataType(gettype($entity));
-        $boom = explode('\\', $rendererClass);
-        $class = str_replace('ModelRenderer', '', array_pop($boom));
-        $model->setRendererType(strtolower($class));
         $actual = RendererFactory::getModelRenderer($model);
 
-        $this->assertInstanceOf($rendererClass, $actual);
+        $this->assertInstanceOf($rendererClass, $actual, "DataType: '" . gettype($entity) . "': '{$rendererClass}'; Actual: '" . get_class($actual) . "'");
     }
 
 }

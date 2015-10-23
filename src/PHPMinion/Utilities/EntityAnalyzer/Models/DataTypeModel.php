@@ -35,13 +35,6 @@ abstract class DataTypeModel
     private $_dataType;
 
     /**
-     * Renderer type to use the data type
-     *
-     * @var string
-     */
-    private $_rendererType;
-
-    /**
      * @return string
      */
     public function getDataType()
@@ -49,28 +42,9 @@ abstract class DataTypeModel
         return $this->_dataType;
     }
 
-    /**
-     * @param string $dataType
-     */
-    public function setDataType($dataType)
+    public function __construct($entity)
     {
-        $this->_dataType = $dataType;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRendererType()
-    {
-        return $this->_rendererType;
-    }
-
-    /**
-     * @param string $rendererType
-     */
-    public function setRendererType($rendererType)
-    {
-        $this->_rendererType = $rendererType;
+        $this->_dataType = strtolower(gettype($entity));
     }
 
 }

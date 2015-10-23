@@ -9,6 +9,9 @@
  * file that was distributed with this source code.
  */
 
+// super cereal about error reporting
+error_reporting(-1);
+
 $DS = DIRECTORY_SEPARATOR;
 $phpminionVendor = dirname(dirname(__FILE__)) . "{$DS}vendor";
 $parentVendor = dirname(dirname(dirname(dirname(__FILE__))));

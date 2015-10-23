@@ -15,7 +15,6 @@ namespace PHPMinion\Utilities\EntityAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Factories\WorkerFactory;
 use PHPMinion\Utilities\EntityAnalyzer\Factories\RendererFactory;
-//use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * Class EntityEntityAnalyzer
@@ -34,6 +33,22 @@ class EntityAnalyzer
 {
 
     /**
+     * @var  EntityAnalyzer _instance
+     */
+    private static $_instance;
+
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new EntityAnalyzer();
+        }
+
+        return self::$_instance;
+    }
+
+    /**
      * Analyzes an entity and returns the rendered results
      *
      * Analyze() and Render() have been split off into separate
@@ -42,11 +57,12 @@ class EntityAnalyzer
      * @param  mixed  $entity
      * @return string
      */
-    public function analyzeAndRender($entity)
+    public static function analyzeAndRender($entity)
     {
-        $model = $this->analyze($entity);
+        $_this = self::getInstance();
+        $model = $_this->analyze($entity);
 
-        return $this->render($model);
+        return $_this->render($model);
     }
 
     /**
@@ -55,7 +71,7 @@ class EntityAnalyzer
      * @param mixed $entity Target entity for analysis
      * @return DataTypeModel
      */
-    public function analyze($entity)
+    public static function analyze($entity)
     {
         $worker = WorkerFactory::getWorker($entity);
 
@@ -68,7 +84,7 @@ class EntityAnalyzer
      * @param  DataTypeModel $model
      * @return string
      */
-    public function render(DataTypeModel $model)
+    public static function render(DataTypeModel $model)
     {
         $renderer = RendererFactory::getModelRenderer($model);
 

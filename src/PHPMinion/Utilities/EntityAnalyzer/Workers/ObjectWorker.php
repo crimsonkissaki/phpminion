@@ -63,15 +63,13 @@ class ObjectWorker implements DataTypeWorkerInterface
     /**
      * TODO: this fucks up when passed a stdClass - cant use \ReflectionProperty->getValue()
      *
-     * @return ObjectModel
+     * @inheritDoc
      */
     public function createModel($entity)
     {
         $this->validateTargetObj($entity);
 
-        $model = new ObjectModel();
-        $model->setDataType('object');
-        $model->setRendererType('object');
+        $model = new ObjectModel($entity);
 
         return $model;
 

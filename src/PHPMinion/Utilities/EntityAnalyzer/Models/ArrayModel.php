@@ -12,6 +12,8 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Models;
 
+use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
+
 /**
  * Class ArrayModel
  *
@@ -28,6 +30,41 @@ class ArrayModel extends DataTypeModel
      *
      * @var array
      */
-    public $elements = [];
+    private $_elements = [];
+
+    /**
+     * @return array
+     */
+    public function getElements()
+    {
+        return $this->_elements;
+    }
+
+    /**
+     * @param array $elements
+     */
+    public function setElements(array $elements)
+    {
+        $this->_elements = $elements;
+    }
+
+    /**
+     * @param mixed $key
+     * @param mixed $value
+     * @throws EntityAnalyzerException
+     */
+    public function addElement($key, $value)
+    {
+        $this->_elements[$key] = $value;
+    }
+
+    public function getElement($key)
+    {
+        if (isset($this->_elements[$key])) {
+            return $this->_elements[$key];
+        }
+
+        throw new EntityAnalyzerException("No array element exists for key '{$key}'.");
+    }
 
 }

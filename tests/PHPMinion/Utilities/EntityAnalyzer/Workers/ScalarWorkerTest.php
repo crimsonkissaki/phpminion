@@ -76,7 +76,6 @@ class ScalarWorkerTest extends \PHPUnit_Framework_TestCase
         $actual = $this->worker->createModel($entity);
 
         $this->assertEquals($expectedDataType, $actual->getDataType());
-        $this->assertEquals('scalar', $actual->getRendererType());
         $this->assertEquals($entity, $actual->getValue());
     }
 

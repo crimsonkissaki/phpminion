@@ -54,7 +54,7 @@ class Config
     public function __construct()
     {
         $this->PROJECT_ROOT_PATH = dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR;
-        $this->setEntityAnalyzer(new EntityAnalyzer());
+        $this->setEntityAnalyzer(EntityAnalyzer::getInstance());
     }
 
 }

@@ -22,7 +22,7 @@ class EntityAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->analyzer = new EntityAnalyzer();
+        $this->analyzer = EntityAnalyzer::getInstance();
     }
 
     public function analyzeDataProvider()
@@ -67,10 +67,6 @@ class EntityAnalyzerTest extends \PHPUnit_Framework_TestCase
     public function test_render_returnsString($modelType, $entity)
     {
         $model = $this->analyzer->analyze($entity);
-        $model->setDataType(gettype($entity));
-        $boom = explode('\\', $modelType);
-        $class = str_replace('Model', '', array_pop($boom));
-        $model->setRendererType(strtolower($class));
         $renderResult = $this->analyzer->render($model);
 
         $this->assertTrue(is_string($renderResult));

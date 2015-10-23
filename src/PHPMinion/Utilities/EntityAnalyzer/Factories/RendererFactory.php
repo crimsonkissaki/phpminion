@@ -61,32 +61,37 @@ class RendererFactory
     public static function getModelRenderer(DataTypeModel $model)
     {
         $_this = self::getInstance();
-        $rendererType = strtolower($model->getRendererType());
+        $dataType = $model->getDataType();
 
-        if (isset($_this->_renderers[$rendererType])) {
-            return $_this->_renderers[$rendererType];
+        if (isset($_this->_renderers[$dataType])) {
+            return $_this->_renderers[$dataType];
         }
 
         $renderer = false;
-        switch ($rendererType) {
+        switch ($dataType) {
             case 'object':
                 $renderer = new ObjectModelRenderer();
                 break;
             case 'array':
                 $renderer = new ArrayModelRenderer();
                 break;
-            case 'scalar':
+            case 'boolean':
+            case 'float':
+            case 'double':
+            case 'integer':
+            case 'null':
+            case 'string':
                 $renderer = new ScalarModelRenderer();
                 break;
         }
 
         if (!$renderer) {
-            throw new EntityAnalyzerException("No model renderer available in RendererFactory for model type '{$rendererType}'.");
+            throw new EntityAnalyzerException("No model renderer available in RendererFactory for model type '{$dataType}'.");
         }
 
-        $_this->_renderers[$rendererType] = $renderer;
+        $_this->_renderers[$dataType] = $renderer;
 
-        return $_this->_renderers[$rendererType];
+        return $_this->_renderers[$dataType];
     }
 
 }

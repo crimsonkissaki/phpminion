@@ -72,16 +72,16 @@ class WorkerFactory
         $worker = false;
         switch (true) {
             case (is_object($entity)):
-                $worker = new ObjectWorker();
+                $worker = new ObjectWorker($entity);
                 break;
             case (is_array($entity)):
-                $worker = new ArrayWorker();
+                $worker = new ArrayWorker($entity);
                 break;
             case (is_numeric($entity)):
             case (is_null($entity)):
             case (is_string($entity)):
             case (is_bool($entity)):
-                $worker = new ScalarWorker();
+                $worker = new ScalarWorker($entity);
                 break;
             /*
             case (is_resource($entity)):

@@ -12,7 +12,10 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
+use PHPMinion\Utilities\Core\Common;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
+use PHPMinion\Utilities\EntityAnalyzer\EntityAnalyzer;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
@@ -34,15 +37,12 @@ class ArrayWorker implements DataTypeWorkerInterface
     {
         $this->validateTargetArr($entity);
 
-        $model = new ArrayModel();
-        $model->setDataType('array');
-        $model->setRendererType('array');
+        $model = new ArrayModel($entity);
 
-        /*
-        foreach ($array as $key => $value) {
-            $model->elements[$key] = $value;
+        foreach ($entity as $key => $value) {
+            $analyzedValue = $this->analyzeArrayValue($value);
+            $model->addElement($key, $analyzedValue);
         }
-        */
 
         return $model;
     }
@@ -61,6 +61,17 @@ class ArrayWorker implements DataTypeWorkerInterface
         }
 
         throw new EntityAnalyzerException("ArrayWorker only accepts arrays: '" . gettype($entity) . "' supplied.");
+    }
+
+    /**
+     * Generates a DataTypeModel for the array value
+     *
+     * @param  mixed $value
+     * @return DataTypeModel
+     */
+    private function analyzeArrayValue($value)
+    {
+        return EntityAnalyzer::analyze($value);
     }
 
 }
