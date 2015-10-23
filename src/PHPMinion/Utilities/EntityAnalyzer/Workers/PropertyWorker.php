@@ -123,78 +123,7 @@ class PropertyWorker implements DataTypeWorkerInterface
         return false;
     }
 
-    /**
-     * Gets details for an object property
-     *
-     * Looping through an array of all class properties returned by
-     * a \ReflectionClass's getProperties() method returns is interesting
-     * because 'constant' properties are returned as an associative array
-     * of 'name' => 'value', while every other visibility level is returned
-     * as a numerically indexed array of 'N' => \ReflectionProperty objects.
-     *
-     * @param    string        $visibility Property visibility
-     * @param    string|int    $key        Property name or a numeric index
-     * @param    string|object $value      Property value or \ReflectionProperty object
-     * @return  PropertyModel
-     */
-    private function getPropertyDetails($visibility, $key, $value)
-    {
-        $model = new PropertyModel();
-        $model->name = (is_object($value)) ? $value->name : $key;
-        //$model->setter = $this->findPropertySetterIfExists($result->name, $this->methods);
-        $model->setter = 'TODO: get this working!';
-        $model->visibility = $visibility;
-        $model->isStatic = (is_object($value)) ? $value->isStatic() : false;
 
-        //$model->currentValue = $this->getCurrentPropertyValue($visibility, $value);
-        //$model->currentValueDataType = gettype($model->currentValue);
-        //$model->defaultValue = $this->getPropertyDefaultValue($visibility, $value);
-        //$model->defaultValueDataType = gettype($model->defaultValue);
-        $model->defaultValue = 'TODO: get this working!';
-        $model->defaultValueDataType = 'TODO: get this working!';
-
-
-        $actualValue = $this->getCurrentPropertyValue($visibility, $value);
-        $model->currentValue = $this->getAnalyzedValueIfRequired($actualValue);
-        $model->currentValueDataType = gettype($actualValue);
-        //$classData = $this->getValueClassData($model->currentValue);
-        $classData = $this->getValueClassData($actualValue);
-        $model->className = $classData['className'];
-        $model->classNamespace = $classData['classNamespace'];
-
-        return $model;
-    }
-
-    /**
-     * Gets the current value for a property, if any
-     *
-     * TODO: need to make sure this is working right with stdClass and custom objects
-     *
-     * 'Constant' properties just need the value string returned.
-     * All other visibility levels are a \ReflectionProperty object
-     * whose getValue() method requires an actual instance of the
-     * owning class to determine the default value.
-     *
-     * @param   string        $visibility Property visibility
-     * @param   string|object $value      String or \ReflectionProperty object
-     * @return  string
-     */
-    private function getCurrentPropertyValue($visibility, $value)
-    {
-        if ($visibility === 'constant') {
-            return $value;
-        }
-
-        if ($value->isPrivate() || $value->isProtected()) {
-            $value->setAccessible(true);
-        }
-
-        if ($visibility === 'static') {
-            return $value->getValue();
-        }
-
-        return $value->getValue($this->_obj);
-    }
 
     /**
      * Returns an analyzed DataTypeModel or the actual value, depending
@@ -249,34 +178,7 @@ class PropertyWorker implements DataTypeWorkerInterface
         return (is_object($this->classInstance)) ? $value->getValue($this->classInstance) : 'unknown';
     }
 
-    /**
-     * Gets class data for values that are objects
-     *
-     * This method consumes the return value of a \ReflectionProperty
-     * object's getValue() method, and if the default value is an object
-     * getValue() returns an instance of that object.
-     *
-     * @param   mixed $value Hopefully a value object instance
-     * @return  array
-     */
-    private function getValueClassData($value)
-    {
-        $data = ['className' => null, 'classNamespace' => null];
 
-        if (!is_object($value)) {
-            return $data;
-        }
-
-        $className = get_class($value);
-        if (($pos = strrpos($className, '\\')) === false) {
-            $data['className'] = $className;
-        } else {
-            $data['className'] = substr($className, $pos + 1);
-            $data['classNamespace'] = substr($className, 0, $pos);
-        }
-
-        return $data;
-    }
 
     /**
      * Gets the name of a property's setter, if one exists

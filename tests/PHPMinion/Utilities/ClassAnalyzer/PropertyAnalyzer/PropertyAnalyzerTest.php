@@ -26,16 +26,18 @@ class PropertyAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->analyzer = PropertyAnalyzer::getInstance();
+        $this->analyzer = new PropertyAnalyzer();
     }
 
     public function validArgsDataProvider()
     {
         return array(
-            array( new \ReflectionObject(MockClasses::getMock_allVisibility()) ),
+            array( MockClasses::getMock_allVisibility() ),
+            /*
             array( new \ReflectionObject(MockClasses::getMock_simple()) ),
             array( new \ReflectionObject(MockClasses::getMock_stdClass()) ),
             array( new \ReflectionClass('\PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel') ),
+            */
         );
     }
 
@@ -44,8 +46,10 @@ class PropertyAnalyzerTest extends \PHPUnit_Framework_TestCase
      */
     public function test_analyze_returnsArrayOfPropertyModels($entity)
     {
+        $object = (is_string($entity)) ? new $entity() : $entity;
+        $refEntity = new \ReflectionClass($object);
         $expected = '\PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel';
-        $actual = $this->analyzer->analyze($entity);
+        $actual = $this->analyzer->analyze($object, $refEntity);
 
         echo "\n\nreturn from propana->analyze:\n\n";
         var_dump($actual);

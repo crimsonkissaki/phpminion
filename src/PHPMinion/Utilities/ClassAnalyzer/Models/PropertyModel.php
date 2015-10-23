@@ -52,8 +52,8 @@ class PropertyModel
      * Setter method if any
      *
      * @var string
-     */
     private $setter;
+     */
 
     /**
      * Current property value, if any
@@ -73,15 +73,15 @@ class PropertyModel
      * Default property value, if any
      *
      * @var mixed
-     */
     private $defaultValue;
+     */
 
     /**
      * Default property value data type
      *
      * @var string
-     */
     private $defaultValueDataType;
+     */
 
     /**
      * Class name of object property types
@@ -96,13 +96,6 @@ class PropertyModel
      * @var string
      */
     private $classNamespace;
-
-    /**
-     * Any comments that need to be displayed above the property in the mock
-     *
-     * @var string
-     */
-    private $comments;
 
     /**
      * @return string
@@ -262,22 +255,6 @@ class PropertyModel
     public function setClassNamespace($classNamespace)
     {
         $this->classNamespace = $classNamespace;
-    }
-
-    /**
-     * @return string
-     */
-    public function getComments()
-    {
-        return $this->comments;
-    }
-
-    /**
-     * @param string $comments
-     */
-    public function setComments($comments)
-    {
-        $this->comments = $comments;
     }
 
     /**

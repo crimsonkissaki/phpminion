@@ -12,6 +12,8 @@
 
 namespace PHPMinion\Utilities\ClassAnalyzer\PropertyAnalyzer;
 
+use PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel;
+
 /**
  * Class PropertyAnalyzer
  *
@@ -27,30 +29,31 @@ class PropertyAnalyzer
 {
 
     /**
-     * @var PropertyAnalyzer
+     * Object under the microscope
+     *
+     * @var object
      */
-    private static $_instance;
+    private $_obj;
 
-    private function __construct() {}
-
-    public static function getInstance()
-    {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new PropertyAnalyzer();
-        }
-
-        return self::$_instance;
-    }
+    /**
+     * ReflectionClass of object
+     *
+     * @var \ReflectionClass
+     */
+    private $_refObj;
 
     /**
      * Analyzes a class's properties
      *
-     * @param \ReflectionClass $class
+     * @param object           $object
+     * @param \ReflectionClass $refObject
      * @return array
      */
-    public static function analyze(\ReflectionClass $class)
+    public function analyze($object, \ReflectionClass $refObject)
     {
-        $propertyModels = self::getInstance()->createModelsForClassProperties($class);
+        $this->_obj = $object;
+        $this->_refObj = $refObject;
+        $propertyModels = $this->createModelsForClassProperties();
 
         return $propertyModels;
     }
@@ -58,72 +61,14 @@ class PropertyAnalyzer
     /**
      * Creates PropertyModel objects for all class properties
      *
-     * @param \ReflectionClass $class
      * @return PropertyModels[]
      */
-    private function createModelsForClassProperties(\ReflectionClass $class)
+    private function createModelsForClassProperties()
     {
-        $refProps = $this->getReflectionProperties($class);
+        $refProps = $this->_refObj->getProperties();
         $propertyModels = $this->getPropertiesDetails($refProps);
 
         return $propertyModels;
-    }
-
-    // testing if i really need to go through the work of doing this by visibility
-    private function getReflectionProperties(\ReflectionClass $class)
-    {
-        $byVis = $this->getReflectionPropertiesByVisibility($class);
-
-        $props = [];
-        foreach ($byVis as $vis => $propsArr) {
-            foreach ($propsArr as $key => $prop) {
-                $props[] = $prop;
-            }
-        }
-
-        return $props;
-    }
-
-    /**
-     * Returns an associative array of object properties by visibility
-     *
-     * <code>
-     * $props = [
-     *   'constant' => [
-     *     \ReflectionProperty,
-     *     \ReflectionProperty,
-     *   ],
-     *   'public' => [
-     *     \ReflectionProperty,
-     *     \ReflectionProperty,
-     *   ],
-     *   ...
-     * ];
-     * </code>
-     *
-     * @param  \ReflectionClass $class
-     * @return array
-     */
-    private function getReflectionPropertiesByVisibility(\ReflectionClass $class)
-    {
-        $props = [];
-        if ($const = $class->getConstants()) {
-            $props['constant'] = $const;
-        }
-        if ($priv = $class->getProperties(\ReflectionProperty::IS_PRIVATE)) {
-            $props['private'] = $priv;
-        }
-        if ($prot = $class->getProperties(\ReflectionProperty::IS_PROTECTED)) {
-            $props['protected'] = $prot;
-        }
-        if ($pub = $class->getProperties(\ReflectionProperty::IS_PUBLIC)) {
-            $props['public'] = $pub;
-        }
-        if ($stat = $class->getProperties(\ReflectionProperty::IS_STATIC)) {
-            $props['static'] = $stat;
-        }
-
-        return $props;
     }
 
     /**
@@ -146,9 +91,114 @@ class PropertyAnalyzer
         return $results;
     }
 
-    private function getPropertyDetails($key, $value)
+    /**
+     * Gets details for an object property
+     *
+     * Looping through an array of all class properties returned by
+     * a \ReflectionClass's getProperties() method is interesting
+     * because 'constant' properties are returned as an associative array
+     * of 'name' => 'value', while every other visibility level is returned
+     * as a numerically indexed array of 'N' => \ReflectionProperty objects.
+     *
+     * @param    string|int    $key        Property name or a numeric index
+     * @param    string|object $property   Property value or \ReflectionProperty object
+     * @return  PropertyModel
+     */
+    private function getPropertyDetails($key, $property)
     {
+        $model = new PropertyModel();
+        $model->setName(((is_object($property)) ? $property->getName(): $key));
+        //$model->setter = $this->findPropertySetterIfExists($result->name, $this->methods);
+        $model->setVisibility($this->getPropertyVisibility($property));
+        $model->setIsStatic((is_object($property)) ? $property->isStatic() : false);
+        $model->setCurrentValue($this->getCurrentPropertyValue($property));
+        $model->setCurrentValueDataType(gettype($model->getCurrentValue()));
 
+        $classData = $this->getValueClassData($model->getCurrentValue());
+        $model->setClassName($classData['className']);
+        $model->setClassNamespace($classData['classNamespace']);
+
+        return $model;
     }
 
+    /**
+     * Determines what visibility/scope a property falls under
+     *
+     * @param  mixed $property
+     * @return string
+     */
+    private function getPropertyVisibility($property)
+    {
+        switch (true) {
+            case (!is_object($property)):
+                return 'constant';
+            case ($property->isStatic()):
+                return 'static';
+            case ($property->isPublic()):
+                return 'public';
+            case ($property->isPrivate()):
+                return 'private';
+            case ($property->isProtected()):
+                return 'protected';
+            default:
+                return 'UNKNOWN_VISIBILITY';
+        }
+    }
+
+    /**
+     * Gets the current value for a property, if any
+     *
+     * 'Constant' properties just need the value string returned.
+     * All other visibility levels are a \ReflectionProperty object
+     * whose getValue() method requires an actual instance of the
+     * owning class to determine the default value.
+     *
+     * @param   string|object $property      String or \ReflectionProperty object
+     * @return  string
+     */
+    private function getCurrentPropertyValue($property)
+    {
+        if (!is_object($property)) {
+            return $property;
+        }
+
+        if ($property->isPrivate() || $property->isProtected()) {
+            $property->setAccessible(true);
+        }
+
+        if ($property->isStatic()) {
+            return $property->getValue();
+        }
+
+        return $property->getValue($this->_obj);
+    }
+
+    /**
+     * Gets class data for values that are objects
+     *
+     * This method consumes the return value of a \ReflectionProperty
+     * object's getValue() method, and if the default value is an object
+     * getValue() returns an instance of that object.
+     *
+     * @param   mixed $value Hopefully a value object instance
+     * @return  array
+     */
+    private function getValueClassData($value)
+    {
+        $data = ['className' => null, 'classNamespace' => null];
+
+        if (!is_object($value)) {
+            return $data;
+        }
+
+        $className = get_class($value);
+        if (($pos = strrpos($className, '\\')) === false) {
+            $data['className'] = $className;
+        } else {
+            $data['className'] = substr($className, $pos + 1);
+            $data['classNamespace'] = substr($className, 0, $pos);
+        }
+
+        return $data;
+    }
 }
