@@ -33,11 +33,9 @@ class PropertyAnalyzerTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array( MockClasses::getMock_allVisibility() ),
-            /*
             array( new \ReflectionObject(MockClasses::getMock_simple()) ),
             array( new \ReflectionObject(MockClasses::getMock_stdClass()) ),
             array( new \ReflectionClass('\PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel') ),
-            */
         );
     }
 
@@ -51,11 +49,18 @@ class PropertyAnalyzerTest extends \PHPUnit_Framework_TestCase
         $expected = '\PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel';
         $actual = $this->analyzer->analyze($object, $refEntity);
 
-        echo "\n\nreturn from propana->analyze:\n\n";
-        var_dump($actual);
-        die();
-
         $this->assertContainsOnlyInstancesOf($expected, $actual);
+    }
+
+    public function test_analyze_returnsProperValuesForAllProperties()
+    {
+        $expected = MockClasses::getMock_allVisibilityAsModels();
+        $entity = MockClasses::getMock_allVisibility();
+        $refEntity = new \ReflectionClass($entity);
+        $actual = $this->analyzer->analyze($entity, $refEntity);
+
+        // may have to eventually manually re-order the arrays for this to work
+        $this->assertEquals($expected, $actual);
     }
 
 }

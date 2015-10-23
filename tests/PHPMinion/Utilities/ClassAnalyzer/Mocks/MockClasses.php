@@ -18,13 +18,13 @@ class MockClasses
     public static function getMock_stdClass()
     {
         $obj = new \stdClass();
-        $obj->prop1 = 'string value';
+        $obj->prop1 = 'public string value';
         $obj->prop2 = 10;
         $obj->prop3 = 3.14;
         $obj->prop4 = true;
         $obj->prop5 = false;
         $obj->prop6 = null;
-        $obj->prop7 = ['val1', 'val2'];
+        $obj->prop7 = ['public', 'val1', 'val2'];
 
         return $obj;
     }
@@ -38,4 +38,10 @@ class MockClasses
     {
         return new VisibilityClass();
     }
+
+    public static function getMock_allVisibilityAsModels()
+    {
+        return VisibilityClassAsPropertyModels::buildFinalForm();
+    }
+
 }

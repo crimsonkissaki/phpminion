@@ -15,13 +15,13 @@ namespace PHPMinionTest\Utilities\ClassAnalyzer\Mocks;
 class VisibilityClass
 {
 
-    const CONST_STRING = 'const string value';
-    const CONST_INT = 10;
-    const CONST_DOUBLE = 3.14;
-    const CONST_BOOL_TRUE = true;
-    const CONST_BOOL_FALSE = false;
-    const CONST_NULL = null;
-    const CONST_ARRAY = ['const', 'val1', 'val2'];
+    const CONSTANT_STRING = 'constant string value';
+    const CONSTANT_INTEGER = 10;
+    const CONSTANT_DOUBLE = 3.14;
+    const CONSTANT_TRUE = true;
+    const CONSTANT_FALSE = false;
+    const CONSTANT_NULL = null;
+    const CONSTANT_ARRAY = ['constant', 'val1', 'val2'];
 
     public $public_string = 'public string value';
     public $public_integer = 10;
@@ -47,12 +47,28 @@ class VisibilityClass
     private $private_null;
     private $private_array = ['private', 'val1', 'val2'];
 
-    public static $static_string = 'public static string value';
-    public static $static_integer = 10;
-    public static $static_double = 3.14;
-    public static $static_true = true;
-    public static $static_false = false;
-    public static $static_null;
-    public static $static_array = ['public static', 'val1', 'val2'];
+    public static $public_static_string = 'public static string value';
+    public static $public_static_integer = 10;
+    public static $public_static_double = 3.14;
+    public static $public_static_true = true;
+    public static $public_static_false = false;
+    public static $public_static_null;
+    public static $public_static_array = ['public static', 'val1', 'val2'];
+
+    protected static $protected_static_string = 'protected static string value';
+    protected static $protected_static_integer = 10;
+    protected static $protected_static_double = 3.14;
+    protected static $protected_static_true = true;
+    protected static $protected_static_false = false;
+    protected static $protected_static_null;
+    protected static $protected_static_array = ['protected static', 'val1', 'val2'];
+
+    private static $private_static_string = 'private static string value';
+    private static $private_static_integer = 10;
+    private static $private_static_double = 3.14;
+    private static $private_static_true = true;
+    private static $private_static_false = false;
+    private static $private_static_null;
+    private static $private_static_array = ['private static', 'val1', 'val2'];
 
 }

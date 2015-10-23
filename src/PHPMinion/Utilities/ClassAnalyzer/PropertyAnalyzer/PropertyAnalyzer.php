@@ -65,7 +65,10 @@ class PropertyAnalyzer
      */
     private function createModelsForClassProperties()
     {
-        $refProps = $this->_refObj->getProperties();
+        $props = $this->_refObj->getProperties();
+        $const = $this->_refObj->getConstants();
+        $refProps = array_merge($const, $props);
+
         $propertyModels = $this->getPropertiesDetails($refProps);
 
         return $propertyModels;
