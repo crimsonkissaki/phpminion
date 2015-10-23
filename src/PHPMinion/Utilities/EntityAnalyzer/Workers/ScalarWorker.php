@@ -34,9 +34,11 @@ class ScalarWorker implements DataTypeWorkerInterface
     public function createModel($entity)
     {
         $this->validateTargetEntity($entity);
+
         $model = new ScalarModel();
-        $model->setDataType(gettype($entity));
+        $model->setDataType(strtolower(gettype($entity)));
         $model->setRendererType('scalar');
+        $model->setValue($entity);
 
         return $model;
     }
@@ -54,7 +56,7 @@ class ScalarWorker implements DataTypeWorkerInterface
             return true;
         }
 
-        throw new EntityAnalyzerException("ScalarWorker only accepts arrays: '" . gettype($entity) . "' supplied.");
+        throw new EntityAnalyzerException("ScalarWorker only accepts scalar values: '" . gettype($entity) . "' supplied.");
     }
 
 }

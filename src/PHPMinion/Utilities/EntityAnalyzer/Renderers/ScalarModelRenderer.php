@@ -13,6 +13,7 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Renderers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
+use PHPMinion\Utilities\Core\Common;
 
 /**
  * ScalarModelRenderer
@@ -30,7 +31,7 @@ class ScalarModelRenderer extends DataTypeModelRenderer implements ModelRenderer
      */
     public function renderModel(DataTypeModel $model, $level = 0)
     {
-        $output = "Non-functional ScalarModelRenderer->renderModel()";
+        $output = Common::_getSimpleTypeValue($model->getValue());
 
         return $output;
     }

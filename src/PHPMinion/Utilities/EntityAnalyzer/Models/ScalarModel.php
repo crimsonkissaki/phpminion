@@ -23,8 +23,21 @@ namespace PHPMinion\Utilities\EntityAnalyzer\Models;
 class ScalarModel extends DataTypeModel
 {
 
-    public function __construct()
+    /**
+     * The entity value
+     *
+     * @var mixed
+     */
+    private $_value;
+
+    public function getValue()
     {
+        return $this->_value;
+    }
+
+    public function setValue($value)
+    {
+        $this->_value = $value;
     }
 
 }

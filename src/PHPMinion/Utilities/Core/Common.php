@@ -193,7 +193,7 @@ class Common
             case (is_numeric($var)):
                 return strtoupper(gettype($var)) . " ({$var})";
             case (is_string($var)):
-                return "STRING '({$var})'";
+                return "STRING ('{$var}')";
             case (is_array($var)):
                 return 'ARRAY (' . count($var) . ')';
             case (is_object($var)):
@@ -218,7 +218,7 @@ class Common
                 $value = ob_get_clean();
                 break;
             case (is_object($var)):
-                /** @var \PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityEntityAnalyzer $analyzer */
+                /** @var \PHPMinion\Utilities\EntityAnalyzer\EntityAnalyzer $analyzer */
                 $analyzer = Dbug::getInstance()->getConfig()->getEntityAnalyzer();
                 $analyzerResults = $analyzer->analyzeAndRender($var);
                 $value = $analyzerResults;

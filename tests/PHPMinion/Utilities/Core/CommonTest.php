@@ -68,7 +68,7 @@ class CommonTest extends \PHPUnit_Framework_TestCase
             array( 'NULL', null),
             array( 'INTEGER (10)', 10 ),
             array( 'DOUBLE (10.01)', 10.01 ),
-            array( 'STRING \'(this is a string)\'', 'this is a string' ),
+            array( 'STRING (\'this is a string\')', 'this is a string' ),
             array( 'ARRAY (2)', ['v1', 'v2'] ),
             array( 'OBJECT (stdClass)', new \stdClass() ),
         );

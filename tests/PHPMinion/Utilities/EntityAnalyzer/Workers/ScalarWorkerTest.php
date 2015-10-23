@@ -31,22 +31,22 @@ class ScalarWorkerTest extends \PHPUnit_Framework_TestCase
     public function scalarTypesDataProvider()
     {
         return array(
-            array( true ),
-            array( false ),
-            array( null ),
-            array( 'test string' ),
-            array( 10 ),
-            array( 3.14 ),
+            array( true, 'boolean' ),
+            array( false, 'boolean' ),
+            array( null, 'null' ),
+            array( 'test string', 'string' ),
+            array( 10, 'integer' ),
+            array( 3.14, 'double' ),
         );
     }
 
     /**
      * @dataProvider scalarTypesDataProvider
      */
-    public function test_createModel_returnsScalarModel($value)
+    public function test_createModel_returnsScalarModel($entity)
     {
         $expected = '\PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel';
-        $actual = $this->worker->createModel($value);
+        $actual = $this->worker->createModel($entity);
 
         $this->assertInstanceOf($expected, $actual);
     }
@@ -63,9 +63,21 @@ class ScalarWorkerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider invalidTypesDataProvider
      * @expectedException \PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException
      */
-    public function test_createModel_throwsExceptionForInvalidDataTypes($value)
+    public function test_createModel_throwsExceptionForInvalidDataTypes($entity)
     {
-        $this->worker->createModel($value);
+        $this->worker->createModel($entity);
+    }
+
+    /**
+     * @dataProvider scalarTypesDataProvider
+     */
+    public function test_createModel_returnsProperDataInModel($entity, $expectedDataType)
+    {
+        $actual = $this->worker->createModel($entity);
+
+        $this->assertEquals($expectedDataType, $actual->getDataType());
+        $this->assertEquals('scalar', $actual->getRendererType());
+        $this->assertEquals($entity, $actual->getValue());
     }
 
 }
