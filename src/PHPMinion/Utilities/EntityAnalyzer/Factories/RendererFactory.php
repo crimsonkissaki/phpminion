@@ -16,6 +16,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Renderers\ObjectModelRenderer;
 use PHPMinion\Utilities\EntityAnalyzer\Renderers\ArrayModelRenderer;
 use PHPMinion\Utilities\EntityAnalyzer\Renderers\ScalarModelRenderer;
+use PHPMinion\Utilities\EntityAnalyzer\Renderers\ModelRendererInterface;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
@@ -60,38 +61,32 @@ class RendererFactory
     public static function getModelRenderer(DataTypeModel $model)
     {
         $_this = self::getInstance();
-        $modelType = strtolower($model->getDataType());
+        $rendererType = strtolower($model->getRendererType());
 
-        if (isset($_this->_renderers[$modelType])) {
-            return $_this->_renderers[$modelType];
+        if (isset($_this->_renderers[$rendererType])) {
+            return $_this->_renderers[$rendererType];
         }
 
         $renderer = false;
-        switch ($modelType) {
+        switch ($rendererType) {
             case 'object':
                 $renderer = new ObjectModelRenderer();
                 break;
             case 'array':
                 $renderer = new ArrayModelRenderer();
                 break;
-            case 'boolean':
-            case 'integer':
-            case 'float':
-            case 'double':
-            case 'null':
-            case 'string':
+            case 'scalar':
                 $renderer = new ScalarModelRenderer();
                 break;
-
         }
 
         if (!$renderer) {
-            throw new EntityAnalyzerException("No model renderer available in RendererFactory for model type '{$modelType}'.");
+            throw new EntityAnalyzerException("No model renderer available in RendererFactory for model type '{$rendererType}'.");
         }
 
-        $_this->_renderers[$modelType] = $renderer;
+        $_this->_renderers[$rendererType] = $renderer;
 
-        return $_this->_renderers[$modelType];
+        return $_this->_renderers[$rendererType];
     }
 
 }

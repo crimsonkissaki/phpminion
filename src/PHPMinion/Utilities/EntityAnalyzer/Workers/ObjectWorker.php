@@ -12,11 +12,13 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
+/*
 use PHPMinion\Utilities\Dbug\Dbug;
-use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\PropertyWorker;
+*/
+use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
@@ -29,7 +31,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
  * @created     October 18, 2015
  * @version     0.1
  */
-class ObjectWorker
+class ObjectWorker implements DataTypeWorkerInterface
 {
 
     /**
@@ -55,17 +57,24 @@ class ObjectWorker
 
     public function __construct()
     {
-        $this->_model = new ObjectModel();
+        //$this->_model = new ObjectModel();
     }
 
     /**
      * TODO: this fucks up when passed a stdClass - cant use \ReflectionProperty->getValue()
      *
-     * @return EntityModel
+     * @return ObjectModel
      */
-    public function workObject($obj)
+    public function createModel($entity)
     {
-        $this->setUp($obj);
+        $this->validateTargetObj($entity);
+
+        $model = new ObjectModel();
+
+        return $model;
+
+        /*
+        $this->setUp($entity);
 
         $this->_propertyWorker = new PropertyWorker($this->_obj, $this->_refObj);
 
@@ -84,6 +93,7 @@ class ObjectWorker
         \PHPMinion\Utils::dbug($model, "model in objectworker->workobject()");
 
         return $model;
+        */
     }
 
     /**
@@ -97,7 +107,6 @@ class ObjectWorker
      */
     private function setUp($obj)
     {
-        $this->validateTargetObj($obj);
 
         if (is_object($obj)) {
             $this->_obj = $obj;

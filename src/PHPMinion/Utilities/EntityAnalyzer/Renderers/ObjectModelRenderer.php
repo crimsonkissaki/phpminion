@@ -25,7 +25,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
  * @created     October 19, 2015
  * @version     0.1
  */
-class ObjectModelRenderer implements ModelRendererInterface
+class ObjectModelRenderer extends DataTypeModelRenderer implements ModelRendererInterface
 {
 
     /**
@@ -45,11 +45,6 @@ class ObjectModelRenderer implements ModelRendererInterface
         }
 
         return $output;
-    }
-
-    private function indent($level)
-    {
-        return str_repeat('  ', $level);
     }
 
     private function generateModelSummary(DataTypeModel $model, $level)

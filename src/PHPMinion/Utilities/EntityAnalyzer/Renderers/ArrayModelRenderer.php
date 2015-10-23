@@ -22,7 +22,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
  * @created     October 19, 2015
  * @version     0.1
  */
-class ArrayModelRenderer implements ModelRendererInterface
+class ArrayModelRenderer extends DataTypeModelRenderer implements ModelRendererInterface
 {
 
     /**
@@ -33,11 +33,6 @@ class ArrayModelRenderer implements ModelRendererInterface
         $output = "Non-functional ArrayModelRenderer->renderModel()";
 
         return $output;
-    }
-
-    private function indent($level)
-    {
-        return str_repeat('  ', $level);
     }
 
 }

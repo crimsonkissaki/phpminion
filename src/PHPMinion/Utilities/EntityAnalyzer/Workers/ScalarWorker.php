@@ -18,39 +18,41 @@ use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 /**
  * ScalarWorker
  *
- * Builds up the ScalarModel data
+ * Converts scalar data types into a ScalarModel
  *
- * @created     October 18, 2015
+ * Int, Float, Bool, String, Null
+ *
+ * @created     October 22, 2015
  * @version     0.1
  */
-class ScalarWorker
+class ScalarWorker implements DataTypeWorkerInterface
 {
 
     /**
-     * @param array $array
-     * @return EntityModel
+     * @inheritDoc
      */
-    public function workEntity($model, $entity)
+    public function createModel($entity)
     {
+        $this->validateTargetEntity($entity);
+        $model = new ScalarModel();
+
         return $model;
     }
 
     /**
-     * Verifies the analysis target is workable
+     * Verifies the target entity is workable
      *
-     * @param  mixed $array
+     * @param  mixed $entity
      * @return bool
      * @throws EntityAnalyzerException
      */
-    private function validateTargetEntity($array)
+    private function validateTargetEntity($entity)
     {
-        \PHPMinion\Utilities\Dbug\Dbug::color('validating target array:', 'blue')->ignore()->dump();
-
-        if (is_array($array)) {
+        if (is_bool($entity) || is_string($entity) || is_null($entity) || is_numeric($entity)) {
             return true;
         }
 
-        throw new EntityAnalyzerException("ScalarWorker only accepts arrays: '" . gettype($array) . "' supplied.");
+        throw new EntityAnalyzerException("ScalarWorker only accepts arrays: '" . gettype($entity) . "' supplied.");
     }
 
 }

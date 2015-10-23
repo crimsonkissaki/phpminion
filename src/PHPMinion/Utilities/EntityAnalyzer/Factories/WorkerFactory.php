@@ -12,10 +12,11 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Factories;
 
-//use PHPMinion\Utilities\EntityAnalyzer\Workers\EntityWorkerInterface;
-use PHPMinion\Utilities\EntityAnalyzer\Workers\ScalarWorker;
-use PHPMinion\Utilities\EntityAnalyzer\Workers\ObjectWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Workers\DataTypeWorkerInterface;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\ArrayWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Workers\ObjectWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Workers\ScalarWorker;
+//use PHPMinion\Utilities\EntityAnalyzer\Workers\ResourceWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
@@ -56,7 +57,7 @@ class WorkerFactory
      * Returns the proper analyzer class for the entity data type
      *
      * @param  mixed $entity
-     * @return EntityWorkerInterface
+     * @return DataTypeWorkerInterface
      * @throws EntityAnalyzerException
      */
     public static function getWorker($entity)
@@ -82,6 +83,11 @@ class WorkerFactory
             case (is_bool($entity)):
                 $worker = new ScalarWorker();
                 break;
+            /*
+            case (is_resource($entity)):
+                $worker = new ResourceWorker();
+                break;
+            */
         }
 
         if (!$worker) {

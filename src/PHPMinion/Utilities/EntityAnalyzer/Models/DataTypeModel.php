@@ -12,6 +12,8 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Models;
 
+use PHPMinion\Utilities\EntityAnalyzer\Renderers\DataTypeModelRenderer;
+
 /**
  * Class DataTypeModel
  *
@@ -32,14 +34,43 @@ abstract class DataTypeModel
      */
     private $_dataType;
 
+    /**
+     * Renderer type to use the data type
+     *
+     * @var string
+     */
+    private $_rendererType;
+
+    /**
+     * @return string
+     */
     public function getDataType()
     {
         return $this->_dataType;
     }
 
+    /**
+     * @param string $dataType
+     */
     public function setDataType($dataType)
     {
         $this->_dataType = $dataType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRendererType()
+    {
+        return $this->_rendererType;
+    }
+
+    /**
+     * @param string $rendererType
+     */
+    public function setRendererType($rendererType)
+    {
+        $this->_rendererType = $rendererType;
     }
 
 }

@@ -6,6 +6,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Factories\RendererFactory;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 
 /**
  * Class RendererFactoryTest
@@ -38,43 +39,30 @@ class RendererFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function getModelRendererDataProvider()
     {
-        $objectModel = new ObjectModel();
-        $objectModel->setDataType(gettype($objectModel));
-        $arrayModel = new ArrayModel();
-        $arrayModel->setDataType(gettype(['var1', 'var2']));
-        $simpleModelTrue = new ScalarModel();
-        $simpleModelTrue->setDataType(gettype(true));
-        $simpleModelFalse = new ScalarModel();
-        $simpleModelFalse->setDataType(gettype(false));
-        $simpleModelNull = new ScalarModel();
-        $simpleModelNull->setDataType(gettype(null));
-        $simpleModelString = new ScalarModel();
-        $simpleModelString->setDataType(gettype('string'));
-        $simpleModelInteger = new ScalarModel();
-        $simpleModelInteger->setDataType(gettype(10));
-        $simpleModelDouble = new ScalarModel();
-        $simpleModelDouble->setDataType(gettype(3.14));
-
         $path = '\PHPMinion\Utilities\EntityAnalyzer\Renderers\\';
         return array(
-            array( $path.'ArrayModelRenderer', $arrayModel ),
-            array( $path.'ObjectModelRenderer', $objectModel ),
-            array( $path.'ScalarModelRenderer', $simpleModelTrue ),
-            array( $path.'ScalarModelRenderer', $simpleModelFalse ),
-            array( $path.'ScalarModelRenderer', $simpleModelNull ),
-            array( $path.'ScalarModelRenderer', $simpleModelString ),
-            array( $path.'ScalarModelRenderer', $simpleModelInteger ),
-            array( $path.'ScalarModelRenderer', $simpleModelDouble ),
+            array( $path.'ArrayModelRenderer', new ArrayModel(), ['var1','var2'] ),
+            array( $path.'ObjectModelRenderer', new ObjectModel(), new \stdClass() ),
+            array( $path.'ScalarModelRenderer', new ScalarModel(), true ),
+            array( $path.'ScalarModelRenderer', new ScalarModel(), false ),
+            array( $path.'ScalarModelRenderer', new ScalarModel(), null ),
+            array( $path.'ScalarModelRenderer', new ScalarModel(), 'test string' ),
+            array( $path.'ScalarModelRenderer', new ScalarModel(), 10 ),
+            array( $path.'ScalarModelRenderer', new ScalarModel(), 3.14 ),
         );
     }
 
     /**
      * @dataProvider getModelRendererDataProvider
      */
-    public function test_getModelRenderer_returnsProperRendererObjectInterface($expected, $value)
+    public function test_getModelRenderer_returnsProperRendererObjectInterface($rendererClass, $model, $entity)
     {
         $expected = '\PHPMinion\Utilities\EntityAnalyzer\Renderers\ModelRendererInterface';
-        $actual = RendererFactory::getModelRenderer($value);
+        /** @var DataTypeModel $model */
+        $model->setDataType(gettype($entity));
+        $class = str_replace('ModelRenderer', '', array_pop(explode('\\', $rendererClass)));
+        $model->setRendererType(strtolower($class));
+        $actual = RendererFactory::getModelRenderer($model);
 
         $this->assertInstanceOf($expected, $actual);
     }
@@ -82,11 +70,15 @@ class RendererFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getModelRendererDataProvider
      */
-    public function test_getModelRenderer_returnsProperRendererObject($expected, $value)
+    public function test_getModelRenderer_returnsProperRendererObject($rendererClass, $model, $entity)
     {
-        $actual = RendererFactory::getModelRenderer($value);
+        /** @var DataTypeModel $model */
+        $model->setDataType(gettype($entity));
+        $class = str_replace('ModelRenderer', '', array_pop(explode('\\', $rendererClass)));
+        $model->setRendererType(strtolower($class));
+        $actual = RendererFactory::getModelRenderer($model);
 
-        $this->assertInstanceOf($expected, $actual);
+        $this->assertInstanceOf($rendererClass, $actual);
     }
 
 }

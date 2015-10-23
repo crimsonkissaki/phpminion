@@ -12,8 +12,7 @@
 
 namespace PHPMinion\Utilities\Core;
 
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzerInterface;
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\EntityAnalyzer;
 
 /**
  * Config.php
@@ -38,11 +37,11 @@ class Config
     /**
      * Class used to analyze objects in DbugTools
      *
-     * @var EntityAnalyzerInterface
+     * @var EntityAnalyzer
      */
     private $_entityAnalyzer;
 
-    public function setEntityAnalyzer(EntityAnalyzerInterface $entityAnalyzer)
+    public function setEntityAnalyzer(EntityAnalyzer$entityAnalyzer)
     {
         $this->_entityAnalyzer = $entityAnalyzer;
     }

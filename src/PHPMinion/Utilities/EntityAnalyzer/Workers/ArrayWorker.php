@@ -23,49 +23,42 @@ use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
  * @created     October 18, 2015
  * @version     0.1
  */
-class ArrayWorker
+class ArrayWorker implements DataTypeWorkerInterface
 {
 
     /**
-     * @param array $array
-     * @return EntityModel
+     * @param array $entity
+     * @return ArrayModel
      */
-    public function workArray(array $array)
+    public function createModel($entity)
     {
-        \PHPMinion\Utilities\Dbug\Dbug::dbug($array, "array worker array vals:")->ignore()->dump();
-
-        $this->validateTargetArr($array);
-
-        \PHPMinion\Utilities\Dbug\Dbug::color('target array validated!', 'purple')->ignore()->dump();
+        $this->validateTargetArr($entity);
 
         $model = new ArrayModel();
 
-        \PHPMinion\Utils::dbug($model, "model in work array");
-
+        /*
         foreach ($array as $key => $value) {
             $model->elements[$key] = $value;
         }
+        */
 
-        \PHPMinion\Utils::dbug($model, "model being returned from workArray");
         return $model;
     }
 
     /**
      * Verifies the analysis target is workable
      *
-     * @param  mixed $array
+     * @param  mixed $entity
      * @return bool
      * @throws EntityAnalyzerException
      */
-    private function validateTargetArr($array)
+    private function validateTargetArr($entity)
     {
-        \PHPMinion\Utilities\Dbug\Dbug::color('validating target array:', 'blue')->ignore()->dump();
-
-        if (is_array($array)) {
+        if (is_array($entity)) {
             return true;
         }
 
-        throw new EntityAnalyzerException("ArrayWorker only accepts arrays: '" . gettype($array) . "' supplied.");
+        throw new EntityAnalyzerException("ArrayWorker only accepts arrays: '" . gettype($entity) . "' supplied.");
     }
 
 }

@@ -17,12 +17,12 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 /**
  * ScalarModelRenderer
  *
- * Renders a ScalarModel to something more human-readable
+ * Renders an ScalarModel to something more human-readable
  *
  * @created     October 19, 2015
  * @version     0.1
  */
-class ScalarModelRenderer implements ModelRendererInterface
+class ScalarModelRenderer extends DataTypeModelRenderer implements ModelRendererInterface
 {
 
     /**
@@ -33,11 +33,6 @@ class ScalarModelRenderer implements ModelRendererInterface
         $output = "Non-functional ScalarModelRenderer->renderModel()";
 
         return $output;
-    }
-
-    private function indent($level)
-    {
-        return str_repeat('  ', $level);
     }
 
 }

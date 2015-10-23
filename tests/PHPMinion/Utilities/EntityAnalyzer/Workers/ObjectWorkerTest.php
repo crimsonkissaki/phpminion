@@ -12,40 +12,35 @@
 
 namespace PHPMinionTest\Utilities\EntityAnalyzer\Workers;
 
-use PHPMinion\Utilities\EntityAnalyzer\Workers\ScalarWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Workers\ObjectWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
-class ScalarWorkerTest extends \PHPUnit_Framework_TestCase
+class ObjectWorkerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var ScalarWorker
+     * @var ObjectWorker
      */
     public $worker;
 
     public function setUp()
     {
-        $this->worker = new ScalarWorker();
+        $this->worker = new ObjectWorker();
     }
 
     public function scalarTypesDataProvider()
     {
         return array(
-            array( true ),
-            array( false ),
-            array( null ),
-            array( 'test string' ),
-            array( 10 ),
-            array( 3.14 ),
+            array( new \stdClass() ),
         );
     }
 
     /**
      * @dataProvider scalarTypesDataProvider
      */
-    public function test_createModel_returnsScalarModel($value)
+    public function test_createModel_returnsObjectModel($value)
     {
-        $expected = '\PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel';
+        $expected = '\PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel';
         $actual = $this->worker->createModel($value);
 
         $this->assertInstanceOf($expected, $actual);
@@ -54,7 +49,12 @@ class ScalarWorkerTest extends \PHPUnit_Framework_TestCase
     public function invalidTypesDataProvider()
     {
         return array(
-            array( new \stdClass() ),
+            array( true ),
+            array( false ),
+            array( null ),
+            array( 'test string' ),
+            array( 10 ),
+            array( 3.14 ),
             array( ['var1', 'var2'] ),
         );
     }

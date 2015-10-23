@@ -4,7 +4,19 @@
 
     <testsuites>
         <testsuite name="PHPMinion Test Suite">
+            <!-- KNOWN GOOD TESTS -->
+            <directory>./tests/PHPMinion/Utilities/Core</directory>
+            <file>./tests/PHPMinion/Utilities/EntityAnalyzer/Factories/WorkerFactoryTest.php</file>
+            <file>./tests/PHPMinion/Utilities/EntityAnalyzer/Workers/ScalarWorkerTest.php</file>
+            <file>./tests/PHPMinion/Utilities/EntityAnalyzer/Workers/ArrayWorkerTest.php</file>
+            <file>./tests/PHPMinion/Utilities/EntityAnalyzer/Factories/RendererFactoryTest.php</file>
+            <file>./tests/PHPMinion/Utilities/EntityAnalyzer/EntityAnalyzerTest.php</file>
+
+            <!-- DA FUQ? -->
+            <!--
             <directory>./tests/PHPMinion</directory>
+            -->
+            <exclude>./tests/PHPMinion/Utilities/EntityAnalyzer/Factories</exclude>
         </testsuite>
     </testsuites>
 

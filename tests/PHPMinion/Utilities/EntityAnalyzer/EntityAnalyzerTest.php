@@ -1,8 +1,8 @@
 <?php
 
-namespace PHPMinionTest\Utilities\EntityAnalyzer\Analyzers;
+namespace PHPMinionTest\Utilities\EntityAnalyzer;
 
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\EntityAnalyzer;
 
 /**
  * Class EntityAnalyzerTest
@@ -28,7 +28,7 @@ class EntityAnalyzerTest extends \PHPUnit_Framework_TestCase
     /**
      * @ignoreTest
      */
-    public function test_analyzeAndRender_returnsProperHtml()
+    public function _test_analyzeAndRender_returnsProperHtml()
     {
         $this->markTestIncomplete('method not fully implemented');
 
@@ -44,26 +44,39 @@ class EntityAnalyzerTest extends \PHPUnit_Framework_TestCase
         $path = '\PHPMinion\Utilities\EntityAnalyzer\Models\\';
         return array(
             array( $path.'ArrayModel', ['var1','var2']),
+            array( $path.'ObjectModel', new \stdClass() ),
             array( $path.'ScalarModel', true ),
             array( $path.'ScalarModel', false ),
             array( $path.'ScalarModel', null ),
             array( $path.'ScalarModel', 10 ),
             array( $path.'ScalarModel', 3.14 ),
             array( $path.'ScalarModel', 'string var' ),
-            array( $path.'ObjectModel', new \stdClass() ),
+            /**  array( $path.'ResourceModel', <a resource> ), **/
         );
     }
 
     /**
      * @dataProvider analyzeDataProvider
      */
-    public function test_analyze_returnsProperModelType($expected, $value)
+    public function test_analyze_returnsProperModelType($expected, $entity)
     {
-        $this->markTestIncomplete('method not fully implemented');
-
-        $actual = $this->analyzer->analyze($value);
+        $actual = $this->analyzer->analyze($entity);
 
         $this->assertInstanceOf($expected, $actual);
+    }
+
+    /**
+     * @dataProvider analyzeDataProvider
+     */
+    public function test_render_returnsString($modelType, $entity)
+    {
+        $model = $this->analyzer->analyze($entity);
+        $model->setDataType(gettype($entity));
+        $class = str_replace('Model', '', array_pop(explode('\\', $modelType)));
+        $model->setRendererType(strtolower($class));
+        $renderResult = $this->analyzer->render($model);
+
+        $this->assertTrue(is_string($renderResult));
     }
 
 }

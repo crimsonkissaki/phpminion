@@ -10,27 +10,27 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\EntityAnalyzer\Analyzers;
+namespace PHPMinion\Utilities\EntityAnalyzer;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
-use PHPMinion\Utilities\EntityAnalyzer\Factories\AnalyzerFactory;
+use PHPMinion\Utilities\EntityAnalyzer\Factories\WorkerFactory;
 use PHPMinion\Utilities\EntityAnalyzer\Factories\RendererFactory;
-use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
+//use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
  * Class EntityEntityAnalyzer
  *
- * Entry point for entity analysis.
- * Calls the proper analysis handlers for various datatypes that
- * need more rigorous handling.
+ * One stop shopping for all your entity analysis needs.
+ * "Shop smart. Shop S-Mart."
+ *
+ * TODO: add options for HTML or CLI rendering of results?
  *
  * @package     PHPMinion
  * @author      Evan Johnson
- * @created     October 18, 2015
+ * @created     October 22, 2015
  * @version     0.1
  */
-class EntityAnalyzer implements EntityAnalyzerInterface
+class EntityAnalyzer
 {
 
     /**
@@ -41,7 +41,6 @@ class EntityAnalyzer implements EntityAnalyzerInterface
      *
      * @param  mixed  $entity
      * @return string
-     * @throws EntityAnalyzerException
      */
     public function analyzeAndRender($entity)
     {
@@ -51,18 +50,20 @@ class EntityAnalyzer implements EntityAnalyzerInterface
     }
 
     /**
-     * @inheritDoc
-     * @throws EntityAnalyzerException
+     * Returns an entity converted to DataTypeModel form
+     *
+     * @param mixed $entity Target entity for analysis
+     * @return DataTypeModel
      */
     public function analyze($entity)
     {
-        $analyzer = AnalyzerFactory::getAnalyzer($entity);
+        $worker = WorkerFactory::getWorker($entity);
 
-        return $analyzer->analyze($entity);
+        return $worker->createModel($entity);
     }
 
     /**
-     * Converts an DataTypeModel into viewable results
+     * Converts a DataTypeModel into viewable results
      *
      * @param  DataTypeModel $model
      * @return string
@@ -70,8 +71,6 @@ class EntityAnalyzer implements EntityAnalyzerInterface
     public function render(DataTypeModel $model)
     {
         $renderer = RendererFactory::getModelRenderer($model);
-
-        \PHPMinion\Utilities\Dbug\Dbug::type($renderer, "renderer type in entityanalyzer->render():")->ignore()->dump();
 
         return $renderer->renderModel($model);
     }
