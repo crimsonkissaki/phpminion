@@ -68,7 +68,8 @@ class EntityAnalyzerTest extends \PHPUnit_Framework_TestCase
     {
         $model = $this->analyzer->analyze($entity);
         $model->setDataType(gettype($entity));
-        $class = str_replace('Model', '', array_pop(explode('\\', $modelType)));
+        $boom = explode('\\', $modelType);
+        $class = str_replace('Model', '', array_pop($boom));
         $model->setRendererType(strtolower($class));
         $renderResult = $this->analyzer->render($model);
 

@@ -60,7 +60,8 @@ class RendererFactoryTest extends \PHPUnit_Framework_TestCase
         $expected = '\PHPMinion\Utilities\EntityAnalyzer\Renderers\ModelRendererInterface';
         /** @var DataTypeModel $model */
         $model->setDataType(gettype($entity));
-        $class = str_replace('ModelRenderer', '', array_pop(explode('\\', $rendererClass)));
+        $boom = explode('\\', $rendererClass);
+        $class = str_replace('ModelRenderer', '', array_pop($boom));
         $model->setRendererType(strtolower($class));
         $actual = RendererFactory::getModelRenderer($model);
 
@@ -74,7 +75,8 @@ class RendererFactoryTest extends \PHPUnit_Framework_TestCase
     {
         /** @var DataTypeModel $model */
         $model->setDataType(gettype($entity));
-        $class = str_replace('ModelRenderer', '', array_pop(explode('\\', $rendererClass)));
+        $boom = explode('\\', $rendererClass);
+        $class = str_replace('ModelRenderer', '', array_pop($boom));
         $model->setRendererType(strtolower($class));
         $actual = RendererFactory::getModelRenderer($model);
 
