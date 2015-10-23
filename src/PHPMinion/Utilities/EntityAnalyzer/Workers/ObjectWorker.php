@@ -70,6 +70,8 @@ class ObjectWorker implements DataTypeWorkerInterface
         $this->validateTargetObj($entity);
 
         $model = new ObjectModel();
+        $model->setDataType('object');
+        $model->setRendererType('object');
 
         return $model;
 

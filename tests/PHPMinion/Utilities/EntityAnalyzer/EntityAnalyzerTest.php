@@ -25,20 +25,6 @@ class EntityAnalyzerTest extends \PHPUnit_Framework_TestCase
         $this->analyzer = new EntityAnalyzer();
     }
 
-    /**
-     * @ignoreTest
-     */
-    public function _test_analyzeAndRender_returnsProperHtml()
-    {
-        $this->markTestIncomplete('method not fully implemented');
-
-        $testVar = true;
-        $expected = '';
-        $actual = $this->analyzer->analyzeAndRender($testVar);
-
-        $this->assertEquals($expected, $actual);
-    }
-
     public function analyzeDataProvider()
     {
         $path = '\PHPMinion\Utilities\EntityAnalyzer\Models\\';
@@ -53,6 +39,16 @@ class EntityAnalyzerTest extends \PHPUnit_Framework_TestCase
             array( $path.'ScalarModel', 'string var' ),
             /**  array( $path.'ResourceModel', <a resource> ), **/
         );
+    }
+
+    /**
+     * @dataProvider analyzeDataProvider
+     */
+    public function test_analyzeAndRender_returnsString($modelClass, $entity)
+    {
+        $actual = $this->analyzer->analyzeAndRender($entity);
+
+        $this->assertTrue(is_string($actual));
     }
 
     /**

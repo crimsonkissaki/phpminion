@@ -35,6 +35,8 @@ class ArrayWorker implements DataTypeWorkerInterface
         $this->validateTargetArr($entity);
 
         $model = new ArrayModel();
+        $model->setDataType('array');
+        $model->setRendererType('array');
 
         /*
         foreach ($array as $key => $value) {
