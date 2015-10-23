@@ -12,37 +12,36 @@
 
 namespace PHPMinionTest\Utilities\EntityAnalyzer\Workers;
 
-use PHPMinionTest\Utilities\EntityAnalyzer\Mocks\ObjectModelMocks;
-use PHPMinion\Utilities\EntityAnalyzer\Workers\ObjectWorker;
+use PHPMinion\Utilities\EntityAnalyzer\Workers\PropertyWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
-class ObjectWorkerTest extends \PHPUnit_Framework_TestCase
+class PropertyWorkerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var ObjectWorker
+     * @var PropertyWorker
      */
     public $worker;
 
     public function setUp()
     {
-        $this->worker = new ObjectWorker();
+        $this->worker = new PropertyWorker();
     }
 
     public function validTypesDataProvider()
     {
         return array(
-            array( ObjectModelMocks::getSimpleObj() ),
+            array( new \stdClass() ),
         );
     }
 
     /**
      * @dataProvider validTypesDataProvider
      */
-    public function test_createModel_returnsObjectModel($entity)
+    public function test_createModel_returnsPropertyModel($value)
     {
-        $expected = '\PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel';
-        $actual = $this->worker->createModel($entity);
+        $expected = '\PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel';
+        $actual = $this->worker->createModel($value);
 
         $this->assertInstanceOf($expected, $actual);
     }
@@ -64,25 +63,23 @@ class ObjectWorkerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider invalidTypesDataProvider
      * @expectedException \PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException
      */
-    public function test_createModel_throwsExceptionForInvalidDataTypes($entity)
+    public function _test_createModel_throwsExceptionForInvalidDataTypes($value)
     {
-        $this->worker->createModel($entity);
+        $this->worker->createModel($value);
     }
 
     public function mockedDataProvider()
     {
         return array(
-            array( ObjectModelMocks::getMock_SimpleObj(), ObjectModelMocks::getSimpleObj() ),
+            array(),
         );
     }
 
     /**
      * @dataProvider mockedDataProvider
      */
-    public function test_createModel_returnsProperDataInModel($expected, $entity)
+    public function _test_createModel_returnsProperDataInModel($expected, $entity)
     {
-        $actual = $this->worker->createModel($entity);
 
-        $this->assertEquals($expected, $actual);
     }
 }

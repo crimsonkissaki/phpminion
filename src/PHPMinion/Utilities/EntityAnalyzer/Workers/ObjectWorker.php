@@ -12,12 +12,6 @@
 
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
-/*
-use PHPMinion\Utilities\Dbug\Dbug;
-use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
-use PHPMinion\Utilities\EntityAnalyzer\Workers\PropertyWorker;
-*/
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
@@ -35,32 +29,6 @@ class ObjectWorker implements DataTypeWorkerInterface
 {
 
     /**
-     * Target object to analyze
-     *
-     * @var object
-     */
-    private $_obj;
-
-    /**
-     * Target object's \ReflectionClass
-     *
-     * @var \ReflectionClass
-     */
-    private $_refObj;
-
-    /**
-     * @var PropertyWorker
-     */
-    private $_propertyWorker;
-
-    private $_methodWorker;
-
-    public function __construct()
-    {
-        //$this->_model = new ObjectModel();
-    }
-
-    /**
      * TODO: this fucks up when passed a stdClass - cant use \ReflectionProperty->getValue()
      *
      * @inheritDoc
@@ -70,59 +38,9 @@ class ObjectWorker implements DataTypeWorkerInterface
         $this->validateTargetObj($entity);
 
         $model = new ObjectModel($entity);
+        $this->analyzeObjectProperties($model, $entity);
 
         return $model;
-
-        /*
-        $this->setUp($entity);
-
-        $this->_propertyWorker = new PropertyWorker($this->_obj, $this->_refObj);
-
-        $model = new ObjectModel();
-        $model->setName($this->getObjectName($this->_refObj));
-        //$model->properties = $this->_propertyWorker->getClassProperties();
-        $properties = $this->_propertyWorker->getReflectionProperties();
-        foreach ($properties as $vis => $visProps) {
-            foreach( $visProps as $name => $value) {
-                if ($propModel = $this->_propertyWorker->new_getPropertyDetails($vis, $name, $value)) {
-                    $model->addProperty($propModel);
-                }
-            }
-        }
-
-        \PHPMinion\Utils::dbug($model, "model in objectworker->workobject()");
-
-        return $model;
-        */
-    }
-
-    /**
-     * Sets up ObjectWorker
-     *
-     * TODO: this will probably have issues if passing in a class name string and it requires __construct() args to instantiate
-     *
-     * @param mixed $obj
-     * @return bool
-     * @throws EntityAnalyzerException
-     */
-    private function setUp($obj)
-    {
-
-        if (is_object($obj)) {
-            $this->_obj = $obj;
-            $this->_refObj = new \ReflectionObject($obj);
-        }
-
-        if (is_string($obj)) {
-            try {
-                $this->_obj = new $obj();
-                $this->_refObj = new \ReflectionClass($obj);
-            } catch (\Exception $e) {
-                throw new EntityAnalyzerException("Unknown error while attempting to instantiate '{$obj}': '{$e->getMessage()}'\n\nCreate an object instance and try that instead.");
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -144,15 +62,15 @@ class ObjectWorker implements DataTypeWorkerInterface
         throw new EntityAnalyzerException("ObjectWorker only accept objects or fully qualified class names: '" . gettype($obj) . "' supplied.");
     }
 
-    private function getObjectName(\ReflectionClass $obj)
+    /**
+     * Creates appropriate DataTypeModels for each object property
+     *
+     * @param ObjectModel $model
+     * @param object      $entity
+     */
+    private function analyzeObjectProperties(ObjectModel $model, $entity)
     {
-        return $obj->getName();
+        // get all object properties, regardless of visibility
     }
-
-    private function getObjectMethods(\ReflectionClass $obj)
-    {
-        return [];
-    }
-
 
 }

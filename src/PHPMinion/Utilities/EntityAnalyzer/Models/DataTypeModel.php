@@ -42,6 +42,16 @@ abstract class DataTypeModel
         return $this->_dataType;
     }
 
+    /**
+     * Allows overrides by children
+     *
+     * @param string $dataType
+     */
+    protected function setDataType($dataType)
+    {
+        $this->_dataType = $dataType;
+    }
+
     public function __construct($entity)
     {
         $this->_dataType = strtolower(gettype($entity));

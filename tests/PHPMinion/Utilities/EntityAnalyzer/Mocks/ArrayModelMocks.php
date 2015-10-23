@@ -15,11 +15,8 @@ namespace PHPMinionTest\Utilities\EntityAnalyzer\Mocks;
 use PHPMinion\Utilities\Core\Common;
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
-use PHPMinion\Utilities\EntityAnalyzer\Renderers\ArrayModelRenderer;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
-use PHPMinion\Utilities\EntityAnalyzer\Renderers\ObjectModelRenderer;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
-use PHPMinion\Utilities\EntityAnalyzer\Renderers\ScalarModelRenderer;
 
 /**
  * Class ArrayModelMocks

@@ -13,25 +13,24 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
 use PHPMinion\Utilities\Dbug\Dbug;
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityAnalyzerInterface;
-use PHPMinion\Utilities\EntityAnalyzer\Analyzers\EntityEntityAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\EntityAnalyzer;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
+//use PHPMinion\Utilities\EntityAnalyzer\Models\MethodModel;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
- * Class ObjectWorker
+ * Class PropertyWorker
  *
- * Builds up the ObjectModel data
+ * Builds up the PropertyModel data
  *
  * @package     PHPMinion
  * @author      Evan Johnson
  * @created     October 18, 2015
  * @version     0.1
  */
-class PropertyWorker
+class PropertyWorker implements DataTypeWorkerInterface
 {
 
     /**
@@ -57,7 +56,6 @@ class PropertyWorker
      * @param object           $targetObj
      * @param \ReflectionClass $reflectionObj
      * @throws EntityAnalyzerException
-     */
     public function __construct($targetObj, \ReflectionClass $reflectionObj)
     {
         if (!is_object($targetObj)) {
@@ -67,6 +65,17 @@ class PropertyWorker
         $this->_entityAnalyzer = new EntityEntityAnalyzer();
         $this->_obj = $targetObj;
         $this->_refObj = $reflectionObj;
+    }
+     */
+
+    /**
+     * @inheritDoc
+     */
+    public function createModel($entity)
+    {
+        $model = new PropertyModel();
+
+        return $model;
     }
 
     /**
@@ -81,50 +90,6 @@ class PropertyWorker
         return $this->getClassPropertiesDetails($refProps);
     }
 
-    /**
-     * Returns an associative array of object properties by visibility
-     *
-     * <code>
-     * $props = [
-     *   'constant' => [
-     *     \ReflectionProperty,
-     *     \ReflectionProperty,
-     *   ],
-     *   'public' => [
-     *     \ReflectionProperty,
-     *     \ReflectionProperty,
-     *   ],
-     *   ...
-     * ];
-     * </code>
-     *
-     * @return array
-     */
-    public function getReflectionProperties($obj = null)
-    {
-        if (is_null($obj)) {
-            $obj = $this->_refObj;
-        }
-
-        $props = [];
-        if ($const = $obj->getConstants()) {
-            $props['constant'] = $const;
-        }
-        if ($priv = $obj->getProperties(\ReflectionProperty::IS_PRIVATE)) {
-            $props['private'] = $priv;
-        }
-        if ($prot = $obj->getProperties(\ReflectionProperty::IS_PROTECTED)) {
-            $props['protected'] = $prot;
-        }
-        if ($pub = $obj->getProperties(\ReflectionProperty::IS_PUBLIC)) {
-            $props['public'] = $pub;
-        }
-        if ($stat = $obj->getProperties(\ReflectionProperty::IS_STATIC)) {
-            $props['static'] = $stat;
-        }
-
-        return $props;
-    }
 
     /**
      * Returns an associative array of visibility => [PropertyModel objects] for the class's properties
@@ -144,33 +109,6 @@ class PropertyWorker
         return $models;
     }
 
-    /**
-     * Gets details for an array of properties
-     *
-     * Constants are a problem here since they're set as an associative array
-     * and not numeric, so 'as key => value' works while 'as $property' does not.
-     *
-     * @param   string $visibility Visibility scope of properties
-     * @param   array  $properties Array of \ReflectionProperties objects
-     * @return  array
-     */
-    private function getPropertiesDetails($visibility, $properties)
-    {
-        $results = [];
-        foreach ($properties as $key => $value) {
-            // it causes problems down the line to have static
-            // properties set in the other visibilities
-            $prop = $this->getPropertyDetails($visibility, $key, $value);
-            if ($visibility !== 'static' && empty($prop->isStatic)) {
-                array_push($results, $prop);
-            }
-            if ($visibility === 'static') {
-                array_push($results, $prop);
-            }
-        }
-
-        return $results;
-    }
 
     public function new_getPropertyDetails($visibility, $key, $value)
     {

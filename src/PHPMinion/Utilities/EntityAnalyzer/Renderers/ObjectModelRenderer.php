@@ -33,7 +33,7 @@ class ObjectModelRenderer extends DataTypeModelRenderer implements ModelRenderer
      */
     public function renderModel(DataTypeModel $model, $level = 0)
     {
-        $output = $this->indent($level) . "Object ({$model->getName()})" . PHP_EOL;
+        $output = $this->indent($level) . "Object ({$model->getClassName()})" . PHP_EOL;
         $output .= $this->generateModelSummary($model, $level);
 
         foreach ($model->getProperties() as $vis => $props) {

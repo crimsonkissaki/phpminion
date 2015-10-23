@@ -26,37 +26,57 @@ class ObjectModel extends DataTypeModel
 {
 
     /**
+     * Class represented by the ObjectModel
+     *
      * @var string
      */
-    private $name;
+    private $_className;
 
-    private $properties = [];
+    /**
+     * Class properties
+     *
+     * @var array
+     */
+    private $_properties = [];
 
     //public $methods = [];
 
-    public function setName($name)
+    public function getClassName()
     {
-        $this->name = $name;
+        return $this->_className;
     }
 
-    public function getName()
+    /**
+     * @param string $visibility
+     * @param string $name
+     * @param DataTypeModel $value
+     */
+    public function addProperty($visibility, $name, DataTypeModel $value)
     {
-        return $this->name;
-    }
-
-    public function addProperty(PropertyModel $property)
-    {
-        $visibility = $property->visibility;
-        if (empty($this->properties[$visibility])) {
-            $this->properties[$visibility] = [];
+        if (empty($this->_properties[$visibility])) {
+            $this->_properties[$visibility] = [];
         }
 
-        $this->properties[$visibility][$property->name] = $property;
+        $this->_properties[$visibility][$name] = $value;
+    }
+
+    /**
+     * @param array $properties
+     */
+    public function setProperties(array $properties)
+    {
+        $this->_properties = $properties;
     }
 
     public function getProperties()
     {
-        return $this->properties;
+        return $this->_properties;
+    }
+
+    public function __construct($entity)
+    {
+        parent::__construct($entity);
+        $this->_className = get_class($entity);
     }
 
 }
