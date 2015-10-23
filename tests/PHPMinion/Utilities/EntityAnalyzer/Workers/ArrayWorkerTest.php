@@ -12,7 +12,7 @@
 
 namespace PHPMinionTest\Utilities\EntityAnalyzer\Workers;
 
-use PHPMinionTest\Utilities\EntityAnalyzer\Mocks\DataTypeModelMocks;
+use PHPMinionTest\Utilities\EntityAnalyzer\Mocks\ArrayModelMocks;
 use PHPMinion\Utilities\EntityAnalyzer\Workers\ArrayWorker;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
@@ -84,9 +84,9 @@ class ArrayWorkerTest extends \PHPUnit_Framework_TestCase
     public function mockedDataProvider()
     {
         return array(
-            array( DataTypeModelMocks::getArrayModelMockTwoElements(), DataTypeModelMocks::getMockTwoElementArray() ),
-            array( DataTypeModelMocks::getArrayModelMockAssociativeArray(), DataTypeModelMocks::getMockAssociativeArray() ),
-            array( DataTypeModelMocks::getArrayModelMockNestedArray(), DataTypeModelMocks::getMockNestedArray() ),
+            array( ArrayModelMocks::getMock_twoElementArr(), ArrayModelMocks::getTwoElementArray() ),
+            array( ArrayModelMocks::getMock_associativeArr(), ArrayModelMocks::getAssociativeArray() ),
+            array( ArrayModelMocks::getMock_nestedArr(), ArrayModelMocks::getNestedArray() ),
         );
     }
 

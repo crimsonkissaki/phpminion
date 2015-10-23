@@ -22,16 +22,16 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
 use PHPMinion\Utilities\EntityAnalyzer\Renderers\ScalarModelRenderer;
 
 /**
- * Class DataTypeModelMocks
+ * Class ArrayModelMocks
  *
- * Mocks for use in testing
+ * Mocks for use in testing ArrayModel creation
  *
  * Most will be hand-built to ensure testing consistency
  */
-class DataTypeModelMocks
+class ArrayModelMocks
 {
 
-    public static function getMockTwoElementArray()
+    public static function getTwoElementArray()
     {
         return ['val1', 'val2'];
     }
@@ -41,9 +41,9 @@ class DataTypeModelMocks
      *
      * @return ArrayModel
      */
-    public static function getArrayModelMockTwoElements()
+    public static function getMock_twoElementArr()
     {
-        $arr = self::getMockTwoElementArray();
+        $arr = self::getTwoElementArray();
         $model = new ArrayModel($arr);
 
         foreach ($arr as $k => $v) {
@@ -55,14 +55,14 @@ class DataTypeModelMocks
         return $model;
     }
 
-    public static function getMockAssociativeArray()
+    public static function getAssociativeArray()
     {
         return ['key1' => 'val1', 'key2' => 'val2'];
     }
 
-    public static function getArrayModelMockAssociativeArray()
+    public static function getMock_associativeArr()
     {
-        $arr = self::getMockAssociativeArray();
+        $arr = self::getAssociativeArray();
         $model = new ArrayModel($arr);
 
         foreach ($arr as $k => $v) {
@@ -74,7 +74,7 @@ class DataTypeModelMocks
         return $model;
     }
 
-    public static function getMockNestedArray()
+    public static function getNestedArray()
     {
         return [
             'key1' => 'val1',
@@ -86,9 +86,9 @@ class DataTypeModelMocks
         ];
     }
 
-    public static function getArrayModelMockNestedArray()
+    public static function getMock_nestedArr()
     {
-        $arr = self::getMockNestedArray();
+        $arr = self::getNestedArray();
         $model = new ArrayModel($arr);
 
         foreach ($arr as $key => $value) {
