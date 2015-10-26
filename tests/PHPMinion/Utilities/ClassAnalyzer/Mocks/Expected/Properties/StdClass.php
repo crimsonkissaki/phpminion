@@ -54,7 +54,7 @@ class StdClass
             }
             $model->setCurrentValue($curVal);
             $model->setCurrentValueDataType(gettype($value));
-            $finalForm[] = $model;
+            $props[] = $model;
         }
 
         return $props;

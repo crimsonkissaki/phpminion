@@ -55,8 +55,13 @@ class PropertyAnalysis
         $this->validateArgs($object, $refObject);
 
         $this->_obj = $object;
-        $this->_refObj = $refObject;
-        $propertyModels = $this->createModelsForClassProperties();
+        // stdClass does not play nicely with reflection
+        if (get_class($object) === 'stdClass') {
+            $propertyModels = $this->getPropertiesDetails($this->_obj);
+        } else {
+            $this->_refObj = $refObject;
+            $propertyModels = $this->createModelsForClassProperties();
+        }
 
         return $propertyModels;
     }
@@ -88,7 +93,6 @@ class PropertyAnalysis
         $const = $this->_refObj->getConstants();
         $props = $this->_refObj->getProperties();
         $refProps = array_merge($const, $props);
-
         $propertyModels = $this->getPropertiesDetails($refProps);
 
         return $propertyModels;
@@ -129,6 +133,7 @@ class PropertyAnalysis
      */
     private function getPropertyDetails($key, $property)
     {
+        // have to differentiate between stdClasses and not here
         $model = new PropertyModel();
         $model->setName(((is_object($property)) ? $property->getName(): $key));
         //$model->setter = $this->findPropertySetterIfExists($result->name, $this->methods);
@@ -152,13 +157,15 @@ class PropertyAnalysis
      */
     private function getPropertyVisibility($property)
     {
+        // order is important so we don't call methods on stdClass values
         switch (true) {
-            case (!is_object($property)):
+            case (get_class($this->_obj) === 'stdClass' || $property->isPublic()):
+                return 'public';
+            // BSTS check
+            case (get_class($this->_obj) !== 'stdClass' && !is_object($property)):
                 return 'constant';
             case ($property->isStatic()):
                 return 'static';
-            case ($property->isPublic()):
-                return 'public';
             case ($property->isPrivate()):
                 return 'private';
             case ($property->isProtected()):

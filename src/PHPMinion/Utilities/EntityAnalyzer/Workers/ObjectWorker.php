@@ -13,8 +13,11 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
-use PHPMinion\Utilities\ClassAnalyzer\PropertyAnalysis\PropertyAnalysis;
+use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
+use PHPMinion\Utilities\EntityAnalyzer\Translators\DataTypeModelTranslator;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
+
+use PHPMinion\Utilities\ClassAnalyzer\PropertyAnalysis\PropertyAnalysis;
 
 /**
  * Class ObjectWorker
@@ -37,7 +40,7 @@ class ObjectWorker implements DataTypeWorkerInterface
         $this->validateTargetObj($entity);
 
         $model = new ObjectModel($entity);
-        $this->analyzeObjectProperties($model, $entity);
+        $model->setProperties($this->analyzeObjectProperties($model, $entity));
 
         return $model;
     }
@@ -68,16 +71,39 @@ class ObjectWorker implements DataTypeWorkerInterface
      *
      * @param ObjectModel $model
      * @param object      $entity
+     * @return DataTypeModel[]
      */
     private function analyzeObjectProperties(ObjectModel $model, $entity)
     {
         $propertyAnalysis = new PropertyAnalysis();
-        $properties = $propertyAnalysis->analyze($entity, new \ReflectionClass($entity));
-        // get all object properties, regardless of visibility
+        $propertyModels = $propertyAnalysis->analyze($entity, new \ReflectionClass($entity));
+        $dataTypeModels = DataTypeModelTranslator::translateFromClassAnalyzerPropertyModel($propertyModels);
+        $properties = $this->arrangeDataTypeModelsByVisibility($dataTypeModels);
 
-        echo "\n\nclass properties from ObjectWorker:\n";
-        var_dump($properties);
-        die();
+        return $properties;
+    }
+
+    /**
+     * Creates an array of data models by visibility
+     *
+     * @param DataTypeModels[] $models
+     * @return array
+     */
+    private function arrangeDataTypeModelsByVisibility($models)
+    {
+        $visibilities = ['constant', 'static', 'public', 'protected', 'private'];
+        $propertiesByVis = [];
+        foreach ($visibilities as $vis) {
+            /** @var DataTypeModel $model */
+            foreach ($models as $name => $model) {
+                if (!isset($propertiesByVis[$vis])) {
+                    $propertiesByVis[$vis] = [];
+                }
+                $propertiesByVis[$vis][$name] = $model;
+            }
+        }
+
+        return $propertiesByVis;
     }
 
 }

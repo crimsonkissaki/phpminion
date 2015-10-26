@@ -35,6 +35,13 @@ abstract class DataTypeModel
     private $_dataType;
 
     /**
+     * Data visibility scope
+     *
+     * @var string
+     */
+    private $_visibility = 'public';
+
+    /**
      * @return string
      */
     public function getDataType()
@@ -50,6 +57,19 @@ abstract class DataTypeModel
     protected function setDataType($dataType)
     {
         $this->_dataType = $dataType;
+    }
+
+    public function getVisibility()
+    {
+        return $this->_visibility;
+    }
+
+    /**
+     * @param string
+     */
+    public function setVisibility($visibility)
+    {
+        $this->_visibility = $visibility;
     }
 
     public function __construct($entity)

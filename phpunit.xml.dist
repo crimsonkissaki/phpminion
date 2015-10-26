@@ -5,7 +5,12 @@
     <testsuites>
         <testsuite name="PHPMinion Test Suite">
             <!-- CURRENT -->
+            <file>./tests/PHPMinion/Utilities/EntityAnalyzer/Workers/ObjectWorkerTest.php</file>
+
+            <!-- IN PROGRESS -->
+            <!--
             <directory>./tests/PHPMinion</directory>
+            -->
 
             <!-- KNOWN GOOD TESTS -->
             <!--
@@ -23,10 +28,6 @@
             <file>./tests/PHPMinion/Utilities/EntityAnalyzer/EntityAnalyzerTest.php</file>
             -->
 
-            <!-- IN PROGRESS -->
-            <!--
-            <file>./tests/PHPMinion/Utilities/EntityAnalyzer/Workers/ObjectWorkerTest.php</file>
-            -->
         </testsuite>
     </testsuites>
 

@@ -23,13 +23,13 @@ class MockClasses
     public static function stdClass()
     {
         $obj = new \stdClass();
-        $obj->prop1 = 'public string value';
-        $obj->prop2 = 10;
-        $obj->prop3 = 3.14;
-        $obj->prop4 = true;
-        $obj->prop5 = false;
-        $obj->prop6 = null;
-        $obj->prop7 = ['public', 'val1', 'val2'];
+        $obj->public_string = 'public string value';
+        $obj->public_integer = 10;
+        $obj->public_double = 3.14;
+        $obj->public_true = true;
+        $obj->public_false = false;
+        $obj->public_null = null;
+        $obj->public_array = ['public', 'val1', 'val2'];
 
         return $obj;
     }

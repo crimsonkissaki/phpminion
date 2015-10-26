@@ -32,11 +32,13 @@ class ObjectModelMocks
     public static function getSimpleObj()
     {
         $obj = new \stdClass();
-        $obj->prop1 = 'val1';
-        $obj->prop2 = 10;
-        $obj->prop3 = 3.14;
-        $obj->prop4 = true;
-        $obj->prop5 = false;
+        $obj->public_string = 'public string value';
+        $obj->public_integer = 10;
+        $obj->public_double = 3.14;
+        $obj->public_true = true;
+        $obj->public_false = false;
+        $obj->public_null = null;
+        $obj->public_array = ['public', 'val1', 'val2'];
 
         return $obj;
     }
@@ -52,8 +54,16 @@ class ObjectModelMocks
         $model = new ObjectModel($obj);
 
         foreach ($obj as $propName => $propValue) {
-            $property = new ScalarModel($propValue);
-            $property->setValue($propValue);
+            if (!is_array($propValue) && !is_object($propValue)) {
+                $property = new ScalarModel($propValue);
+                $property->setValue($propValue);
+            }
+            if (is_array($propValue)) {
+                foreach ($propValue as $k => $v) {
+                    $property = new ArrayModel($propValue);
+                    $property->setValue($propValue);
+                }
+            }
             $model->addProperty('public', $propName, $property);
         }
 
