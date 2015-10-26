@@ -10,12 +10,13 @@
  * @version     0.1
  */
 
-namespace PHPMinion\Utilities\ClassAnalyzer\PropertyAnalyzer;
+namespace PHPMinion\Utilities\ClassAnalyzer\PropertyAnalysis;
 
 use PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel;
+use PHPMinion\Utilities\ClassAnalyzer\Exceptions\ClassAnalyzerException;
 
 /**
- * Class PropertyAnalyzer
+ * Class PropertyAnalysis
  *
  * Puts class properties under a reflection microscope
  *
@@ -25,7 +26,7 @@ use PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel;
  * @created     October 23, 2015
  * @version     0.1
  */
-class PropertyAnalyzer
+class PropertyAnalysis
 {
 
     /**
@@ -51,11 +52,30 @@ class PropertyAnalyzer
      */
     public function analyze($object, \ReflectionClass $refObject)
     {
+        $this->validateArgs($object, $refObject);
+
         $this->_obj = $object;
         $this->_refObj = $refObject;
         $propertyModels = $this->createModelsForClassProperties();
 
         return $propertyModels;
+    }
+
+    /**
+     * Validates args passed into PropertyAnalysis
+     *
+     * @param object           $object
+     * @param \ReflectionClass $refObject
+     * @return bool
+     * @throws ClassAnalyzerException
+     */
+    private function validateArgs($object, $refObject)
+    {
+        if (!is_object($object) || !$refObject instanceof \ReflectionClass || (get_class($object) !== $refObject->getName())) {
+            throw new ClassAnalyzerException("PropertyAnalysis must receive an object and it's reflection class as arguments.");
+        }
+
+        return true;
     }
 
     /**
@@ -65,8 +85,8 @@ class PropertyAnalyzer
      */
     private function createModelsForClassProperties()
     {
-        $props = $this->_refObj->getProperties();
         $const = $this->_refObj->getConstants();
+        $props = $this->_refObj->getProperties();
         $refProps = array_merge($const, $props);
 
         $propertyModels = $this->getPropertiesDetails($refProps);

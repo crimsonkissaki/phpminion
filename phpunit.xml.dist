@@ -5,10 +5,11 @@
     <testsuites>
         <testsuite name="PHPMinion Test Suite">
             <!-- CURRENT -->
-            <file>./tests/PHPMinion/Utilities/ClassAnalyzer/PropertyAnalyzer/PropertyAnalyzerTest.php</file>
 
             <!-- KNOWN GOOD TESTS -->
             <!--
+            <file>./tests/PHPMinion/Utilities/ClassAnalyzer/ClassAnalysis/ClassAnalysisTest.php</file>
+            <file>./tests/PHPMinion/Utilities/ClassAnalyzer/PropertyAnalysis/PropertyAnalysisTest.php</file>
             <file>./tests/PHPMinion/Utilities/ClassAnalyzer/ClassAnalyzerTest.php</file>
             <directory>./tests/PHPMinion/Utilities/Core</directory>
             <directory>./tests/PHPMinion/Utilities/EntityAnalyzer</directory>
@@ -17,8 +18,8 @@
             <file>./tests/PHPMinion/Utilities/EntityAnalyzer/Workers/ArrayWorkerTest.php</file>
             <file>./tests/PHPMinion/Utilities/EntityAnalyzer/Factories/RendererFactoryTest.php</file>
             <file>./tests/PHPMinion/Utilities/EntityAnalyzer/EntityAnalyzerTest.php</file>
-            <directory>./tests/PHPMinion</directory>
             -->
+            <directory>./tests/PHPMinion</directory>
 
             <!-- IN PROGRESS -->
             <!--

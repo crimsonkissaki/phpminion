@@ -12,7 +12,9 @@
 
 namespace PHPMinion\Utilities\ClassAnalyzer;
 
-use PHPMinion\Utilities\ClassAnalyzer\PropertyAnalyzer\PropertyAnalyzer;
+use PHPMinion\Utilities\ClassAnalyzer\Models\ClassModel;
+use PHPMinion\Utilities\ClassAnalyzer\ClassAnalysis\ClassAnalysis;
+use PHPMinion\Utilities\ClassAnalyzer\PropertyAnalysis\PropertyAnalysis;
 use PHPMinion\Utilities\ClassAnalyzer\Exceptions\ClassAnalyzerException;
 
 /**
@@ -30,13 +32,6 @@ class ClassAnalyzer
 {
 
     /**
-     * Name of class to be analyzed
-     *
-     * @var  string
-     */
-    private $_className;
-
-    /**
      * Instance of class to be analyzed
      *
      * @var  object
@@ -51,27 +46,26 @@ class ClassAnalyzer
     private $_refClass;
 
     /**
-     * The class's properties by visibility (scope)
+     * Representation of the class
      *
-     * @var array
+     * @var ClassModel
      */
-    private $_properties = [];
+    private $_classModel;
 
     /**
-     * The class's methods by visibility (scope)
-     *
-     * @var array
+     * @var ClassAnalysis
      */
-    private $_methods = [];
+    private $_classAnalysis;
 
-    public function getProperties()
-    {
-        return $this->_properties;
-    }
+    /**
+     * @var PropertyAnalysis
+     */
+    private $_propertyAnalysis;
 
-    public function getMethods()
+    public function __construct()
     {
-        return $this->_methods;
+        $this->_classAnalysis = new ClassAnalysis();
+        $this->_propertyAnalysis = new PropertyAnalysis();
     }
 
     /**
@@ -85,39 +79,12 @@ class ClassAnalyzer
         $this->validateClass($class);
         $this->setUp($class);
 
-        $this->_properties = ''; //PropertyAnalyzer::analyze($this->_refClass);
-        $this->_methods = '';
+        $this->_classModel = $this->_classAnalysis->analyze($this->_class, $this->_refClass);
+        $this->_classModel->setProperties(
+            $this->_propertyAnalysis->analyze($this->_class, $this->_refClass)
+        );
 
         return $this;
-    }
-
-    /**
-     * Sets up ClassAnalyzer for work
-     *
-     * @param object|string $class
-     * @return bool
-     * @throws ClassAnalyzerException
-     */
-    private function setUp($class)
-    {
-        try {
-            if (is_object($class)) {
-                $this->_class = $class;
-                $this->_className = get_class($class);
-                $this->_refClass = new \ReflectionObject($class);
-
-                return true;
-            }
-            if (is_string($class)) {
-                $this->_class = new $class();
-                $this->_className = $class;
-                $this->_refClass = new \ReflectionClass($class);
-
-                return true;
-            }
-        } catch (\Exception $e) {
-            throw new ClassAnalyzerException("Unknown error while attempting to instantiate '{$class}': '{$e->getMessage()}'");
-        }
     }
 
     /**
@@ -134,6 +101,33 @@ class ClassAnalyzer
         }
 
         throw new ClassAnalyzerException("ClassAnalyzer can only accept object instances or fully qualified class names. " . gettype($class) . " provided.");
+    }
+
+    /**
+     * Sets up ClassAnalyzer for work
+     *
+     * @param object|string $class
+     * @return bool
+     * @throws ClassAnalyzerException
+     */
+    private function setUp($class)
+    {
+        try {
+            if (is_object($class)) {
+                $this->_class = $class;
+                $this->_refClass = new \ReflectionObject($class);
+
+                return true;
+            }
+            if (is_string($class)) {
+                $this->_class = new $class();
+                $this->_refClass = new \ReflectionClass($class);
+
+                return true;
+            }
+        } catch (\Exception $e) {
+            throw new ClassAnalyzerException("Unknown error while attempting to instantiate '{$class}': '{$e->getMessage()}'");
+        }
     }
 
 }

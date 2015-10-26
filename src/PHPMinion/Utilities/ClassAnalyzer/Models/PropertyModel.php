@@ -17,8 +17,6 @@ namespace PHPMinion\Utilities\ClassAnalyzer\Models;
  *
  * Model to hold object property data
  *
- * @package     PHPMinion
- * @author      Evan Johnson
  * @created     October 23, 2015
  * @version     0.1
  */

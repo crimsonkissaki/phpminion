@@ -44,4 +44,9 @@ class MockClasses
         return VisibilityClassAsPropertyModels::buildFinalForm();
     }
 
+    public static function getMock_fullInheritanceChain()
+    {
+        return new FullInheritanceChainClass();
+    }
+
 }
