@@ -48,7 +48,7 @@ class PropertyAnalysis
      *
      * @param object           $object
      * @param \ReflectionClass $refObject
-     * @return array
+     * @return PropertyModel[]
      */
     public function analyze($object, \ReflectionClass $refObject)
     {

@@ -13,6 +13,7 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Workers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
+use PHPMinion\Utilities\ClassAnalyzer\PropertyAnalysis\PropertyAnalysis;
 use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
 
 /**
@@ -29,8 +30,6 @@ class ObjectWorker implements DataTypeWorkerInterface
 {
 
     /**
-     * TODO: this fucks up when passed a stdClass - cant use \ReflectionProperty->getValue()
-     *
      * @inheritDoc
      */
     public function createModel($entity)
@@ -65,12 +64,20 @@ class ObjectWorker implements DataTypeWorkerInterface
     /**
      * Creates appropriate DataTypeModels for each object property
      *
+     * This is supposed to be a simplistic analysis
+     *
      * @param ObjectModel $model
      * @param object      $entity
      */
     private function analyzeObjectProperties(ObjectModel $model, $entity)
     {
+        $propertyAnalysis = new PropertyAnalysis();
+        $properties = $propertyAnalysis->analyze($entity, new \ReflectionClass($entity));
         // get all object properties, regardless of visibility
+
+        echo "\n\nclass properties from ObjectWorker:\n";
+        var_dump($properties);
+        die();
     }
 
 }

@@ -10,19 +10,19 @@
  * @version     0.1
  */
 
-namespace PHPMinionTest\Utilities\ClassAnalyzer\Mocks;
+namespace PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Expected\Properties;
 
 use PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel;
 
 /**
- * Class VisibilityClassAsPropertyModels
+ * Class VisibilityClass
  *
  * What the VisibilityClass ought to look like as PropertyModel[]
  */
-class VisibilityClassAsPropertyModels
+class VisibilityClass
 {
 
-    public static function buildFinalForm()
+    public static function getPropertyModels()
     {
         $visibilities = ['constant', 'public', 'protected', 'private'];
         $properties = [

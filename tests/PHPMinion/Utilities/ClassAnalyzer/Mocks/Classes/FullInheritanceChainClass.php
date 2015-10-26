@@ -10,11 +10,11 @@
  * @version     0.1
  */
 
-namespace PHPMinionTest\Utilities\ClassAnalyzer\Mocks;
+namespace PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Classes;
 
-use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\SimpleClass;
-use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\SimpleInterface;
-use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\VisibilityClassAsPropertyModels;
+use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Classes\SimpleClass;
+use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Classes\SimpleInterface;
+use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Classes\VisibilityClassAsPropertyModels;
 
 class FullInheritanceChainClass extends SimpleClass implements SimpleInterface
 {

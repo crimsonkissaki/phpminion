@@ -13,6 +13,7 @@
 namespace PHPMinionTest\Utilities\ClassAnalysis;
 
 use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\MockClasses;
+use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\MockExpected;
 use PHPMinion\Utilities\ClassAnalyzer\ClassAnalysis\ClassAnalysis;
 use PHPMinion\Utilities\ClassAnalyzer\Models\ClassModel;
 use PHPMinion\Utilities\ClassAnalyzer\Exceptions\ClassAnalysisException;
@@ -33,9 +34,9 @@ class ClassAnalysisTest extends \PHPUnit_Framework_TestCase
     public function validArgsDataProvider()
     {
         return array(
-            array( MockClasses::getMock_allVisibility() ),
-            array( MockClasses::getMock_simple() ),
-            array( MockClasses::getMock_stdClass() ),
+            array( MockClasses::allVisibility() ),
+            array( MockClasses::simple() ),
+            array( MockClasses::stdClass() ),
             array( '\PHPMinion\Utilities\ClassAnalyzer\Models\ClassModel' ),
         );
     }
@@ -53,24 +54,21 @@ class ClassAnalysisTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf($expected, $actual);
     }
 
-    public function test_analyze_returnsProperValues()
+    public function mocksDataProvider()
     {
-        $path = 'PHPMinionTest\Utilities\ClassAnalyzer\\';
-        $entity = MockClasses::getMock_fullInheritanceChain();
-        $refEntity = new \ReflectionClass($entity);
-        $expected = new ClassModel();
-        $expected->setName($path.'Mocks\FullInheritanceChainClass');
-        $expected->setNameSpace($path.'Mocks');
-        $expected->setUses(array(
-            $path.'Mocks\SimpleClass',
-            $path.'Mocks\SimpleInterface',
-            $path.'Mocks\VisibilityClassAsPropertyModels',
-        ));
-        $expected->setExtends($path.'Mocks\SimpleClass');
-        $expected->setImplements(array(
-            $path.'Mocks\SimpleInterface',
-        ));
+        return array(
+            array( MockClasses::fullInheritanceChain(), MockExpected::fullInheritanceChain_classModel() ),
+            array( MockClasses::stdClass(), MockExpected::stdClass_classModel() ),
+            array( MockClasses::allVisibility(), MockExpected::allVisibility_classModel() ),
+        );
+    }
 
+    /**
+     * @dataProvider mocksDataProvider
+     */
+    public function test_analyze_returnsProperValues($entity, $expected)
+    {
+        $refEntity = new \ReflectionClass($entity);
         $actual = $this->analyzer->analyze($entity, $refEntity);
 
         $this->assertEquals($expected, $actual);

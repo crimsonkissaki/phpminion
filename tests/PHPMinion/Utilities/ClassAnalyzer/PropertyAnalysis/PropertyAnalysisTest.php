@@ -13,6 +13,7 @@
 namespace PHPMinionTest\Utilities\PropertyAnalysis;
 
 use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\MockClasses;
+use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\MockExpected;
 use PHPMinion\Utilities\ClassAnalyzer\PropertyAnalysis\PropertyAnalysis;
 use PHPMinion\Utilities\ClassAnalyzer\Exceptions\PropertyAnalysisException;
 
@@ -32,10 +33,10 @@ class PropertyAnalysisTest extends \PHPUnit_Framework_TestCase
     public function validArgsDataProvider()
     {
         return array(
-            array( MockClasses::getMock_allVisibility() ),
-            array( new \ReflectionObject(MockClasses::getMock_simple()) ),
-            array( new \ReflectionObject(MockClasses::getMock_stdClass()) ),
-            array( new \ReflectionClass('\PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel') ),
+            array( MockClasses::allVisibility() ),
+            array( MockClasses::simple() ),
+            array( MockClasses::stdClass() ),
+            array( 'PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel' ),
         );
     }
 
@@ -52,10 +53,19 @@ class PropertyAnalysisTest extends \PHPUnit_Framework_TestCase
         $this->assertContainsOnlyInstancesOf($expected, $actual);
     }
 
-    public function test_analyze_returnsProperValuesForAllProperties()
+    public function mockArgsDataProvider()
     {
-        $expected = MockClasses::getMock_allVisibilityAsModels();
-        $entity = MockClasses::getMock_allVisibility();
+        return array(
+            array( MockClasses::allVisibility(), MockExpected::allVisibility_propertyModels() ),
+            array( MockClasses::stdClass(), MockExpected::stdClass_propertyModels() ),
+        );
+    }
+
+    /**
+     * @dataProvider mockArgsDataProvider
+     */
+    public function test_analyze_returnsProperValuesForAllProperties($entity, $expected)
+    {
         $refEntity = new \ReflectionClass($entity);
         $actual = $this->analyzer->analyze($entity, $refEntity);
 

@@ -10,7 +10,7 @@
  * @version     0.1
  */
 
-namespace PHPMinionTest\Utilities\ClassAnalyzer\Mocks;
+namespace PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Classes;
 
 class VisibilityClass
 {

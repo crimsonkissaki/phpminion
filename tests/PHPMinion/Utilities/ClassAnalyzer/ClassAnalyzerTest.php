@@ -12,6 +12,7 @@
 
 namespace PHPMinionTest\Utilities\ClassAnalyzer;
 
+use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\MockClasses;
 use PHPMinion\Utilities\ClassAnalyzer\ClassAnalyzer;
 use PHPMinion\Utilities\ClassAnalyzer\Exceptions\ClassAnalyzerException;
 
@@ -54,7 +55,7 @@ class ClassAnalyzerTest extends \PHPUnit_Framework_TestCase
     public function validArgsDataProvider()
     {
         return [
-            [ new \stdClass() ],
+            [ MockClasses::stdClass() ],
             [ '\PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel' ],
         ];
     }

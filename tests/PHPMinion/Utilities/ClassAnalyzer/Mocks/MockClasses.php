@@ -12,10 +12,15 @@
 
 namespace PHPMinionTest\Utilities\ClassAnalyzer\Mocks;
 
+/**
+ * Class MockClasses
+ *
+ * Mock classes for testing analysis
+ */
 class MockClasses
 {
 
-    public static function getMock_stdClass()
+    public static function stdClass()
     {
         $obj = new \stdClass();
         $obj->prop1 = 'public string value';
@@ -29,24 +34,19 @@ class MockClasses
         return $obj;
     }
 
-    public static function getMock_simple()
+    public static function simple()
     {
-        return new SimpleClass();
+        return new Classes\SimpleClass();
     }
 
-    public static function getMock_allVisibility()
+    public static function allVisibility()
     {
-        return new VisibilityClass();
+        return new Classes\VisibilityClass();
     }
 
-    public static function getMock_allVisibilityAsModels()
+    public static function fullInheritanceChain()
     {
-        return VisibilityClassAsPropertyModels::buildFinalForm();
-    }
-
-    public static function getMock_fullInheritanceChain()
-    {
-        return new FullInheritanceChainClass();
+        return new Classes\FullInheritanceChainClass();
     }
 
 }

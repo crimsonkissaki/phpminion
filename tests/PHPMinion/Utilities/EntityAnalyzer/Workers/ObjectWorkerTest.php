@@ -81,6 +81,12 @@ class ObjectWorkerTest extends \PHPUnit_Framework_TestCase
      */
     public function test_createModel_returnsProperDataInModel($expected, $entity)
     {
+        /*
+        echo "\n\nexpected:\n";
+        var_dump($expected);
+        die();
+        */
+
         $actual = $this->worker->createModel($entity);
 
         $this->assertEquals($expected, $actual);
