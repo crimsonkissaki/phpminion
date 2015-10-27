@@ -41,7 +41,7 @@ class ArrayWorker implements DataTypeWorkerInterface
 
         foreach ($entity as $key => $value) {
             $analyzedValue = $this->analyzeArrayValue($value);
-            $model->addElement($key, $analyzedValue);
+            $model->setValue($key, $analyzedValue);
         }
 
         return $model;

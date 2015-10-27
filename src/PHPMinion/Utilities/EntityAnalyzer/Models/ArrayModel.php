@@ -22,46 +22,37 @@ use PHPMinion\Utilities\EntityAnalyzer\Exceptions\EntityAnalyzerException;
  * @created     October 18, 2015
  * @version     0.1
  */
-class ArrayModel extends DataTypeModel
+class ArrayModel extends DataTypeModel implements DataModelInterface
 {
 
     /**
-     * Array of keys => data models
+     * @inheritDoc
      *
-     * @var array
-     */
-    private $_elements = [];
-
-    /**
-     * @return array
-     */
-    public function getElements()
-    {
-        return $this->_elements;
-    }
-
-    /**
-     * @param array $elements
-     */
-    public function setElements(array $elements)
-    {
-        $this->_elements = $elements;
-    }
-
-    /**
-     * @param mixed $key
-     * @param mixed $value
+     * OVERLOADED METHOD
+     *
+     * Non-array $value args are added as a numeric index
+     * ['key' => 'value'] args are added sequentially as provided
+     *
+     * @param  mixed $value
      * @throws EntityAnalyzerException
      */
-    public function addElement($key, $value)
+    public function setValue($value)
     {
-        $this->_elements[$key] = $value;
+        $vals = (is_array($value)) ? $value : [$value];
+        foreach ($vals as $key => $val) {
+            $this->_value[$key] = $val;
+        }
     }
 
-    public function getElement($key)
+    /**
+     * @param  mixed $key
+     * @return mixed
+     * @throws EntityAnalyzerException
+     */
+    public function getValueByKey($key)
     {
-        if (isset($this->_elements[$key])) {
-            return $this->_elements[$key];
+        if (isset($this->_value[$key])) {
+            return $this->_value[$key];
         }
 
         throw new EntityAnalyzerException("No array element exists for key '{$key}'.");

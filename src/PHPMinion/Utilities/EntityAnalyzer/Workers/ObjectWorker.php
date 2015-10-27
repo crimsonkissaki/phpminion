@@ -40,7 +40,7 @@ class ObjectWorker implements DataTypeWorkerInterface
         $this->validateTargetObj($entity);
 
         $model = new ObjectModel($entity);
-        $model->setProperties($this->analyzeObjectProperties($model, $entity));
+        $model->setValue($this->analyzeObjectProperties($model, $entity));
 
         return $model;
     }
@@ -78,9 +78,9 @@ class ObjectWorker implements DataTypeWorkerInterface
         $propertyAnalysis = new PropertyAnalysis();
         $propertyModels = $propertyAnalysis->analyze($entity, new \ReflectionClass($entity));
         $dataTypeModels = DataTypeModelTranslator::translateFromClassAnalyzerPropertyModel($propertyModels);
-        $properties = $this->arrangeDataTypeModelsByVisibility($dataTypeModels);
+        //$properties = $this->arrangeDataTypeModelsByVisibility($dataTypeModels);
 
-        return $properties;
+        return $dataTypeModels;
     }
 
     /**
@@ -91,16 +91,14 @@ class ObjectWorker implements DataTypeWorkerInterface
      */
     private function arrangeDataTypeModelsByVisibility($models)
     {
-        $visibilities = ['constant', 'static', 'public', 'protected', 'private'];
         $propertiesByVis = [];
-        foreach ($visibilities as $vis) {
-            /** @var DataTypeModel $model */
-            foreach ($models as $name => $model) {
-                if (!isset($propertiesByVis[$vis])) {
-                    $propertiesByVis[$vis] = [];
-                }
-                $propertiesByVis[$vis][$name] = $model;
+        /** @var DataTypeModel $model */
+        foreach ($models as $name => $model) {
+            $vis = $model->getVisibility();
+            if (!isset($propertiesByVis[$vis])) {
+                $propertiesByVis[$vis] = [];
             }
+            $propertiesByVis[$vis][$name] = $model;
         }
 
         return $propertiesByVis;

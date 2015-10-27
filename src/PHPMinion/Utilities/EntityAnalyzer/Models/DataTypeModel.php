@@ -32,14 +32,25 @@ abstract class DataTypeModel
      *
      * @var string
      */
-    private $_dataType;
+    protected $_dataType;
 
     /**
      * Data visibility scope
      *
      * @var string
      */
-    private $_visibility = 'public';
+    protected $_visibility = 'public';
+
+    /**
+     * Values depending on data model type
+     *
+     * Scalar is a simple value
+     * Array is key => value
+     * Object is property => value
+     *
+     * @var mixed
+     */
+    protected $_value;
 
     /**
      * @return string
@@ -59,6 +70,9 @@ abstract class DataTypeModel
         $this->_dataType = $dataType;
     }
 
+    /**
+     * @return string
+     */
     public function getVisibility()
     {
         return $this->_visibility;
@@ -70,6 +84,14 @@ abstract class DataTypeModel
     public function setVisibility($visibility)
     {
         $this->_visibility = $visibility;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->_value;
     }
 
     public function __construct($entity)

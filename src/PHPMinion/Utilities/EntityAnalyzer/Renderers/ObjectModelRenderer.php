@@ -36,9 +36,15 @@ class ObjectModelRenderer extends DataTypeModelRenderer implements ModelRenderer
         $output = $this->indent($level) . "Object ({$model->getClassName()})" . PHP_EOL;
         $output .= $this->generateModelSummary($model, $level);
 
-        foreach ($model->getProperties() as $vis => $props) {
+        $objProps = $model->getValue();
+
+        if (empty($objProps)) {
+            return $output;
+        }
+
+        foreach ($objProps as $vis => $props) {
             /** @var PropertyModel $prop */
-            foreach ($props as $prop) {
+            foreach ($props as $propName => $propModel) {
                 //\application\Utils::dbug($prop, "property", true);
                 $output .= $this->generatePropertyOutput($prop, $level + 1);
             }
@@ -47,15 +53,30 @@ class ObjectModelRenderer extends DataTypeModelRenderer implements ModelRenderer
         return $output;
     }
 
+    /**
+     * TL;DR the object
+     *
+     * TODO: make sure tests cover null values (empty objects)
+     *
+     * @param DataTypeModel $model
+     * @param               $level
+     * @return string
+     */
     private function generateModelSummary(DataTypeModel $model, $level)
     {
         $tldr = '';
         $propCount = 0;
-        foreach ($model->getProperties() as $vis => $props) {
+        $output = $this->indent($level + 1) . "TL;DR :: properties ({$propCount})" . PHP_EOL;
+        $objProps = $model->getValue();
+
+        if (empty($objProps)) {
+            return $output;
+        }
+
+        foreach ($objProps as $vis => $props) {
             $propCount += ($visProps = count($props));
             $tldr .= $this->indent($level + 2) . $visProps . ' ' . $vis . PHP_EOL;
         }
-        $output = $this->indent($level + 1) . "TL;DR :: properties ({$propCount})" . PHP_EOL;
 
         return $output . $tldr;
     }

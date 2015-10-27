@@ -25,7 +25,7 @@ use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
  *
  * Most will be hand-built to ensure testing consistency
  */
-class ArrayModelMocks
+class ArrayModelMocks extends ModelMock
 {
 
     public static function getTwoElementArray()
@@ -40,14 +40,7 @@ class ArrayModelMocks
      */
     public static function getMock_twoElementArr()
     {
-        $arr = self::getTwoElementArray();
-        $model = new ArrayModel($arr);
-
-        foreach ($arr as $k => $v) {
-            $eleModel = new ScalarModel($v);
-            $eleModel->setValue($v);
-            $model->addElement($k, $eleModel);
-        }
+        $model = self::createArrayModels(self::getTwoElementArray());
 
         return $model;
     }
@@ -59,14 +52,7 @@ class ArrayModelMocks
 
     public static function getMock_associativeArr()
     {
-        $arr = self::getAssociativeArray();
-        $model = new ArrayModel($arr);
-
-        foreach ($arr as $k => $v) {
-            $eleModel = new ScalarModel($v);
-            $eleModel->setValue($v);
-            $model->addElement($k, $eleModel);
-        }
+        $model = self::createArrayModels(self::getAssociativeArray());
 
         return $model;
     }
@@ -85,24 +71,7 @@ class ArrayModelMocks
 
     public static function getMock_nestedArr()
     {
-        $arr = self::getNestedArray();
-        $model = new ArrayModel($arr);
-
-        foreach ($arr as $key => $value) {
-            if (!is_array($value) && !is_object($value)) {
-                $eleModel = new ScalarModel($value);
-                $eleModel->setValue($value);
-            }
-            if (is_array($value)) {
-                $eleModel = new ArrayModel($value);
-                foreach ($value as $subK => $subV) {
-                    $subModel = new ScalarModel($subV);
-                    $subModel->setValue($subV);
-                    $eleModel->addElement($subK, $subModel);
-                }
-            }
-            $model->addElement($key, $eleModel);
-        }
+        $model = self::createArrayModels(self::getNestedArray());
 
         return $model;
     }
