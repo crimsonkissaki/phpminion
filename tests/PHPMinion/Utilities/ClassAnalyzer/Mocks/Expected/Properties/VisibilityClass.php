@@ -63,7 +63,7 @@ class VisibilityClass
             foreach ($properties as $name => $value) {
                 $model = new PropertyModel();
                 $model->setName("{$vis}_static_{$name}");
-                $model->setVisibility('static');
+                $model->setVisibility($vis);
                 $model->setIsStatic(true);
                 $curVal = $value;
                 if (is_array($curVal)) {

@@ -13,6 +13,8 @@
 namespace PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Expected\Properties;
 
 use PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel;
+use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Classes\SimpleClass;
+use PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Classes\VisibilityClass as VisClass;
 
 /**
  * Class SlightlyComplexClass
@@ -24,64 +26,84 @@ class SlightlyComplexClass
 
     public static function getPropertyModels()
     {
-        return [new PropertyModel()];
+        $expectedProperties = [];
 
+        $visClass = new PropertyModel();
+        $visClass->setName('visibilityClass');
+        $visClass->setVisibility('private');
+        $visClass->setCurrentValue(new VisClass());
+        $visClass->setCurrentValueDataType('object');
+        $visClass->setClassName('VisibilityClass');
+        $visClass->setClassNamespace('PHPMinionTest\Utilities\ClassAnalyzer\Mocks\Classes');
+        $expectedProperties[] = $visClass;
 
-        $visibilities = ['constant', 'public', 'protected', 'private'];
-        $properties = [
-            'string' => 'string value',
-            'integer' => 10,
-            'double' => 3.14,
-            'true' => true,
-            'false' => false,
-            'null' => null,
-            'array' => ['', 'val1', 'val2']
-        ];
+        $orderId = new PropertyModel();
+        $orderId->setName('orderId');
+        $orderId->setVisibility('private');
+        $orderId->setCurrentValue(12345);
+        $orderId->setCurrentValueDataType('integer');
+        $expectedProperties[] = $orderId;
 
-        $finalForm = [];
-        foreach ($visibilities as $vis) {
-            foreach ($properties as $name => $value) {
-                $model = new PropertyModel();
-                $name = "{$vis}_{$name}";
-                if ($vis === 'constant') {
-                    $name = strtoupper($name);
-                }
-                $model->setName($name);
-                $model->setVisibility($vis);
-                $model->setIsStatic(false);
-                $curVal = $value;
-                if (is_array($curVal)) {
-                    $curVal[0] = $vis;
-                }
-                if (is_string($curVal)) {
-                    $curVal = "{$vis} {$curVal}";
-                }
-                $model->setCurrentValue($curVal);
-                $model->setCurrentValueDataType(gettype($value));
-                $finalForm[] = $model;
-            }
+        $orderTotalCost = new PropertyModel();
+        $orderTotalCost->setName('orderTotalCost');
+        $orderTotalCost->setVisibility('private');
+        $orderTotalCost->setCurrentValue(499.95);
+        $orderTotalCost->setCurrentValueDataType('double');
+        $expectedProperties[] = $orderTotalCost;
+
+        $orderItem = new PropertyModel();
+        $orderItem->setName('orderItems');
+        $orderItem->setVisibility('private');
+        $orderItems = [];
+        for ($i = 0; $i < 2; $i += 1) {
+            $sc = new SimpleClass();
+            $sc->property1 = "property {$i}";
+            $sc->property2 = $i * $i;
+            $sc->property3 = $i * 1.5;
+            $sc->property4 = true;
+            $sc->property5 = false;
+            $sc->property6 = null;
+            $sc->property7 = ['specialComponents' => ['red_led', 'blue_backlight', 'rush_shipping']];
+            $orderItems[] = $sc;
         }
+        $orderItem->setCurrentValue($orderItems);
+        $orderItem->setCurrentValueDataType('array');
+        $expectedProperties[] = $orderItem;
 
-        foreach (['public', 'protected', 'private'] as $vis) {
-            foreach ($properties as $name => $value) {
-                $model = new PropertyModel();
-                $model->setName("{$vis}_static_{$name}");
-                $model->setVisibility('static');
-                $model->setIsStatic(true);
-                $curVal = $value;
-                if (is_array($curVal)) {
-                    $curVal[0] = "{$vis} static";
-                }
-                if (is_string($curVal)) {
-                    $curVal = "{$vis} static {$curVal}";
-                }
-                $model->setCurrentValue($curVal);
-                $model->setCurrentValueDataType(gettype($value));
-                $finalForm[] = $model;
-            }
-        }
+        $isNewCustomer = new PropertyModel();
+        $isNewCustomer->setName('isNewCustomer');
 
-        return $finalForm;
+        $couponCode = new PropertyModel();
+        $couponCode->setName('couponCode');
+        $couponCode->setVisibility('private');
+        $couponCode->setCurrentValue('ABC123');
+        $couponCode->setCurrentValueDataType('string');
+        $expectedProperties[] = $couponCode;
+
+        $isNewCustomer = new PropertyModel();
+        $isNewCustomer->setName('isNewCustomer');
+        $isNewCustomer->setVisibility('private');
+        $isNewCustomer->setCurrentValue(true);
+        $isNewCustomer->setCurrentValueDataType('boolean');
+        $expectedProperties[] = $isNewCustomer;
+
+        $customInstructions = new PropertyModel();
+        $customInstructions->setName('customInstructions');
+        $customInstructions->setVisibility('private');
+        $customInstructions->setCurrentValue(null);
+        $customInstructions->setCurrentValueDataType('null');
+        $expectedProperties[] = $customInstructions;
+
+        $orderDate = new PropertyModel();
+        $orderDate->setName('orderDate');
+        $orderDate->setVisibility('private');
+        $orderDate->setCurrentValue(new \DateTime("2015-10-27 12:00:00", new \DateTimeZone('America/Chicago')));
+        $orderDate->setCurrentValueDataType('object');
+        $orderDate->setClassName('DateTime');
+        $orderDate->setClassNamespace(null);
+        $expectedProperties[] = $orderDate;
+
+        return $expectedProperties;
     }
 
 }

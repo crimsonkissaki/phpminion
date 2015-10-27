@@ -163,11 +163,16 @@ class PropertyAnalysis
                 // stdClass will blow up everything else
                 return 'public';
             case (!is_object($property)):
+                // constants cause issues since they're strings
                 return 'constant';
+            /*
+             * TODO: what to do with static properties?
+            case ($property->isStatic()):
+                // static is a type unto itself
+                return 'static';
+            */
             case ($property->isPublic()):
                 return 'public';
-            case ($property->isStatic()):
-                return 'static';
             case ($property->isPrivate()):
                 return 'private';
             case ($property->isProtected()):

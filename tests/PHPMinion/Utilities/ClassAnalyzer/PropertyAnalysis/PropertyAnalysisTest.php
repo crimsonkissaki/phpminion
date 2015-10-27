@@ -58,21 +58,28 @@ class PropertyAnalysisTest extends \PHPUnit_Framework_TestCase
         return array(
             array( MockClasses::stdClass(), MockExpected::stdClass_propertyModels() ),
             array( MockClasses::allVisibility(), MockExpected::allVisibility_propertyModels() ),
-            //array( MockClasses::slightlyComplex(), MockExpected::slightlyComplex_propertyModels() ),
-            //array( MockClasses::complex(), MockExpected::complex_propertyModels() ),
+            array( MockClasses::slightlyComplex(), MockExpected::slightlyComplex_propertyModels() ),
         );
     }
 
     /**
      * @dataProvider mockArgsDataProvider
+     *
+     * TODO: PHP level namespaces need to have an indicator of some sort?
      */
     public function test_analyze_returnsProperValuesForAllProperties($entity, $expected)
     {
         $refEntity = new \ReflectionClass($entity);
         $actual = $this->analyzer->analyze($entity, $refEntity);
+        usort($expected, array($this, 'nameCompare'));
+        usort($actual, array($this, 'nameCompare'));
 
-        // may have to eventually manually re-order the arrays for this to work
         $this->assertEquals($expected, $actual);
+    }
+
+    public function nameCompare($a, $b)
+    {
+        return strcmp($a->getName(), $b->getName());
     }
 
 }

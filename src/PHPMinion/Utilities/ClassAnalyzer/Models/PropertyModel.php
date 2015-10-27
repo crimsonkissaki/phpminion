@@ -44,7 +44,7 @@ class PropertyModel
      *
      * @var bool
      */
-    private $isStatic;
+    private $isStatic = false;
 
     /**
      * Setter method if any
@@ -62,6 +62,16 @@ class PropertyModel
 
     /**
      * Current property value data type
+     *
+     * Possible values:
+     *  boolean
+     *  integer
+     *  double (same as float)
+     *  string
+     *  array
+     *  object
+     *  resource
+     *  NULL (must be strtolower)
      *
      * @var string
      */
@@ -188,7 +198,7 @@ class PropertyModel
      */
     public function setCurrentValueDataType($currentValueDataType)
     {
-        $this->currentValueDataType = $currentValueDataType;
+        $this->currentValueDataType = strtolower($currentValueDataType);
     }
 
     /**
