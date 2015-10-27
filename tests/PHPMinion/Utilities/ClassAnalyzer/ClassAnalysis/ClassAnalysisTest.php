@@ -60,6 +60,8 @@ class ClassAnalysisTest extends \PHPUnit_Framework_TestCase
             array( MockClasses::fullInheritanceChain(), MockExpected::fullInheritanceChain_classModel() ),
             array( MockClasses::stdClass(), MockExpected::stdClass_classModel() ),
             array( MockClasses::allVisibility(), MockExpected::allVisibility_classModel() ),
+            array( MockClasses::slightlyComplex(), MockExpected::slightlyComplex_classModel() ),
+            array( MockClasses::Complex(), MockExpected::complex_classModel() ),
         );
     }
 

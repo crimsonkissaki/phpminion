@@ -70,4 +70,44 @@ class MockExpected
         return Expected\Classes\FullInheritanceChainClass::getClassModel();
     }
 
+    /**
+     * Intended result of analyzing the SlightlyComplexClass mock
+     *
+     * @return array
+     */
+    public static function slightlyComplex_classModel()
+    {
+        return Expected\Classes\SlightlyComplexClass::getClassModel();
+    }
+
+    /**
+     * Intended result of analyzing the SlightlyComplexClass mock properties
+     *
+     * @return array
+     */
+    public static function slightlyComplex_propertyModels()
+    {
+        return Expected\Properties\SlightlyComplexClass::getPropertyModels();
+    }
+
+    /**
+     * Intended result of analyzing the ComplexClass mock
+     *
+     * @return array
+     */
+    public static function complex_classModel()
+    {
+        return Expected\Classes\ComplexClass::getClassModel();
+    }
+
+    /**
+     * Intended result of analyzing the ComplexClass mock properties
+     *
+     * @return array
+     */
+    public static function complex_propertyModels()
+    {
+        return Expected\Properties\ComplexClass::getPropertyModels();
+    }
+
 }

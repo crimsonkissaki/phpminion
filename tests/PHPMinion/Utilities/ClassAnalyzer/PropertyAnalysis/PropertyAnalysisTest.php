@@ -33,17 +33,17 @@ class PropertyAnalysisTest extends \PHPUnit_Framework_TestCase
     public function validArgsDataProvider()
     {
         return array(
-            array( MockClasses::allVisibility() ),
-            array( MockClasses::simple() ),
             array( MockClasses::stdClass() ),
+            array( MockClasses::simple() ),
             array( 'PHPMinion\Utilities\ClassAnalyzer\Models\PropertyModel' ),
+            array( MockClasses::allVisibility() ),
         );
     }
 
     /**
      * @dataProvider validArgsDataProvider
      */
-    public function _test_analyze_returnsArrayOfPropertyModels($entity)
+    public function test_analyze_returnsArrayOfPropertyModels($entity)
     {
         $object = (is_string($entity)) ? new $entity() : $entity;
         $refEntity = new \ReflectionClass($object);
@@ -57,7 +57,9 @@ class PropertyAnalysisTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array( MockClasses::stdClass(), MockExpected::stdClass_propertyModels() ),
-            //array( MockClasses::allVisibility(), MockExpected::allVisibility_propertyModels() ),
+            array( MockClasses::allVisibility(), MockExpected::allVisibility_propertyModels() ),
+            //array( MockClasses::slightlyComplex(), MockExpected::slightlyComplex_propertyModels() ),
+            //array( MockClasses::complex(), MockExpected::complex_propertyModels() ),
         );
     }
 

@@ -49,4 +49,14 @@ class MockClasses
         return new Classes\FullInheritanceChainClass();
     }
 
+    public static function slightlyComplex()
+    {
+        return new Classes\SlightlyComplexClass();
+    }
+
+    public static function complex()
+    {
+        return new Classes\ComplexClass();
+    }
+
 }

@@ -159,11 +159,13 @@ class PropertyAnalysis
     {
         // order is important so we don't call methods on stdClass values
         switch (true) {
-            case (get_class($this->_obj) === 'stdClass' || $property->isPublic()):
+            case (get_class($this->_obj) === 'stdClass'):
+                // stdClass will blow up everything else
                 return 'public';
-            // BSTS check
-            case (get_class($this->_obj) !== 'stdClass' && !is_object($property)):
+            case (!is_object($property)):
                 return 'constant';
+            case ($property->isPublic()):
+                return 'public';
             case ($property->isStatic()):
                 return 'static';
             case ($property->isPrivate()):
