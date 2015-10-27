@@ -36,7 +36,6 @@ class ScalarWorker implements DataTypeWorkerInterface
         $this->validateTargetEntity($entity);
 
         $model = new ScalarModel($entity);
-        $model->setValue($entity);
 
         return $model;
     }

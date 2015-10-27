@@ -59,4 +59,9 @@ class MockClasses
         return new Classes\ComplexClass();
     }
 
+    public static function recursive()
+    {
+        return new Classes\RecursiveClass();
+    }
+
 }

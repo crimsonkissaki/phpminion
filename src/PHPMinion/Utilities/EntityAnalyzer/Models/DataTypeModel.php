@@ -28,18 +28,25 @@ abstract class DataTypeModel
 {
 
     /**
+     * Name of the property, if any
+     *
+     * @var string
+     */
+    protected $propertyName;
+
+    /**
      * Data type the model represents
      *
      * @var string
      */
-    protected $_dataType;
+    protected $dataType;
 
     /**
      * Data visibility scope
      *
      * @var string
      */
-    protected $_visibility = 'public';
+    protected $visibility = 'public';
 
     /**
      * Values depending on data model type
@@ -50,14 +57,30 @@ abstract class DataTypeModel
      *
      * @var mixed
      */
-    protected $_value;
+    protected $value;
+
+    /**
+     * @return string
+     */
+    public function getPropertyName()
+    {
+        return $this->propertyName;
+    }
+
+    /**
+     * @param string $propertyName
+     */
+    public function setPropertyName($propertyName)
+    {
+        $this->propertyName = $propertyName;
+    }
 
     /**
      * @return string
      */
     public function getDataType()
     {
-        return $this->_dataType;
+        return $this->dataType;
     }
 
     /**
@@ -67,7 +90,7 @@ abstract class DataTypeModel
      */
     protected function setDataType($dataType)
     {
-        $this->_dataType = $dataType;
+        $this->dataType = $dataType;
     }
 
     /**
@@ -75,7 +98,7 @@ abstract class DataTypeModel
      */
     public function getVisibility()
     {
-        return $this->_visibility;
+        return $this->visibility;
     }
 
     /**
@@ -83,7 +106,7 @@ abstract class DataTypeModel
      */
     public function setVisibility($visibility)
     {
-        $this->_visibility = $visibility;
+        $this->visibility = $visibility;
     }
 
     /**
@@ -91,7 +114,7 @@ abstract class DataTypeModel
      */
     public function getValue()
     {
-        return $this->_value;
+        return $this->value;
     }
 
     public function __construct($entity)

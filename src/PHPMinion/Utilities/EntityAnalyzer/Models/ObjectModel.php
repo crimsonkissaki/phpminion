@@ -56,11 +56,11 @@ class ObjectModel extends DataTypeModel implements DataModelInterface
                 throw new EntityAnalyzerException("ObjectModel values must be DataTypeModels: '" . gettype($dataModel) . "' provided.");
             }
             $vis = $dataModel->getVisibility();
-            if (!is_array($this->_value[$vis])) {
-                $this->_value[$vis] = [];
+            if (!is_array($this->value[$vis])) {
+                $this->value[$vis] = [];
             }
 
-            $this->_value[$vis][$property] = $dataModel;
+            $this->value[$vis][$property] = $dataModel;
         }
     }
 

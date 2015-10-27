@@ -42,6 +42,7 @@ class DataTypeModelTranslator
             $worker = $factory->getWorker($valueData);
             $localModel = $worker->createModel($valueData);
             $localModel->setVisibility($model->getVisibility());
+            $localModel->setPropertyName($model->getName());
             $localData[$model->getName()] = $localModel;
         }
 

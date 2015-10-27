@@ -60,7 +60,17 @@ class EntityAnalyzer
     public static function analyzeAndRender($entity)
     {
         $_this = self::getInstance();
+
+        echo "<BR><BR>";
+        echo __METHOD__ . " :: " . __LINE__ . "<BR>";
+        echo "Beginning run:";
+        echo "<BR>--------------------------------------------------<BR>";
+
         $model = $_this->analyze($entity);
+
+        echo "data model class returned from analyze: " . get_class($model) . "<BR>";
+        echo "model data:<BR>";
+        var_dump($model);
 
         return $_this->render($model);
     }
@@ -75,6 +85,10 @@ class EntityAnalyzer
     {
         $worker = WorkerFactory::getWorker($entity);
 
+        echo __METHOD__ . " :: " . __LINE__ . "<BR>";
+        echo "analyze worker class: " . get_class($worker);
+        echo "<BR><BR>";
+
         return $worker->createModel($entity);
     }
 
@@ -87,6 +101,10 @@ class EntityAnalyzer
     public static function render(DataTypeModel $model)
     {
         $renderer = RendererFactory::getModelRenderer($model);
+
+        echo __METHOD__ . " :: " . __LINE__ . "<BR>";
+        echo "render worker class: " . get_class($renderer);
+        echo "<BR><BR>";
 
         return $renderer->renderModel($model);
     }

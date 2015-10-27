@@ -59,6 +59,7 @@ class PropertyAnalysisTest extends \PHPUnit_Framework_TestCase
             array( MockClasses::stdClass(), MockExpected::stdClass_propertyModels() ),
             array( MockClasses::allVisibility(), MockExpected::allVisibility_propertyModels() ),
             array( MockClasses::slightlyComplex(), MockExpected::slightlyComplex_propertyModels() ),
+            //array( MockClasses::recursive(), '' ),
         );
     }
 

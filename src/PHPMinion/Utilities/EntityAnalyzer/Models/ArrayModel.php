@@ -40,7 +40,7 @@ class ArrayModel extends DataTypeModel implements DataModelInterface
     {
         $vals = (is_array($value)) ? $value : [$value];
         foreach ($vals as $key => $val) {
-            $this->_value[$key] = $val;
+            $this->value[$key] = $val;
         }
     }
 
@@ -51,8 +51,8 @@ class ArrayModel extends DataTypeModel implements DataModelInterface
      */
     public function getValueByKey($key)
     {
-        if (isset($this->_value[$key])) {
-            return $this->_value[$key];
+        if (isset($this->value[$key])) {
+            return $this->value[$key];
         }
 
         throw new EntityAnalyzerException("No array element exists for key '{$key}'.");

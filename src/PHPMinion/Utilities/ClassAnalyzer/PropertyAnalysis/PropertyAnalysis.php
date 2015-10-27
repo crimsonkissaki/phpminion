@@ -63,6 +63,14 @@ class PropertyAnalysis
             $propertyModels = $this->createModelsForClassProperties();
         }
 
+        // why does this work properly but when it returns its out of memory?
+        /*
+        echo __METHOD__ . " :: " . __LINE__ . "<BR><BR>";
+        echo "class properties:<BR>";
+        var_dump($propertyModels);
+        die();
+        */
+
         return $propertyModels;
     }
 
@@ -165,12 +173,6 @@ class PropertyAnalysis
             case (!is_object($property)):
                 // constants cause issues since they're strings
                 return 'constant';
-            /*
-             * TODO: what to do with static properties?
-            case ($property->isStatic()):
-                // static is a type unto itself
-                return 'static';
-            */
             case ($property->isPublic()):
                 return 'public';
             case ($property->isPrivate()):

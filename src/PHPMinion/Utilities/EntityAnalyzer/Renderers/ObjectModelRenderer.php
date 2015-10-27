@@ -13,9 +13,9 @@
 namespace PHPMinion\Utilities\EntityAnalyzer\Renderers;
 
 use PHPMinion\Utilities\EntityAnalyzer\Models\DataTypeModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
 use PHPMinion\Utilities\EntityAnalyzer\Models\ArrayModel;
-use PHPMinion\Utilities\EntityAnalyzer\Models\PropertyModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\ObjectModel;
+use PHPMinion\Utilities\EntityAnalyzer\Models\ScalarModel;
 
 /**
  * Class ObjectModelRenderer
@@ -36,17 +36,42 @@ class ObjectModelRenderer extends DataTypeModelRenderer implements ModelRenderer
         $output = $this->indent($level) . "Object ({$model->getClassName()})" . PHP_EOL;
         $output .= $this->generateModelSummary($model, $level);
 
+        /**
+         * if object properties exist, it should be in format:
+         * [
+         *   visibility => [
+         *     property name => <datatype>Model,
+         *     property name => <datatype>Model,
+         *   ],
+         *   ...
+         * ]
+         * etc.
+         */
+
         $objProps = $model->getValue();
+
+        /*
+        echo __METHOD__ . " :: " . __LINE__ . "<BR>";
+        echo "class properties:<BR>";
+        var_dump($objProps);
+        */
 
         if (empty($objProps)) {
             return $output;
         }
 
-        foreach ($objProps as $vis => $props) {
-            /** @var PropertyModel $prop */
-            foreach ($props as $propName => $propModel) {
-                //\application\Utils::dbug($prop, "property", true);
-                $output .= $this->generatePropertyOutput($prop, $level + 1);
+        foreach ($objProps as $visibility => $propsInVis) {
+            /** @var DataTypeModel $propModel */
+            foreach ($propsInVis as $propName => $propModel) {
+                /*
+                echo "'{$propName}'s model:<BR>";
+                echo "<PRE>";
+                print_r($propModel);
+                echo "</PRE>";
+                echo "<BR><BR>";
+                */
+                //\application\Utils::dbug($propModel, "property '{$propName}'", true);
+                $output .= $this->generateModelOutput($propName, $propModel, $level + 1);
             }
         }
 
@@ -81,38 +106,51 @@ class ObjectModelRenderer extends DataTypeModelRenderer implements ModelRenderer
         return $output . $tldr;
     }
 
-    private function generatePropertyOutput(PropertyModel $prop, $level)
+    /**
+     * @param string        $name
+     * @param DataTypeModel $model
+     * @param int           $level
+     * @return string
+     */
+    private function generateModelOutput($name, DataTypeModel $model, $level)
     {
-        $type = $prop->currentValueDataType;
+        $type = $model->getDataType();
         echo "--> generating for '{$type}'<BR>";
-        $output = $this->indent($level) . "{$prop->visibility} '{$prop->name}' =>";
-        $output .= $this->generateValueOutput($prop, $level);
+        $output = $this->indent($level) . "{$model->getVisibility()} '{$name}' =>";
+        $output .= $this->generateValueOutput($model, $level);
 
         return $output;
     }
 
-    private function generateValueOutput(PropertyModel $prop, $level)
+    /**
+     * Converts a model's data into a readable value
+     *
+     * @param DataTypeModel $model
+     * @param               $level
+     * @return string
+     */
+    private function generateValueOutput(DataTypeModel $model, $level)
     {
         switch (true) {
-            case (is_bool($prop->currentValue)):
-                $output = $this->generateBooleanOutput($prop);
+            case (is_bool($model->getValue())):
+                $output = $this->generateBooleanOutput($model);
                 break;
-            case (is_null($prop->currentValue)):
+            case (is_null($model->getValue())):
                 $output = $this->generateNullOutput();
                 break;
-            case (is_numeric($prop->currentValue)):
-                $output = $this->generateNumericOutput($prop);
+            case (is_numeric($model->getValue())):
+                $output = $this->generateNumericOutput($model);
                 break;
-            case (is_string($prop->currentValue)):
-                $output = $this->generateStringOutput($prop);
+            case (is_string($model->getValue())):
+                $output = $this->generateStringOutput($model);
                 break;
-            //case (is_array($prop->currentValue)):
-            case ($prop->currentValue instanceof ArrayModel):
-                $output = $this->generateArrayOutput($prop, $level + 1);
+            //case (is_array($model->getValue())):
+            case ($model->getValue() instanceof ArrayModel):
+                $output = $this->generateArrayOutput($model, $level + 1);
                 break;
-            //case (is_object($prop->currentValue)):
-            case ($prop->currentValue instanceof ObjectModel):
-                $output = $this->generateObjectOutput($prop, $level + 1);
+            //case (is_object($model->getValue())):
+            case ($model->getValue() instanceof ObjectModel):
+                $output = $this->generateObjectOutput($model, $level + 1);
                 break;
             default:
                 $output = 'UNKNOWN VAR TYPE';
@@ -122,35 +160,35 @@ class ObjectModelRenderer extends DataTypeModelRenderer implements ModelRenderer
     }
 
     /**
-     * @param PropertyModel $prop
+     * @param DataTypeModel $model
      * @return string
      */
-    private function generateBooleanOutput(PropertyModel $prop)
+    private function generateBooleanOutput(DataTypeModel $model)
     {
-        $boolText = ($prop->currentValue === true) ? 'true' : 'false';
+        $boolText = ($model->getValue() === true) ? 'true' : 'false';
         $output = " boolean ({$boolText})" . PHP_EOL;
 
         return $output;
     }
 
     /**
-     * @param PropertyModel $prop
+     * @param DataTypeModel $model
      * @return string
      */
-    private function generateNumericOutput(PropertyModel $prop)
+    private function generateNumericOutput(DataTypeModel $model)
     {
-        $output = ' ' . gettype($prop->currentValue) . " {$prop->currentValue}" . PHP_EOL;
+        $output = ' ' . gettype($model->getValue()) . " {$model->getValue()}" . PHP_EOL;
 
         return $output;
     }
 
     /**
-     * @param PropertyModel $prop
+     * @param DataTypeModel $model
      * @return string
      */
-    private function generateStringOutput(PropertyModel $prop)
+    private function generateStringOutput(DataTypeModel $model)
     {
-        $output = " string '{$prop->currentValue}' (length=" . strlen($prop->currentValue) . ")" . PHP_EOL;
+        $output = " string '{$model->getValue()}' (length=" . strlen($model->getValue()) . ")" . PHP_EOL;
 
         return $output;
     }
@@ -168,39 +206,42 @@ class ObjectModelRenderer extends DataTypeModelRenderer implements ModelRenderer
     /**
      * TODO: finish this
      *
-     * @param PropertyModel $prop
+     * @param DataTypeModel $model
      * @param int           $level
      * @return string
      */
-    private function generateObjectOutput(PropertyModel $prop, $level)
+    private function generateObjectOutput(DataTypeModel $model, $level)
     {
         $output = PHP_EOL . $this->indent($level);
-        //$output .= "{$prop->currentValueDataType} {$prop->currentValue}" . PHP_EOL;
+        //$output .= "{$model->getValue()} {$model->getValue()}" . PHP_EOL;
         $output .= "object placeholder";
 
         return $output;
     }
 
     /**
-     * @param PropertyModel $prop
+     * @param DataTypeModel $model
      * @param int           $level
      * @return string
      */
-    private function generateArrayOutput(PropertyModel $prop, $level)
+    private function generateArrayOutput(DataTypeModel $model, $level)
     {
-        $val = $prop->currentValue;
+        $val = $model->getValue();
         $output = PHP_EOL . $this->indent($level);
         $output .= 'array (size=' . count($val) . ')' . PHP_EOL;
         foreach ($val as $k => $v) {
             $subLvl = $level + 1;
             $output .= $this->indent($subLvl) . "{$k} =>" . PHP_EOL;
             // TODO: fix this hackish shyte!
-            if ($v instanceof PropertyModel) {
+            if ($v instanceof DataTypeModel) {
                 die("fucking finally!");
             }
-            $tmp = new PropertyModel();
+            die("whatever");
+            /*
+            $tmp = new DataTypeModel();
             $tmp->currentValue = $v;
             $tmp->currentValueDataType = gettype($v);
+            */
             $output .= $this->generateValueOutput($tmp, $subLvl + 1);
         }
 

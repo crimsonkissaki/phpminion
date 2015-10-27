@@ -28,7 +28,7 @@ class ScalarModel extends DataTypeModel implements DataModelInterface
      */
     public function setValue($value)
     {
-        $this->_value = $value;
+        $this->value = $value;
     }
 
     public function __construct($value)
